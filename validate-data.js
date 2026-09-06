@@ -235,5 +235,5 @@ const summary = {
   studyPacks: Object.keys(study).length,
   conceptsRequired: data.courses.reduce((s,c)=>s+(study[c.id]?.concepts||[]).length,0)
 };
-console.log('OK — auditoria curricular, estrutural e de publicação v5.2 aprovada');
+console.log('OK — auditoria curricular, estrutural e de publicação v5.3 aprovada');
 console.log(JSON.stringify(summary, null, 2));

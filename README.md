@@ -1,4 +1,4 @@
-# Arqueologia Study Hub · UNEB — v5.2 responsiva
+# Arqueologia Study Hub · UNEB — v5.3 responsiva
 
 Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB — Campus VIII (Paulo Afonso), organizado com base no Projeto Político-Pedagógico (PPP) disponibilizado na página oficial do curso.
 
@@ -25,7 +25,14 @@ A matriz foi conferida componente por componente nas páginas 25–28 do PPP.
 
 As optativas são tratadas com cuidado: o PPP consultado lista nome e carga horária, mas não apresenta ementas específicas. Por isso o app identifica seus conteúdos como roteiros sugeridos.
 
-## O que mudou na v5.2
+## O que mudou na v5.3
+
+- Corrigido o toggle reversível de tópicos estudados/não estudados.
+- Corrigida a migração de chaves antigas de progresso por índice para chaves por nome do tópico.
+- A porcentagem não recebe mais +4% apenas por estar com status “Estudando”; agora representa somente tópicos, flashcards e quiz.
+- Ao desmarcar o último progresso real de uma matéria, o status volta automaticamente para “Não iniciada”.
+- Ao escolher manualmente “Não iniciada” em uma matéria com progresso, o app pede confirmação e zera apenas tópicos/flashcards/quiz da matéria, preservando anotações e dados da turma.
+
 
 - responsividade refinada para desktop, notebook, tablet e celular;
 - sidebar fixa em desktop e transformada em menu lateral até 960 px, liberando espaço útil em tablets;

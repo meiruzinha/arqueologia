@@ -1,4 +1,4 @@
-# Auditoria final da v5.2 — 06/09/2026
+# Auditoria final da v5.3 — 06/09/2026
 
 ## 1. Conferência da matriz curricular
 
@@ -22,7 +22,7 @@ O `validate-data.js` mantém uma referência independente da sequência de nomes
 
 ## 2. Integridade do material
 
-Resultado da validação estrutural da v5.2:
+Resultado da validação estrutural da v5.3:
 
 - 65 componentes obrigatórios;
 - 14 optativas;
@@ -71,7 +71,7 @@ Essas diferenças não são normalizadas silenciosamente porque não há base se
 
 ## 5. Revisão de código e funcionamento
 
-Foram executados nesta v5.2:
+Foram executados nesta v5.3:
 
 - `node validate-data.js`;
 - `node --check` em `app.js`, `data.js`, `study-content.js` e `validate-data.js`;
@@ -87,7 +87,7 @@ A validação curricular retornou 65 obrigatórias, 14 optativas, 397 tópicos d
 
 ## 6. Layout e responsividade
 
-A v5.2 foi conferida em cenários representativos de desktop, notebook, tablet e mobile:
+A v5.3 foi conferida em cenários representativos de desktop, notebook, tablet e mobile:
 
 - 1440 × 900 — desktop;
 - 1024 × 768 — notebook / tablet em paisagem;
@@ -127,4 +127,4 @@ Na interface:
 
 ## 8. Resultado
 
-A v5.2 mantém a base curricular e as funções da versão auditada e acrescenta uma camada responsiva mais robusta para PC, tablet e celular. O plano de ensino de cada professor continua sendo a referência final para ordem das aulas, leituras e avaliações durante o semestre.
+A v5.3 mantém a base curricular e as funções da versão auditada e acrescenta uma camada responsiva mais robusta para PC, tablet e celular. O plano de ensino de cada professor continua sendo a referência final para ordem das aulas, leituras e avaliações durante o semestre.

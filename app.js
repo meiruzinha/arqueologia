@@ -3,7 +3,8 @@
   const STUDY = window.ARCHAEOLOGY_STUDY_CONTENT || {};
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const STORAGE_KEY = 'arqueologia-study-hub-v5';
+  const STORAGE_KEY = 'arqueologia-study-hub-v5-3';
+  const V5_STORAGE_KEY = 'arqueologia-study-hub-v5';
   const V4_STORAGE_KEY = 'arqueologia-study-hub-v4';
   const V3_STORAGE_KEY = 'arqueologia-study-hub-v3';
   const V2_STORAGE_KEY = 'arqueologia-study-hub-v2';
@@ -37,6 +38,13 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return mergeState(JSON.parse(raw));
+      const v5 = localStorage.getItem(V5_STORAGE_KEY);
+      if (v5) {
+        const migrated = mergeState(JSON.parse(v5));
+        canonicalizeTopicChecks(migrated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
       const v4 = localStorage.getItem(V4_STORAGE_KEY);
       if (v4) {
         const migrated = mergeState(JSON.parse(v4));
@@ -86,6 +94,28 @@
       coursePlans: plainObject(incoming.coursePlans),
     };
   }
+
+  function canonicalizeTopicChecks(targetState) {
+    const allCourses = [...(DATA.courses || []), ...(DATA.optatives || [])];
+    const source = plainObject(targetState.topicChecks);
+    const normalized = {};
+
+    allCourses.forEach(course => {
+      const oldChecks = plainObject(source[course.id]);
+      const nextChecks = {};
+      (course.topics || []).forEach((topic, index) => {
+        // A chave pelo nome vence conflitos com índices antigos.
+        if (Object.prototype.hasOwnProperty.call(oldChecks, topic)) nextChecks[topic] = oldChecks[topic] === true;
+        else if (Object.prototype.hasOwnProperty.call(oldChecks, String(index))) nextChecks[topic] = oldChecks[String(index)] === true;
+      });
+      if (Object.keys(nextChecks).length) normalized[course.id] = nextChecks;
+    });
+
+    targetState.topicChecks = normalized;
+    return targetState;
+  }
+
+  canonicalizeTopicChecks(state);
 
   function saveState() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
@@ -137,7 +167,11 @@
   function topicChecked(course, index) {
     const checks = state.topicChecks[course.id] || {};
     const key = topicKey(course, index);
-    return checks[key] === true || checks[index] === true || checks[String(index)] === true;
+    // O formato atual (nome do tópico) é sempre a fonte de verdade.
+    // Só recorremos ao índice legado quando ainda não existe uma chave atual.
+    if (Object.prototype.hasOwnProperty.call(checks, key)) return checks[key] === true;
+    if (Object.prototype.hasOwnProperty.call(checks, String(index))) return checks[String(index)] === true;
+    return false;
   }
   function completedTopicCount(course) {
     return course.topics.reduce((acc, _, index) => acc + (topicChecked(course, index) ? 1 : 0), 0);
@@ -179,8 +213,8 @@
     const cards = flashcardsForCourse(course);
     const flashPart = cards.length ? masteredCardCount(course) / cards.length * 20 : 0;
     const quizPart = (Number(state.quizScores[course.id] || 0) / 100) * 20;
-    const started = state.statuses[course.id] === 'studying' ? 4 : 0;
-    return Math.min(99, Math.round(topicPart + flashPart + quizPart + started));
+    // O status "Estudando" não soma pontos: a porcentagem representa apenas progresso real.
+    return Math.min(99, Math.round(topicPart + flashPart + quizPart));
   }
 
   function globalProgress() {
@@ -510,14 +544,30 @@
     }));
 
     $$('[data-status]', dialogContent).forEach(btn => btn.addEventListener('click', () => {
-      state.statuses[course.id] = btn.dataset.status;
-      $$('[data-status]', dialogContent).forEach(b => b.classList.toggle('active', b === btn));
-      if (btn.dataset.status === 'done') {
-        state.topicChecks[course.id] = Object.fromEntries(course.topics.map((topic) => [topic, true]));
-        const cards = flashcardsForCourse(course); state.flashcardMastery[course.id] = Object.fromEntries(cards.map((card, i) => [flashKey(card, i), true]));
-        $$('[data-topic-check]', dialogContent).forEach(ch => { ch.checked = true; ch.closest('.study-item')?.classList.add('checked'); });
+      const requested = btn.dataset.status;
+
+      if (requested === 'todo') {
+        const hasStudyProgress = completedTopicCount(course) > 0 || masteredCardCount(course) > 0 || Number(state.quizAttempts[course.id] || 0) > 0 || Number(state.quizScores[course.id] || 0) > 0;
+        if (hasStudyProgress && !confirm('Marcar esta matéria como “Não iniciada” vai zerar tópicos estudados, domínio dos flashcards e quiz desta matéria. Suas anotações e dados da turma serão mantidos. Continuar?')) return;
+        state.topicChecks[course.id] = {};
+        state.flashcardMastery[course.id] = {};
+        delete state.quizScores[course.id];
+        delete state.quizAttempts[course.id];
+        state.statuses[course.id] = 'todo';
+        syncStudyUI(course);
+      } else if (requested === 'done') {
+        state.statuses[course.id] = 'done';
+        state.topicChecks[course.id] = Object.fromEntries(course.topics.map(topic => [topic, true]));
+        const cards = flashcardsForCourse(course);
+        state.flashcardMastery[course.id] = Object.fromEntries(cards.map((card, i) => [flashKey(card, i), true]));
+        syncStudyUI(course);
+      } else {
+        state.statuses[course.id] = 'studying';
       }
-      saveState(); refreshDialogProgress(course);
+
+      $$('[data-status]', dialogContent).forEach(b => b.classList.toggle('active', b.dataset.status === state.statuses[course.id]));
+      saveState();
+      refreshDialogProgress(course);
     }));
 
     $$('[data-topic-check]', dialogContent).forEach(ch => ch.addEventListener('change', () => setTopic(course, Number(ch.dataset.topicCheck), ch.checked, ch)));
@@ -562,13 +612,52 @@
     const notes = $('[data-notes-id]', dialogContent); if (notes) notes.addEventListener('input', () => { state.notes[course.id] = notes.value; saveState(); });
   }
 
+  function syncStudyUI(course) {
+    $$('[data-topic-check]', dialogContent).forEach(ch => {
+      const idx = Number(ch.dataset.topicCheck);
+      const value = topicChecked(course, idx);
+      ch.checked = value;
+      ch.closest('.study-item')?.classList.toggle('checked', value);
+    });
+    $$('[data-mark-topic]', dialogContent).forEach(btn => {
+      const idx = Number(btn.dataset.markTopic);
+      const value = topicChecked(course, idx);
+      btn.textContent = value ? 'Marcar como não estudado' : 'Marcar tópico como estudado';
+      const lesson = btn.closest('.lesson-card');
+      const stateEl = $('.lesson-state', lesson);
+      if (stateEl) stateEl.textContent = value ? '✓ estudado' : 'abrir';
+    });
+    $$('.flashcard', dialogContent).forEach(card => card.classList.remove('mastered', 'missed'));
+    const quizResult = $('[data-quiz-result]', dialogContent);
+    if (quizResult && state.statuses[course.id] === 'todo') quizResult.innerHTML = '';
+  }
+
   function setTopic(course, idx, value, checkbox) {
-    state.topicChecks[course.id] ||= {}; state.topicChecks[course.id][topicKey(course, idx)] = value;
-    if (checkbox) checkbox.closest('.study-item')?.classList.toggle('checked', value);
-    const all = course.topics.length && course.topics.every((_, i) => topicChecked(course, i));
-    if (all && state.quizScores[course.id] >= 70 && masteredCardCount(course) === flashcardsForCourse(course).length) state.statuses[course.id] = 'done';
-    else if (Object.values(state.topicChecks[course.id]).some(Boolean)) state.statuses[course.id] = 'studying';
-    saveState(); refreshDialogProgress(course); $$('[data-status]', dialogContent).forEach(b => b.classList.toggle('active', b.dataset.status === (state.statuses[course.id] || 'todo')));
+    state.topicChecks[course.id] ||= {};
+    const checks = state.topicChecks[course.id];
+    const key = topicKey(course, idx);
+    checks[key] = value;
+    // Remove a chave numérica usada pelas versões antigas para impedir conflito ao desmarcar.
+    if (String(idx) !== key) delete checks[String(idx)];
+
+    if (checkbox) {
+      checkbox.checked = value;
+      checkbox.closest('.study-item')?.classList.toggle('checked', value);
+    }
+
+    const allTopics = course.topics.length > 0 && course.topics.every((_, i) => topicChecked(course, i));
+    const anyTopics = course.topics.some((_, i) => topicChecked(course, i));
+    const anyFlash = masteredCardCount(course) > 0;
+    const anyQuiz = Number(state.quizAttempts[course.id] || 0) > 0 || Number(state.quizScores[course.id] || 0) > 0;
+    const allFlash = masteredCardCount(course) === flashcardsForCourse(course).length;
+
+    if (allTopics && Number(state.quizScores[course.id] || 0) >= 70 && allFlash) state.statuses[course.id] = 'done';
+    else if (anyTopics || anyFlash || anyQuiz) state.statuses[course.id] = 'studying';
+    else state.statuses[course.id] = 'todo';
+
+    saveState();
+    refreshDialogProgress(course);
+    $$('[data-status]', dialogContent).forEach(b => b.classList.toggle('active', b.dataset.status === (state.statuses[course.id] || 'todo')));
   }
 
   function bindDynamic() {
