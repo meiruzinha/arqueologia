@@ -4,7 +4,9 @@
   const LESSONS = window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const STORAGE_KEY = 'arqueologia-study-hub-v6';
+  const STORAGE_KEY = 'arqueologia-study-hub-v6-2';
+  const V61_STORAGE_KEY = 'arqueologia-study-hub-v6-1';
+  const V6_STORAGE_KEY = 'arqueologia-study-hub-v6';
   const V53_STORAGE_KEY = 'arqueologia-study-hub-v5-3';
   const V5_STORAGE_KEY = 'arqueologia-study-hub-v5';
   const V4_STORAGE_KEY = 'arqueologia-study-hub-v4';
@@ -40,6 +42,20 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return mergeState(JSON.parse(raw));
+      const v61 = localStorage.getItem(V61_STORAGE_KEY);
+      if (v61) {
+        const migrated = mergeState(JSON.parse(v61));
+        canonicalizeTopicChecks(migrated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
+      const v6 = localStorage.getItem(V6_STORAGE_KEY);
+      if (v6) {
+        const migrated = mergeState(JSON.parse(v6));
+        canonicalizeTopicChecks(migrated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
       const v53 = localStorage.getItem(V53_STORAGE_KEY);
       if (v53) {
         const migrated = mergeState(JSON.parse(v53));
@@ -543,22 +559,55 @@
     return fallback;
   }
 
+  function lessonSupport(course) {
+    const category = packFor(course).category || 'theory';
+    const support = {
+      archaeology: {
+        steps: ['Defina o conceito e diga que tipo de evidência está envolvida.', 'Localize a evidência em seu contexto espacial, estratigráfico e cronológico.', 'Explique qual método permite produzir o dado.', 'Separe observação, inferência e hipótese alternativa.'],
+        mistakes: ['Interpretar um vestígio isolado sem contexto.', 'Confundir descrição com explicação.', 'Tratar uma hipótese como certeza sem discutir limites.']
+      },
+      theory: {
+        steps: ['Defina o conceito com suas próprias palavras.', 'Identifique qual problema o conceito ajuda a explicar.', 'Crie um exemplo concreto.', 'Compare a interpretação com pelo menos uma alternativa.'],
+        mistakes: ['Decorar palavras sem entender relações entre elas.', 'Usar um conceito como rótulo automático.', 'Ignorar o contexto histórico em que a teoria foi formulada.']
+      },
+      methods: {
+        steps: ['Comece pela pergunta de pesquisa.', 'Defina os dados necessários.', 'Escolha método e amostragem compatíveis.', 'Explique análise, limites e forma de documentação.'],
+        mistakes: ['Escolher técnica antes da pergunta.', 'Achar que quantidade de dados corrige coleta enviesada.', 'Apresentar resultado sem discutir incerteza.']
+      },
+      heritage: {
+        steps: ['Identifique os atores e os valores envolvidos.', 'Defina o bem, território ou impacto em análise.', 'Relacione responsabilidades técnicas e sociais.', 'Compare alternativas de preservação, gestão e comunicação.'],
+        mistakes: ['Tratar patrimônio apenas como objeto físico.', 'Ignorar comunidades afetadas.', 'Supor que escavar é sempre sinônimo de preservar.']
+      },
+      bio: {
+        steps: ['Defina a unidade biológica analisada.', 'Explique como ela é observada ou medida.', 'Relacione o dado ao contexto arqueológico.', 'Registre incerteza, preservação e hipóteses alternativas.'],
+        mistakes: ['Transformar estimativa em certeza absoluta.', 'Ignorar preservação e contaminação.', 'Interpretar um marcador isolado sem contexto.']
+      },
+      lab: {
+        steps: ['Descreva o material antes de interpretá-lo.', 'Registre atributos e procedimentos de análise.', 'Compare padrões dentro de um conjunto.', 'Relacione o resultado ao contexto de proveniência.'],
+        mistakes: ['Classificar sem critério explícito.', 'Perder informação de proveniência.', 'Confundir semelhança visual com mesma função ou cronologia.']
+      },
+      field: {
+        steps: ['Defina o objetivo da intervenção.', 'Planeje unidades, amostragem e registro.', 'Documente cada alteração do contexto.', 'Integre campo, laboratório e interpretação.'],
+        mistakes: ['Escavar sem pergunta de pesquisa.', 'Registrar depois em vez de durante a intervenção.', 'Tratar profundidade como sinônimo automático de antiguidade.']
+      }
+    };
+    return support[category] || support.theory;
+  }
+
   function buildLessonData(topic, course) {
     const deep = LESSONS.deep?.[course.id]?.[topic];
     const points = guidePoints(course, topic);
     const cat = CATEGORY_LESSON[packFor(course).category] || CATEGORY_LESSON.theory;
     const overview = packFor(course).overview || course.syllabus || '';
+    const support = lessonSupport(course);
     const definitionBridge = points.length
       ? `Os conceitos centrais desta aula são ${points.map(p => p.term).join(', ')}. Eles devem ser entendidos em relação ao problema da aula, e não como definições soltas.`
       : `O ponto principal é transformar o tema “${topic}” em perguntas observáveis: o que precisa ser descrito, que evidência pode responder e quais interpretações alternativas existem.`;
     const conceptNarrative = points.length
       ? points.map((p, i) => `${i === 0 ? 'Comece por' : 'Relacione também'} ${p.term}: ${p.definition}`).join(' ')
       : '';
-    const explanation = deep?.explanation || `Esta aula aborda ${topic.toLocaleLowerCase('pt-BR')} dentro de ${course.title}. ${overview}
-
-${definitionBridge} ${conceptNarrative}
-
-${cat.approach}`;
+    const explanation = deep?.explanation || `Esta aula aborda ${topic.toLocaleLowerCase('pt-BR')} dentro de ${course.title}. ${overview}\n\n${definitionBridge} ${conceptNarrative}\n\n${cat.approach}`;
+    const deepDive = deep?.deepDive || `Para aprofundar este assunto, não tente apenas memorizar a definição. Pergunte como o tema aparece no tipo de evidência estudado em ${course.title}, que procedimentos permitem reconhecê-lo e quais interpretações concorrentes poderiam explicar o mesmo padrão.\n\nUse a ementa da disciplina como limite: este material organiza o estudo, mas o plano de ensino do professor pode selecionar autores, exemplos e estudos de caso diferentes. Ao revisar, procure sempre ligar conceito, evidência, método e limite da inferência.`;
     const fallbackExample = cat.example;
     const example = deep?.example || topicSpecificExample(topic, course, fallbackExample);
     const remember = deep?.remember || [
@@ -571,11 +620,52 @@ ${cat.approach}`;
       points.length ? `Como ${points[0].term} ajuda a compreender esse assunto?` : 'Que evidência seria necessária para investigar esse tema?',
       'Que erro de interpretação alguém poderia cometer ao estudar esse assunto de forma superficial?'
     ];
-    return { explanation, example, remember, review, points, expanded: !!deep };
+    const commonMistakes = deep?.commonMistakes || support.mistakes;
+    const studySteps = deep?.studySteps || support.steps;
+    const reviewAnswers = Array.isArray(deep?.reviewAnswers) ? deep.reviewAnswers : [];
+    return { explanation, deepDive, example, remember, review, reviewAnswers, points, commonMistakes, studySteps, expanded: !!deep };
   }
 
   function paragraphsHtml(text) {
     return String(text || '').split(/\n\s*\n/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('');
+  }
+
+  const REVIEW_STOPWORDS = new Set('a o as os um uma uns umas de da do das dos e em no na nos nas para por com sem que qual quais como porque porquê porque por que se ao aos à às é são foi foram ser estar isso esse essa esses essas este esta estes estas sua seu suas seus'.split(' '));
+  function reviewTokens(text) {
+    return normalizeText(text).split(/\s+/).filter(x => x.length > 3 && !REVIEW_STOPWORDS.has(x));
+  }
+  function reviewSentences(text) {
+    return (String(text || '').replace(/\s+/g, ' ').match(/[^.!?]+[.!?]+|[^.!?]+$/g) || []).map(x => x.trim()).filter(x => x.length > 20);
+  }
+  function reviewAnswer(question, data, index) {
+    if (data.reviewAnswers?.[index]) return data.reviewAnswers[index];
+    const qTokens = reviewTokens(question);
+    const sourceSentences = [
+      ...reviewSentences(data.explanation),
+      ...reviewSentences(data.deepDive),
+      ...data.points.map(p => `${p.term}: ${p.definition}`),
+      ...reviewSentences(data.example),
+      ...data.remember
+    ];
+    const ranked = sourceSentences.map((sentence, order) => {
+      const norm = normalizeText(sentence);
+      const overlap = qTokens.reduce((n, t) => n + (norm.includes(t) ? 1 : 0), 0);
+      const conceptBonus = data.points.some(p => normalizeText(question).includes(normalizeText(p.term))) && data.points.some(p => sentence.includes(p.term)) ? 2 : 0;
+      return { sentence, score: overlap * 3 + conceptBonus - order * 0.002 };
+    }).sort((a,b) => b.score - a.score);
+    const picked = [];
+    for (const item of ranked) {
+      if (picked.some(x => normalizeText(x) === normalizeText(item.sentence))) continue;
+      if (item.score <= 0 && picked.length) break;
+      picked.push(item.sentence);
+      if (picked.length === 2) break;
+    }
+    if (!picked.length) picked.push(data.remember[Math.min(index, data.remember.length - 1)] || data.remember[0]);
+    return picked.join(' ');
+  }
+  function lessonReadingMinutes(data) {
+    const words = [data.explanation, data.deepDive, data.example, ...data.remember, ...data.points.map(p => p.definition)].join(' ').trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(3, Math.ceil(words / 170));
   }
 
   function lessonText(topic, course) {
@@ -583,12 +673,16 @@ ${cat.approach}`;
     const conceptHtml = data.points.length
       ? `<div class="lesson-concepts"><h4>Conceitos essenciais</h4><div class="concept-grid">${data.points.map(c => `<div class="concept-inline"><strong>${esc(c.term)}</strong><p>${esc(c.definition)}</p></div>`).join('')}</div></div>`
       : '';
-    return `<div class="lesson-depth ${data.expanded ? 'expanded' : ''}"><span>${data.expanded ? 'Aula expandida' : 'Aula guiada'}</span><small>${data.expanded ? 'leitura aprofundada do 1º semestre' : 'material didático baseado na ementa'}</small></div>
-      <div class="lesson-section"><h4>Entenda o assunto</h4>${paragraphsHtml(data.explanation)}</div>
+    const reviewHtml = data.review.map((q, i) => `<li><div class="review-question">${esc(q)}</div><details class="review-answer"><summary>Ver resposta comentada</summary><p>${esc(reviewAnswer(q, data, i))}</p><small>Use esta resposta como referência. O ideal é conseguir explicar a mesma ideia com suas próprias palavras.</small></details></li>`).join('');
+    return `<div class="lesson-depth ${data.expanded ? 'expanded' : ''}"><span>${data.expanded ? 'Aula aprofundada' : 'Aula guiada'}</span><small>${data.expanded ? `leitura desenvolvida · cerca de ${lessonReadingMinutes(data)} min` : `material guiado · cerca de ${lessonReadingMinutes(data)} min`}</small></div>
+      <div class="lesson-section"><h4>1. Entenda o assunto</h4>${paragraphsHtml(data.explanation)}</div>
+      <div class="lesson-section lesson-deep-dive"><h4>2. Aprofundamento</h4>${paragraphsHtml(data.deepDive)}</div>
       ${conceptHtml}
-      <div class="lesson-section lesson-example"><h4>Exemplo aplicado</h4><p>${esc(data.example)}</p></div>
-      <div class="lesson-section lesson-remember"><h4>O que você precisa guardar</h4><ul>${data.remember.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
-      <div class="lesson-section lesson-review"><h4>Perguntas de revisão</h4><ol>${data.review.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>`;
+      <div class="lesson-section lesson-study-steps"><h4>3. Como raciocinar sobre este tema</h4><ol>${data.studySteps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>
+      <div class="lesson-section lesson-example"><h4>4. Exemplo aplicado</h4><p>${esc(data.example)}</p></div>
+      <div class="lesson-section lesson-mistakes"><h4>5. Erros comuns</h4><ul>${data.commonMistakes.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      <div class="lesson-section lesson-remember"><h4>6. O que você precisa guardar</h4><ul>${data.remember.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      <div class="lesson-section lesson-review"><h4>7. Perguntas de revisão</h4><p class="review-instruction">Tente responder sem olhar. Depois abra “Ver resposta comentada” e compare com o que você escreveu ou falou.</p><ol>${reviewHtml}</ol></div>`;
   }
 
   function tabButton(id, label, active) { return `<button type="button" class="course-tab ${active === id ? 'active' : ''}" data-tab="${id}">${label}</button>`; }
@@ -640,7 +734,7 @@ ${cat.approach}`;
         <aside class="study-tips"><h3>Como estudar</h3><ol>${(pack.studyTips || []).map(t => `<li>${esc(t)}</li>`).join('')}</ol><div class="mini-rule"><strong>Teste de domínio</strong><p>Marque um tópico somente quando conseguir explicá-lo sem copiar a definição e dar pelo menos um exemplo ou aplicação.</p></div></aside></div>
       </section>
 
-      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material didático</span><h3>Aulas da matéria</h3><p>Cada aula traz explicação, conceitos, exemplo aplicado, resumo e perguntas de revisão. O 1º semestre possui aulas expandidas; os demais semestres têm aulas guiadas que também podem ser estudadas dentro do app.</p></div></div>
+      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material didático</span><h3>Aulas da matéria</h3><p>As 397 aulas dos 8 semestres trazem explicação desenvolvida, aprofundamento, conceitos, método de raciocínio, exemplo aplicado, erros comuns, síntese e perguntas com respostas comentadas. O conteúdo é material didático de apoio construído a partir da ementa e dos tópicos auditados do PPP; o plano de ensino do professor continua sendo a referência da turma.</p></div></div>
         <div class="lesson-list">${course.topics.map((topic, i) => `<details class="lesson-card" ${i === 0 ? 'open' : ''}><summary><span class="lesson-number">${String(i + 1).padStart(2, '0')}</span><span>${esc(topic)}</span><span class="lesson-state">${topicChecked(course, i) ? '✓ estudado' : 'abrir'}</span></summary><div class="lesson-body">${lessonText(topic, course)}<div class="recall-box"><strong>Fechamento da aula</strong><p>Se você consegue responder às perguntas de revisão sem olhar e dar um exemplo próprio, já pode marcar esta aula como estudada.</p></div><button type="button" class="btn btn-soft btn-sm" data-mark-topic="${i}">${topicChecked(course, i) ? 'Marcar como não estudado' : 'Marcar tópico como estudado'}</button></div></details>`).join('')}</div>
       </section>
 

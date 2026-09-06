@@ -1,146 +1,78 @@
-# Auditoria da v6 — aulas e conteúdo
+# Auditoria da v6.2 — conteúdo aprofundado dos 8 semestres
 
-Data da revisão: 06/09/2026.
+## Objetivo
 
-## 1. Matriz curricular
+A v6.2 corrige a diferença de profundidade que existia entre o 1º semestre e os demais. O aplicativo não deve chamar de “aula” um texto que funcione apenas como lembrete do que pesquisar. Por isso, a camada didática foi ampliada para todos os tópicos obrigatórios.
 
-A base curricular permanece igual à versão auditada anterior e foi novamente validada pelo `validate-data.js`.
+## Cobertura
 
-| Semestre | Componentes | Carga da lista |
-|---|---:|---:|
-| 1º | 7 | 420 h |
-| 2º | 8 | 480 h |
-| 3º | 9 | 560 h |
-| 4º | 9 | 560 h |
-| 5º | 9 | 560 h |
-| 6º | 9 | 560 h |
-| 7º | 8 | 500 h |
-| 8º | 6 | 380 h |
-| **Total** | **65** | **4.020 h** |
+A auditoria estrutural encontrou:
 
-As 14 optativas listadas no PPP continuam cadastradas e somam 560 h.
+- 65 componentes obrigatórios;
+- 14 optativas;
+- 397 tópicos obrigatórios;
+- 397 aulas aprofundadas;
+- 499 conceitos nas disciplinas obrigatórias;
+- 1.588 perguntas de revisão;
+- 1.588 respostas comentadas.
 
-## 2. Nova camada de conteúdo
+Todas as aulas obrigatórias possuem material aprofundado. Nenhum tópico dos semestres 2, 3, 4, 5, 6, 7 ou 8 permanece marcado apenas como “aula guiada”.
 
-A v6 adiciona uma camada de aulas que não existia de forma satisfatória nas versões anteriores.
+## Estrutura mínima por aula
 
-### Componentes obrigatórios
+O `validate-data.js` exige, para cada um dos 397 tópicos:
 
-- 65 disciplinas/componentes conferidos;
-- 397 aulas/tópicos no total;
-- **46 aulas expandidas no 1º semestre**;
-- **351 aulas guiadas do 2º ao 8º semestre**;
-- 499 conceitos de apoio;
-- todas as 397 aulas renderizam explicação, exemplo, resumo e perguntas de revisão.
+1. explicação contextualizada;
+2. seção de aprofundamento;
+3. exemplo aplicado;
+4. roteiro de raciocínio;
+5. erros comuns;
+6. resumo/pontos de retenção;
+7. pelo menos quatro perguntas de revisão;
+8. resposta comentada para cada pergunta;
+9. mínimo de 500 palavras na camada principal validada.
 
-### Estrutura de uma aula
+Na validação final desta versão:
 
-Cada aula possui:
+- média: aproximadamente 758 palavras por aula;
+- menor aula: 540 palavras;
+- maior aula: 1.014 palavras.
 
-- “Entenda o assunto”;
-- conceitos essenciais quando disponíveis;
-- exemplo aplicado;
-- pontos que precisam ser guardados;
-- perguntas de revisão;
-- controle reversível de estudado/não estudado.
+Esses números não incluem todo o texto de interface, bibliografias, ementas, flashcards e quiz.
 
-As 46 aulas do 1º semestre possuem textos próprios com aprofundamento específico. As demais usam a ementa, o roteiro da disciplina, os conceitos revisados e uma abordagem metodológica adequada à área para produzir uma aula guiada.
+## Coerência didática
 
-## 3. Teste automatizado das 65 disciplinas
+As aulas dos semestres 2–8 são construídas com três fontes internas já auditadas no projeto:
 
-Foi executado um teste em Chromium que abriu **cada um dos 65 componentes obrigatórios** individualmente.
+- a ementa oficial da disciplina;
+- o roteiro de tópicos derivado da ementa;
+- os conceitos específicos cadastrados para a matéria.
 
-Para cada componente, o teste verificou:
+Também são aplicados perfis de estudo diferentes conforme a natureza da disciplina: teoria, patrimônio, tecnologia/material, métodos quantitativos, ciências ambientais/biológicas, Direito, arqueologias regionais, metodologia, Arqueologia Histórica, Geologia/Geomorfologia, Bioantropologia, campo, laboratório e formação profissional.
 
-- abertura do modal;
-- presença das 8 abas;
-- aba **Aulas** abrindo corretamente;
-- quantidade de aulas igual à quantidade de tópicos cadastrados;
-- presença de “Entenda o assunto”, “Exemplo aplicado”, “O que você precisa guardar” e “Perguntas de revisão”;
-- conteúdo mínimo não vazio na primeira aula.
+Isso evita tratar, por exemplo, Estatística, Teoria Arqueológica, Arqueogenética, Prática de Campo e Direito como se exigissem o mesmo tipo de raciocínio.
 
-Resultado:
+## Perguntas e respostas
 
-- **65/65 componentes aprovados**;
-- **397/397 aulas encontradas**;
-- **0 erros** nessa bateria.
+Cada aula possui quatro ou mais perguntas. Todas têm uma resposta comentada fechada por padrão. A pergunta deve poder ser respondida a partir da própria aula; o estudante tenta primeiro e abre a resposta depois para comparar o raciocínio.
 
-As 14 optativas também foram abertas em teste separado e seus 70 tópicos sugeridos renderizaram corretamente.
+## Limite acadêmico
 
-## 4. Progresso
+O material didático não é apresentado como plano oficial de aula da UNEB. A ementa do PPP é a base institucional; o aprofundamento é material independente de apoio. Quando o professor fornecer plano de ensino, textos obrigatórios, cronograma ou critérios de avaliação, esses dados devem prevalecer para a turma e podem ser incorporados na área “Minha turma”.
 
-O bug relatado na v5.2 não voltou.
+## Regressões preservadas
 
-Foi testado o seguinte ciclo:
+A v6.2 mantém as correções anteriores:
 
-1. abrir uma matéria;
-2. marcar a primeira aula como estudada;
-3. confirmar aumento da porcentagem;
-4. desmarcar a mesma aula;
-5. confirmar retorno da porcentagem ao valor anterior.
+- marcação e desmarcação de tópico como toggle real;
+- cálculo de porcentagem sem bônus artificial;
+- migração de progresso por chave canônica do tópico;
+- responsividade em desktop, tablet e mobile;
+- 65 obrigatórias + 14 optativas;
+- divergências reais do PPP sinalizadas;
+- bibliografia de Estágio VI sem contaminação de seções posteriores do PDF;
+- filtros que impedem conceitos deslocados entre matérias.
 
-Resultado: aprovado.
+## Resultado
 
-A porcentagem continua sendo composta por:
-
-- 60% aulas/tópicos;
-- 20% flashcards;
-- 20% quiz.
-
-O status “Estudando” não soma pontos artificialmente.
-
-## 5. Responsividade
-
-Bateria executada em:
-
-- 1440 × 900 — desktop;
-- 1024 × 768 — notebook;
-- 834 × 1112 — tablet;
-- 768 × 1024 — tablet retrato;
-- 390 × 844 — mobile;
-- 320 × 700 — mobile estreito.
-
-Resultado:
-
-- zero overflow horizontal detectado;
-- zero erros JavaScript detectados na bateria principal;
-- sidebar fixa em desktop e drawer em tablet/mobile;
-- modal sem overflow horizontal;
-- conteúdo de aula reorganizado para uma coluna em telas menores;
-- abas permanecem navegáveis horizontalmente quando necessário.
-
-## 6. Separação entre fonte oficial e material didático
-
-O app continua distinguindo:
-
-- **PPP oficial:** matriz, ementa, créditos, cargas e bibliografia;
-- **material didático:** aulas, exemplos, resumos, conceitos, flashcards e quizzes;
-- **Minha turma:** informações reais do professor, horários, avaliações e plano de ensino.
-
-As aulas não são apresentadas como transcrição oficial do que o professor necessariamente ministrará. O plano de ensino da turma continua sendo a referência final para ordem, leituras e avaliações.
-
-## 7. Inconsistências do PPP preservadas
-
-Continuam registradas e visíveis as inconsistências já auditadas, incluindo:
-
-- 56 disciplinas / 3 estágios / 200 h / 236 créditos declarados versus 65 componentes / 6 estágios na lista;
-- 4.080 h declaradas versus 4.020 h somadas da lista;
-- 4.840 h declaradas versus 4.780 h ao somar 4.020 + 560 + 200;
-- 236 créditos em uma seção versus 265 em outra;
-- diferenças de nome e carga entre matriz e ementário;
-- Metodologia da Pesquisa Quantitativa na matriz versus Qualitativa no ementário;
-- outros possíveis erros editoriais preservados e sinalizados.
-
-## 8. Crédito do projeto
-
-O rodapé continua exibindo:
-
-> Desenvolvido para fins de estudo, com organização baseada no Projeto Político-Pedagógico (PPP) do Bacharelado em Arqueologia da UNEB — Campus VIII, disponibilizado no site oficial do curso.
->
-> Projeto independente, sem vínculo institucional com a UNEB. — Mei.
-
-Somente **Mei** é linkado ao Instagram configurado (`https://www.instagram.com/meiarqueo/`).
-
-## 9. Resultado
-
-A v6 deixa de ser apenas um rastreador do que estudar. Ela passa a oferecer material legível dentro das disciplinas, preservando a matriz auditada, o acompanhamento de progresso, flashcards, quiz, bibliografia, anotações e responsividade.
+O comando `node validate-data.js` conclui a auditoria curricular, estrutural e de conteúdo da v6.2 sem erros.

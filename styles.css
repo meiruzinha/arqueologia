@@ -719,3 +719,43 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
   .lesson-card summary { grid-template-columns: auto minmax(0,1fr); gap: 10px; }
   .lesson-card summary .lesson-state { grid-column: 2; justify-self: start; }
 }
+
+/* ===== v6.2 · aulas aprofundadas nos 8 semestres ===== */
+.lesson-deep-dive { background: #fffdf9; border-left: 4px solid #b58b6d; }
+.lesson-study-steps { background: #f8f5f1; }
+.lesson-mistakes { background: #fff8f5; border-color: #eadbd2; }
+.lesson-review .review-instruction { margin-bottom: 14px; color: var(--muted); font-size: 13px; }
+.lesson-review > ol { display: grid; gap: 12px; padding-left: 22px; }
+.lesson-review > ol > li { padding-left: 3px; }
+.review-question { font-weight: 700; color: #40352f; line-height: 1.55; }
+.review-answer {
+  margin-top: 8px;
+  border: 1px solid #e3d9d0;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.review-answer summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #765844;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.review-answer summary::-webkit-details-marker { display: none; }
+.review-answer summary::after { content: '+'; font-size: 16px; line-height: 1; }
+.review-answer[open] summary::after { content: '−'; }
+.review-answer[open] summary { border-bottom: 1px solid #eee5de; background: #faf7f3; }
+.review-answer p { margin: 0; padding: 12px 12px 6px; line-height: 1.65; }
+.review-answer small { display: block; padding: 0 12px 12px; color: var(--muted); line-height: 1.5; }
+
+@media (max-width: 520px) {
+  .review-answer summary { padding: 10px; }
+  .review-answer p { padding: 11px 10px 6px; }
+  .review-answer small { padding: 0 10px 11px; }
+}

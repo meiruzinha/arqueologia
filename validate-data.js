@@ -170,19 +170,35 @@ for (const c of data.optatives) {
 }
 
 
-// v6: o 1º semestre possui aulas expandidas próprias; os demais tópicos são renderizados como aulas guiadas.
-const firstSemesterCourses = data.courses.filter(c => c.semester === 1);
-const firstSemesterTopicCount = firstSemesterCourses.reduce((s,c)=>s+(c.topics||[]).length,0);
+// v6.2: todos os 397 tópicos obrigatórios precisam possuir aula aprofundada e gabarito comentado.
+const requiredTopicCount = data.courses.reduce((s,c)=>s+(c.topics||[]).length,0);
 const deepLessonCount = Object.values(lessons.deep || {}).reduce((s,courseLessons)=>s+Object.keys(courseLessons || {}).length,0);
-assert(deepLessonCount === firstSemesterTopicCount, `v6: esperadas ${firstSemesterTopicCount} aulas expandidas do 1º semestre; encontradas ${deepLessonCount}`);
-for (const c of firstSemesterCourses) {
+assert(deepLessonCount === requiredTopicCount, `v6.2: esperadas ${requiredTopicCount} aulas aprofundadas; encontradas ${deepLessonCount}`);
+let reviewQuestionCount = 0;
+let lessonWordTotal = 0;
+let minLessonWords = Infinity;
+let maxLessonWords = 0;
+for (const c of data.courses) {
   for (const topic of c.topics || []) {
     const lesson = lessons.deep?.[c.id]?.[topic];
-    assert(Boolean(lesson), `v6: aula expandida ausente em ${c.id}: ${topic}`);
-    assert(String(lesson?.explanation || '').trim().length > 250, `v6: explicação curta em ${c.id}: ${topic}`);
-    assert(String(lesson?.example || '').trim().length > 80, `v6: exemplo curto/ausente em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.remember) && lesson.remember.length >= 3, `v6: resumo insuficiente em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.review) && lesson.review.length >= 3, `v6: revisão insuficiente em ${c.id}: ${topic}`);
+    assert(Boolean(lesson), `v6.2: aula aprofundada ausente em ${c.id}: ${topic}`);
+    if (!lesson) continue;
+    const lessonText = [lesson.explanation, lesson.deepDive, lesson.example, ...(lesson.remember||[]), ...(lesson.points||[]).map(p=>p.definition)].join(' ');
+    const words = lessonText.trim().split(/\s+/).filter(Boolean).length;
+    lessonWordTotal += words;
+    minLessonWords = Math.min(minLessonWords, words);
+    maxLessonWords = Math.max(maxLessonWords, words);
+    assert(words >= 500, `v6.2: aula ainda curta (${words} palavras) em ${c.id}: ${topic}`);
+    assert(String(lesson?.explanation || '').trim().length > 400, `v6.2: explicação curta em ${c.id}: ${topic}`);
+    assert(String(lesson?.deepDive || '').trim().length > 1200, `v6.2: aprofundamento curto/ausente em ${c.id}: ${topic}`);
+    assert(String(lesson?.example || '').trim().length > 120, `v6.2: exemplo curto/ausente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.studySteps) && lesson.studySteps.length >= 4, `v6.2: roteiro de raciocínio insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.commonMistakes) && lesson.commonMistakes.length >= 3, `v6.2: erros comuns insuficientes em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.remember) && lesson.remember.length >= 3, `v6.2: resumo insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.review) && lesson.review.length >= 4, `v6.2: revisão insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.reviewAnswers) && lesson.reviewAnswers.length === lesson.review.length, `v6.2: gabarito comentado ausente/incompleto em ${c.id}: ${topic}`);
+    reviewQuestionCount += (lesson.review || []).length;
+    lesson.reviewAnswers.forEach((a,i)=>assert(String(a || '').trim().length > 90, `v6.2: resposta comentada curta em ${c.id}: ${topic} #${i+1}`));
   }
 }
 
@@ -253,8 +269,11 @@ const summary = {
   allTopicGuides: all.reduce((s,c)=>s+(study[c.id]?.topicGuides||[]).length,0),
   studyPacks: Object.keys(study).length,
   conceptsRequired: data.courses.reduce((s,c)=>s+(study[c.id]?.concepts||[]).length,0),
-  expandedLessonsFirstSemester: deepLessonCount,
-  guidedLessonsOtherSemesters: data.courses.filter(c=>c.semester>1).reduce((s,c)=>s+(c.topics||[]).length,0)
+  expandedLessonsAllSemesters: deepLessonCount,
+  reviewQuestionsWithAnswers: reviewQuestionCount,
+  averageLessonWords: Math.round(lessonWordTotal / requiredTopicCount),
+  minLessonWords,
+  maxLessonWords
 };
-console.log('OK — auditoria curricular, estrutural e de conteúdo v6 aprovada');
+console.log('OK — auditoria curricular, estrutural e de conteúdo v6.2 aprovada');
 console.log(JSON.stringify(summary, null, 2));
