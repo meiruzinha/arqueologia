@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#6b4937" />
+  <meta name="description" content="Study Hub do Bacharelado em Arqueologia da UNEB Campus VIII, organizado a partir do PPP do curso." />
+  <title>Arqueologia Study Hub · UNEB</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">⌁</div>
+        <div><strong>Arqueologia</strong><span>Study Hub · UNEB</span></div>
+      </div>
+
+      <nav class="nav" aria-label="Navegação principal">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Início</button>
+        <button class="nav-item" data-view="semester"><span>Ⅰ</span> Meu semestre</button>
+        <button class="nav-item" data-view="all"><span>▦</span> Toda a grade</button>
+        <button class="nav-item" data-view="review"><span>↻</span> Revisão</button>
+        <button class="nav-item" data-view="optatives"><span>◇</span> Optativas</button>
+        <button class="nav-item" data-view="favorites"><span>☆</span> Favoritas</button>
+        <button class="nav-item" data-view="glossary"><span>A·Z</span> Glossário</button>
+        <button class="nav-item" data-view="about"><span>i</span> Sobre o PPP</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <label for="currentSemester">Meu semestre atual</label>
+        <select id="currentSemester"></select>
+        <div class="mini-progress">
+          <div class="mini-progress-head"><span>Progresso geral</span><strong id="sidebarProgressText">0%</strong></div>
+          <div class="progress-track"><div id="sidebarProgressBar" class="progress-fill"></div></div>
+        </div>
+        <small class="version">v3 · auditada + estudo</small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+        <div class="search-wrap">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="Buscar matéria, tema, conceito..." autocomplete="off" />
+        </div>
+        <button class="icon-btn" id="exportBtn" title="Exportar meu progresso" aria-label="Exportar meu progresso">⇩</button>
+      </header>
+      <section id="view" class="view" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <dialog id="courseDialog" class="course-dialog">
+    <div class="dialog-shell">
+      <button class="dialog-close" id="dialogClose" aria-label="Fechar">×</button>
+      <div id="courseDialogContent"></div>
+    </div>
+  </dialog>
+
+  <input type="file" id="importInput" accept="application/json" hidden />
+
+  <script src="data.js"></script>
+  <script src="study-content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
