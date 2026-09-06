@@ -1,65 +1,91 @@
-# Arqueologia Study Hub · UNEB — v6.2
+# Arqueologia Study Hub · UNEB — v7
 
 Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB — Campus VIII, organizado a partir do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
-## O que muda na v6.2
+## O que muda na v7
 
-A principal mudança é pedagógica: **todos os 397 tópicos das 65 disciplinas obrigatórias dos 8 semestres agora são renderizados como aulas aprofundadas**, e não apenas como listas ou resumos curtos.
+A v7 consolida o app como **material de estudo + caderno digital de sala**.
 
-Cada aula contém:
+### Caderno digital
 
-- explicação contextualizada;
-- aprofundamento desenvolvido;
-- conceitos essenciais;
-- roteiro de raciocínio;
-- exemplo aplicado;
-- erros comuns;
-- pontos que precisam ser guardados;
-- pelo menos 4 perguntas de revisão;
-- resposta comentada escondida para cada pergunta;
-- botão para marcar/desmarcar a aula como estudada.
+Cada disciplina ganhou um caderno próprio com registros separados por aula. Cada registro pode guardar:
 
-A camada de conteúdo usa a ementa oficial, o roteiro de tópicos e os conceitos auditados já existentes no projeto. O conteúdo didático é material de apoio: o plano de ensino do professor continua sendo a referência para ordem das aulas, autores, avaliações e recortes específicos da turma.
+- título da aula;
+- data;
+- o que foi aprendido em sala;
+- conceitos e palavras-chave;
+- dúvidas para perguntar/revisar;
+- tarefas, leituras e prazos;
+- observações livres.
 
-## Escala atual do conteúdo
+As anotações são salvas automaticamente no navegador, entram no backup do app e podem ser encontradas pela busca. A anotação geral das versões anteriores continua preservada.
+
+Há também uma visão **Caderno** no menu principal, reunindo as matérias do semestre atual e mostrando quantos registros existem em cada uma.
+
+### Menu recolhível
+
+O menu lateral agora pode ser aberto e fechado pelo botão sanduíche também no desktop. Ao recolher o menu, o conteúdo ocupa a largura liberada. Em tablet e celular ele continua funcionando como drawer sobreposto.
+
+### Progresso
+
+A porcentagem mede conclusão do percurso de estudo, não a nota acadêmica.
+
+Nas matérias com todos os componentes:
+
+- 60% — aulas/tópicos estudados;
+- 20% — flashcards dominados;
+- 20% — quiz.
+
+A parcela do quiz é considerada completa a partir de 70%. A melhor nota do quiz continua registrada separadamente. Matérias sem algum componente têm os pesos disponíveis normalizados, para que nenhuma atividade inexistente seja necessária para chegar a 100%.
+
+Marcar e desmarcar aulas ou flashcards recalcula a porcentagem imediatamente. Uma matéria concluída mostra 100%; se um item necessário for desmarcado, o status volta a “Estudando” e a porcentagem diminui.
+
+## Cobertura acadêmica
 
 - 8 semestres;
 - 65 componentes obrigatórios;
 - 14 optativas;
 - 397 aulas aprofundadas;
-- 499 conceitos de apoio;
-- 1.588 perguntas de revisão com 1.588 respostas comentadas;
-- aproximadamente 758 palavras por aula em média na camada didática principal;
-- aula mais curta validada com mais de 500 palavras no material principal.
+- 498 conceitos de apoio nas obrigatórias após a revisão conceitual da v7;
+- 1.588 perguntas de revisão;
+- 1.588 respostas comentadas;
+- média aproximada de 755 palavras por aula na camada principal validada;
+- menor aula validada: 540 palavras;
+- maior aula validada: 1.046 palavras.
 
-## Grade curricular
+A matriz continua auditada contra as páginas 25–28 do PPP. A lista efetiva da matriz soma 4.020 h de componentes obrigatórios e 560 h nas 14 optativas listadas. Divergências internas do próprio PPP permanecem sinalizadas em vez de serem corrigidas silenciosamente.
 
-A matriz permanece auditada contra as páginas 25–28 do PPP. O app preserva divergências internas do próprio documento em vez de inventar componentes ou cargas para fechar contas.
+## Revisão conceitual da v7
 
-Distribuição dos componentes obrigatórios por semestre:
+A revisão final separa com mais rigor **transcrição oficial do PPP** e **conteúdo didático**. Alguns trechos do documento exigem cautela terminológica e receberam notas críticas sem alterar a ementa oficial exibida no app.
 
-- 1º: 7;
-- 2º: 8;
-- 3º: 9;
-- 4º: 9;
-- 5º: 9;
-- 6º: 9;
-- 7º: 8;
-- 8º: 6.
+Entre as correções de material de apoio:
 
-A lista da matriz soma 4.020 h de componentes obrigatórios e 560 h nas 14 optativas listadas.
+- “hominização” não é ensinada como processo ocorrido nas Américas; em Arqueologia Americana e Latino-Americana o roteiro trabalha povoamento/ocupação das Américas;
+- em Antropologia Física, estimativa de sexo biológico é diferenciada de gênero social;
+- análise de DNA não é apresentada como equivalente simples a uma datação arqueológica direta;
+- “ecofato” é explicado no sentido arqueológico usual, sem reproduzir como definição técnica uma repetição confusa do PPP;
+- conceitos automáticos deslocados foram removidos de Teoria Antropológica, Direito Aplicado à Arqueologia e Arqueologia Americana.
 
-## Progresso e migração
+O conteúdo do app é material independente de apoio. O plano de ensino, as leituras, avaliações e orientações do professor continuam prevalecendo para cada turma.
 
-A v6.2 utiliza a chave `arqueologia-study-hub-v6-2` e migra automaticamente o progresso salvo pela v6.1 e por versões anteriores compatíveis. O sistema continua preservando:
+## Persistência e migração
 
-- matérias estudadas;
-- tópicos marcados;
+A v7 usa a chave `arqueologia-study-hub-v7` e migra automaticamente dados compatíveis da v6.2 e versões anteriores. São preservados:
+
+- semestre atual;
+- tópicos/aulas marcados;
 - favoritos;
-- flashcards;
+- domínio de flashcards;
 - resultados de quiz;
-- anotações;
-- dados de “Minha turma”.
+- anotações gerais;
+- dados de “Minha turma”;
+- novos registros do caderno digital;
+- preferência do menu lateral recolhido/aberto no desktop.
+
+## Responsividade testada
+
+A v7 foi testada em 1440, 1024, 960, 834, 768, 620, 520, 430, 390, 360 e 320 px. A bateria automatizada verifica ausência de overflow horizontal tanto na página quanto no caderno dentro da matéria.
 
 ## Arquivos do projeto
 
@@ -82,4 +108,4 @@ Execute:
 node validate-data.js
 ```
 
-O validador confere grade, carga horária, ementas, bibliografias, conceitos, tópicos e a presença/estrutura das 397 aulas aprofundadas.
+O validador confere matriz curricular, cargas, campos obrigatórios, conceitos, tópicos, estrutura das 397 aulas, perguntas/respostas, arquivos e regressões conceituais já encontradas em versões anteriores.

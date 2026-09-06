@@ -1768,3 +1768,46 @@ window.ARCHAEOLOGY_LESSON_CONTENT = {
     }
   }
 })();
+
+
+/* v7 · notas críticas para trechos problemáticos do próprio PPP. */
+(() => {
+  const L = window.ARCHAEOLOGY_LESSON_CONTENT?.deep || {};
+  const append = (courseId, topic, paragraph, mistake) => {
+    const lesson = L[courseId]?.[topic];
+    if (!lesson) return;
+    if (!String(lesson.deepDive || '').includes(paragraph.slice(0, 48))) lesson.deepDive = `${lesson.deepDive || ''}\n\n${paragraph}`.trim();
+    lesson.commonMistakes ||= [];
+    if (mistake && !lesson.commonMistakes.includes(mistake)) lesson.commonMistakes.push(mistake);
+  };
+  append(
+    's4-7-antropologia-fisica',
+    'Genética e análise de DNA mencionadas na ementa',
+    'Nota crítica sobre a ementa: análise de DNA pode contribuir para estudos de parentesco, ancestralidade populacional, afinidades genéticas, sexo cromossômico e outros problemas bioarqueológicos, mas não funciona, em regra, como um método direto de atribuir uma idade arqueológica a um vestígio. Para materiais orgânicos, o radiocarbono é um exemplo de método cronométrico; estimativas genéticas de tempo evolutivo usam modelos e perguntas diferentes. Portanto, a expressão “datação por meio da análise de DNA” presente no PPP deve ser lida com cautela e não memorizada como equivalência entre DNA e radiocarbono.',
+    'Tratar análise de DNA como se fornecesse diretamente uma data arqueológica do vestígio, sem distinguir genética, cronologia e método de datação.'
+  );
+  append(
+    's4-7-antropologia-fisica',
+    'Identificação biológica: estimativas de sexo, idade e variação esquelética',
+    'Outro cuidado terminológico: esqueletos podem fornecer estimativas de sexo biológico com graus de incerteza a partir de características anatômicas e, em alguns casos, dados genéticos. Gênero, porém, envolve identidades e papéis socialmente construídos e não pode ser determinado diretamente pela anatomia esquelética. Quando a ementa usa “identificação de gênero”, o material de estudo prefere a formulação bioantropológica mais precisa: estimativa de sexo.',
+    'Usar “sexo” e “gênero” como sinônimos ou afirmar gênero social diretamente a partir do esqueleto.'
+  );
+  append(
+    's6-6-arqueologia-americana',
+    'Povoamento inicial das Américas',
+    'Nota crítica sobre a ementa: hominização é o processo evolutivo da linhagem humana, cuja história mais antiga ocorreu na África e antecede em muito a ocupação das Américas. Para Arqueologia Americana, o problema pertinente é o povoamento do continente: cronologias, rotas, dispersões, adaptações e diversidade social e cultural. A redação do PPP é mantida na ementa oficial, mas não é apresentada no app como se existisse uma “hominização da América”.',
+    'Confundir evolução da linhagem humana com o processo posterior de povoamento e ocupação das Américas.'
+  );
+  append(
+    's5-5-arqueologia-latino-americana',
+    'Povoamento e diversidade cultural da América Latina',
+    'Nota crítica sobre a ementa: o processo de hominização corresponde à história evolutiva da linhagem humana, desenvolvida muito antes da ocupação das Américas. Para o recorte latino-americano, o problema arqueológico adequado é o povoamento e a ocupação humana do continente, suas cronologias, rotas, adaptações e diversidade cultural. Por isso o roteiro do app não transforma a expressão “hominização da América Latina” do PPP em um fato científico.',
+    'Confundir hominização (evolução da linhagem humana) com o povoamento pré-histórico das Américas.'
+  );
+  append(
+    's1-3-pre-historia-geral',
+    'Relações entre ambiente, biologia e cultura',
+    'Nota terminológica sobre a ementa: em Arqueologia, ecofato costuma designar um vestígio natural relevante para compreender ambiente ou atividade humana — por exemplo sementes, carvão ou restos faunísticos — enquanto artefato designa, em sentido geral, objeto produzido ou modificado por pessoas. O PPP repete a palavra “ecofato” ao mencionar fatores culturais; o material de estudo não adota essa repetição como definição técnica.',
+    'Memorizar a repetição de “ecofato” da ementa como se fatores culturais fossem, por definição, ecofatos.'
+  );
+})();

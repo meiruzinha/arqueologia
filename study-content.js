@@ -7652,3 +7652,39 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   }
 };
+
+
+/* v7 — correções conceituais de auditoria */
+(() => {
+  const packs = window.ARCHAEOLOGY_STUDY_CONTENT || {};
+  const normalize = (v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  const replaceConcepts = (courseId, removeTerms, additions) => {
+    const pack = packs[courseId];
+    if (!pack) return;
+    const banned = new Set(removeTerms.map(normalize));
+    pack.concepts = (pack.concepts || []).filter((c) => !banned.has(normalize(c.term)));
+    const existing = new Set(pack.concepts.map((c) => normalize(c.term)));
+    additions.forEach((concept) => {
+      if (!existing.has(normalize(concept.term))) {
+        pack.concepts.push(concept);
+        existing.add(normalize(concept.term));
+      }
+    });
+  };
+
+  replaceConcepts('s2-2-teoria-antropologica', ['cultura arqueológica'], [
+    { term: 'tradições antropológicas americana e britânica', definition: 'Conjunto de debates e escolas desenvolvidos especialmente na antropologia dos Estados Unidos e da Grã-Bretanha, com diferentes maneiras de relacionar cultura, sociedade, função, história, estrutura, método e trabalho de campo.' }
+  ]);
+
+  replaceConcepts('s2-6-direito-aplicado-a-arqueologia', ['cultura arqueológica'], [
+    { term: 'ordenamento jurídico', definition: 'Conjunto organizado de normas, princípios e instituições que estruturam a aplicação do Direito. Em Arqueologia, ajuda a compreender como a proteção do patrimônio se relaciona a competências, procedimentos e responsabilidades.' }
+  ]);
+
+  replaceConcepts('s5-5-arqueologia-latino-americana', ['hominização'], [
+    { term: 'povoamento das Américas', definition: 'Processo de entrada, dispersão e ocupação de populações humanas no continente americano, investigado por evidências arqueológicas, cronológicas, paleoambientais, bioantropológicas e genéticas. Não é sinônimo de hominização.' }
+  ]);
+
+  replaceConcepts('s6-6-arqueologia-americana', ['hominização', 'arqueologia social latino-americana'], [
+    { term: 'diversidade social e cultural americana', definition: 'Variedade histórica de formas de organização social, tecnologias, economias, cosmologias e relações com a paisagem desenvolvidas por diferentes sociedades das Américas.' }
+  ]);
+})();

@@ -13,12 +13,14 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">⌁</div>
-        <div><strong>Arqueologia</strong><span>Study Hub · UNEB</span></div>
+        <div class="brand-copy"><strong>Arqueologia</strong><span>Study Hub · UNEB</span></div>
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Recolher menu" title="Recolher menu">☰</button>
       </div>
 
       <nav class="nav" aria-label="Navegação principal">
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> Início</button>
         <button class="nav-item" data-view="semester"><span>Ⅰ</span> Meu semestre</button>
+        <button class="nav-item" data-view="notebook"><span>✎</span> Caderno</button>
         <button class="nav-item" data-view="all"><span>▦</span> Toda a grade</button>
         <button class="nav-item" data-view="review"><span>↻</span> Revisão</button>
         <button class="nav-item" data-view="optatives"><span>◇</span> Optativas</button>
@@ -35,7 +37,7 @@
           <div class="progress-track"><div id="sidebarProgressBar" class="progress-fill"></div></div>
         </div>
         <div class="project-credit" aria-label="Informações do projeto">
-          <small class="version">v6.2 · 8 semestres aprofundados</small>
+          <small class="version">v7 · caderno digital + revisão final</small>
           <p class="project-source">Desenvolvido para fins de estudo, com organização baseada no <a href="https://dedc8.uneb.br/wp-content/uploads/2023/05/Projeto-Politico-Pedagogico-Arqueologia-DEDC-VIII.pdf" target="_blank" rel="noopener noreferrer" title="Projeto Político-Pedagógico do Bacharelado em Arqueologia da UNEB — Campus VIII">Projeto Político-Pedagógico (PPP)</a> do Bacharelado em Arqueologia da UNEB — Campus VIII, disponibilizado no <a href="https://dedc8.uneb.br/arqueologia/" target="_blank" rel="noopener noreferrer" title="Site oficial do Bacharelado em Arqueologia da UNEB — Campus VIII">site oficial do curso</a>.</p>
           <p class="project-note">Projeto independente, sem vínculo institucional com a UNEB. — <a class="author-link" href="https://www.instagram.com/meiarqueo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Mei">Mei</a>.</p>
         </div>
@@ -44,7 +46,7 @@
 
     <main class="main">
       <header class="topbar">
-        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="true" title="Abrir ou fechar menu">☰</button>
         <div class="search-wrap">
           <span aria-hidden="true">⌕</span>
           <input id="searchInput" type="search" placeholder="Buscar matéria, tema, conceito..." autocomplete="off" />

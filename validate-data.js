@@ -170,10 +170,10 @@ for (const c of data.optatives) {
 }
 
 
-// v6.2: todos os 397 tópicos obrigatórios precisam possuir aula aprofundada e gabarito comentado.
+// v7: todos os 397 tópicos obrigatórios precisam possuir aula aprofundada e gabarito comentado.
 const requiredTopicCount = data.courses.reduce((s,c)=>s+(c.topics||[]).length,0);
 const deepLessonCount = Object.values(lessons.deep || {}).reduce((s,courseLessons)=>s+Object.keys(courseLessons || {}).length,0);
-assert(deepLessonCount === requiredTopicCount, `v6.2: esperadas ${requiredTopicCount} aulas aprofundadas; encontradas ${deepLessonCount}`);
+assert(deepLessonCount === requiredTopicCount, `v7: esperadas ${requiredTopicCount} aulas aprofundadas; encontradas ${deepLessonCount}`);
 let reviewQuestionCount = 0;
 let lessonWordTotal = 0;
 let minLessonWords = Infinity;
@@ -181,24 +181,29 @@ let maxLessonWords = 0;
 for (const c of data.courses) {
   for (const topic of c.topics || []) {
     const lesson = lessons.deep?.[c.id]?.[topic];
-    assert(Boolean(lesson), `v6.2: aula aprofundada ausente em ${c.id}: ${topic}`);
+    assert(Boolean(lesson), `v7: aula aprofundada ausente em ${c.id}: ${topic}`);
     if (!lesson) continue;
     const lessonText = [lesson.explanation, lesson.deepDive, lesson.example, ...(lesson.remember||[]), ...(lesson.points||[]).map(p=>p.definition)].join(' ');
     const words = lessonText.trim().split(/\s+/).filter(Boolean).length;
     lessonWordTotal += words;
     minLessonWords = Math.min(minLessonWords, words);
     maxLessonWords = Math.max(maxLessonWords, words);
-    assert(words >= 500, `v6.2: aula ainda curta (${words} palavras) em ${c.id}: ${topic}`);
-    assert(String(lesson?.explanation || '').trim().length > 400, `v6.2: explicação curta em ${c.id}: ${topic}`);
-    assert(String(lesson?.deepDive || '').trim().length > 1200, `v6.2: aprofundamento curto/ausente em ${c.id}: ${topic}`);
-    assert(String(lesson?.example || '').trim().length > 120, `v6.2: exemplo curto/ausente em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.studySteps) && lesson.studySteps.length >= 4, `v6.2: roteiro de raciocínio insuficiente em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.commonMistakes) && lesson.commonMistakes.length >= 3, `v6.2: erros comuns insuficientes em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.remember) && lesson.remember.length >= 3, `v6.2: resumo insuficiente em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.review) && lesson.review.length >= 4, `v6.2: revisão insuficiente em ${c.id}: ${topic}`);
-    assert(Array.isArray(lesson?.reviewAnswers) && lesson.reviewAnswers.length === lesson.review.length, `v6.2: gabarito comentado ausente/incompleto em ${c.id}: ${topic}`);
+    assert(words >= 500, `v7: aula ainda curta (${words} palavras) em ${c.id}: ${topic}`);
+    assert(String(lesson?.explanation || '').trim().length > 400, `v7: explicação curta em ${c.id}: ${topic}`);
+    assert(String(lesson?.deepDive || '').trim().length > 1200, `v7: aprofundamento curto/ausente em ${c.id}: ${topic}`);
+    assert(String(lesson?.example || '').trim().length > 120, `v7: exemplo curto/ausente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.studySteps) && lesson.studySteps.length >= 4, `v7: roteiro de raciocínio insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.commonMistakes) && lesson.commonMistakes.length >= 3, `v7: erros comuns insuficientes em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.remember) && lesson.remember.length >= 3, `v7: resumo insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.review) && lesson.review.length >= 4, `v7: revisão insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.reviewAnswers) && lesson.reviewAnswers.length === lesson.review.length, `v7: gabarito comentado ausente/incompleto em ${c.id}: ${topic}`);
     reviewQuestionCount += (lesson.review || []).length;
-    lesson.reviewAnswers.forEach((a,i)=>assert(String(a || '').trim().length > 90, `v6.2: resposta comentada curta em ${c.id}: ${topic} #${i+1}`));
+    lesson.reviewAnswers.forEach((a,i)=>assert(String(a || '').trim().length > 90, `v7: resposta comentada curta em ${c.id}: ${topic} #${i+1}`));
+    const lessonNorm = norm(lessonText);
+    assert(lessonNorm.includes(norm(topic)), `v7: aula não menciona claramente o próprio tópico em ${c.id}: ${topic}`);
+    assert(lessonNorm.includes(norm(c.title)), `v7: aula não está ancorada na disciplina em ${c.id}: ${topic}`);
+    assert(!/\b(undefined|null|lorem ipsum|object object)\b/i.test(lessonText), `v7: placeholder/valor inválido no conteúdo de ${c.id}: ${topic}`);
+    assert(new Set(lesson.reviewAnswers.map(a => norm(a))).size === lesson.reviewAnswers.length, `v7: respostas de revisão duplicadas em ${c.id}: ${topic}`);
   }
 }
 
@@ -225,11 +230,24 @@ const forbidden = {
   'dna antigo': ['opt-1-arte-egipcia','s5-4-arqueologia-classica','s5-1-arqueologia-do-oriente-proximo'],
   'sig': ['s1-4-sociologia','s1-5-linguistica','s1-3-pre-historia-geral'],
   'estado': ['opt-5-restauracao-ceramica','s5-6-botanica-e-etno-botanica'],
-  'andes': ['s5-3-arqueologia-asiatica','s8-4-relatorio-tecnico-pareceres-e-pericia-profissionais']
+  'andes': ['s5-3-arqueologia-asiatica','s8-4-relatorio-tecnico-pareceres-e-pericia-profissionais'],
+  'cultura arqueológica': ['s2-2-teoria-antropologica','s2-6-direito-aplicado-a-arqueologia'],
+  'hominização': ['s5-5-arqueologia-latino-americana','s6-6-arqueologia-americana'],
+  'arqueologia social latino-americana': ['s6-6-arqueologia-americana']
 };
 for (const [term, ids] of Object.entries(forbidden)) for (const id of ids) {
   const terms = (study[id]?.concepts || []).map(x => norm(x.term));
   assert(!terms.includes(norm(term)), `conceito contaminado '${term}' em ${id}`);
+}
+const correctedConcepts = {
+  's2-2-teoria-antropologica': ['tradições antropológicas americana e britânica'],
+  's2-6-direito-aplicado-a-arqueologia': ['ordenamento jurídico'],
+  's5-5-arqueologia-latino-americana': ['povoamento das Américas'],
+  's6-6-arqueologia-americana': ['povoamento das Américas','diversidade social e cultural americana']
+};
+for (const [id, requiredTerms] of Object.entries(correctedConcepts)) {
+  const terms = (study[id]?.concepts || []).map(x => norm(x.term));
+  for (const term of requiredTerms) assert(terms.includes(norm(term)), `correção conceitual ausente '${term}' em ${id}`);
 }
 
 // Alinhamentos mantidos e validados na v5: temas essenciais da ementa precisam aparecer no roteiro.
@@ -249,6 +267,15 @@ for (const [id, terms] of Object.entries(mustContain)) {
   const hay = norm((byId[id]?.topics || []).join(' '));
   for (const term of terms) assert(hay.includes(norm(term)), `roteiro de ${id} não cobre tema-chave: ${term}`);
 }
+
+// v7: recursos de navegação e caderno digital presentes no pacote.
+const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const appJs = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+const css = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
+assert(indexHtml.includes('id="sidebarToggle"') && indexHtml.includes('data-view="notebook"'), 'v7: controles do menu/caderno ausentes no HTML');
+assert(appJs.includes("const STORAGE_KEY = 'arqueologia-study-hub-v7'"), 'v7: chave de armazenamento incorreta');
+assert(appJs.includes('notebookEntries') && appJs.includes('recomputeCourseStatus'), 'v7: caderno ou recálculo de status ausente');
+assert(css.includes('body.sidebar-collapsed') && css.includes('.notebook-entry'), 'v7: estilos do menu recolhível/caderno ausentes');
 
 if (errors.length) {
   console.error(`FALHOU: ${errors.length} problema(s)`);
@@ -275,5 +302,5 @@ const summary = {
   minLessonWords,
   maxLessonWords
 };
-console.log('OK — auditoria curricular, estrutural e de conteúdo v6.2 aprovada');
+console.log('OK — auditoria curricular, estrutural e de conteúdo v7 aprovada');
 console.log(JSON.stringify(summary, null, 2));

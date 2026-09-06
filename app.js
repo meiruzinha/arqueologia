@@ -4,7 +4,8 @@
   const LESSONS = window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const STORAGE_KEY = 'arqueologia-study-hub-v6-2';
+  const STORAGE_KEY = 'arqueologia-study-hub-v7';
+  const V62_STORAGE_KEY = 'arqueologia-study-hub-v6-2';
   const V61_STORAGE_KEY = 'arqueologia-study-hub-v6-1';
   const V6_STORAGE_KEY = 'arqueologia-study-hub-v6';
   const V53_STORAGE_KEY = 'arqueologia-study-hub-v5-3';
@@ -23,6 +24,8 @@
     quizScores: {},
     quizAttempts: {},
     coursePlans: {},
+    notebookEntries: {},
+    sidebarCollapsed: false,
     view: 'dashboard',
     semesterFilter: 1,
   };
@@ -42,6 +45,13 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return mergeState(JSON.parse(raw));
+      const v62 = localStorage.getItem(V62_STORAGE_KEY);
+      if (v62) {
+        const migrated = mergeState(JSON.parse(v62));
+        canonicalizeTopicChecks(migrated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
       const v61 = localStorage.getItem(V61_STORAGE_KEY);
       if (v61) {
         const migrated = mergeState(JSON.parse(v61));
@@ -106,7 +116,7 @@
   function plainObject(value) { return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; }
   function safeSemester(value) { const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 8 ? n : 1; }
   function mergeState(incoming = {}) {
-    const allowedViews = new Set(['dashboard', 'semester', 'all', 'review', 'optatives', 'favorites', 'glossary', 'about']);
+    const allowedViews = new Set(['dashboard', 'semester', 'notebook', 'all', 'review', 'optatives', 'favorites', 'glossary', 'about']);
     const viewName = allowedViews.has(incoming.view) ? incoming.view : 'dashboard';
     return {
       ...structuredCloneSafe(defaultState),
@@ -117,6 +127,8 @@
       statuses: plainObject(incoming.statuses), topicChecks: plainObject(incoming.topicChecks), notes: plainObject(incoming.notes), favorites: plainObject(incoming.favorites),
       flashcardMastery: plainObject(incoming.flashcardMastery), quizScores: plainObject(incoming.quizScores), quizAttempts: plainObject(incoming.quizAttempts),
       coursePlans: plainObject(incoming.coursePlans),
+      notebookEntries: plainObject(incoming.notebookEntries),
+      sidebarCollapsed: incoming.sidebarCollapsed === true,
     };
   }
 
@@ -233,13 +245,35 @@
   }
 
   function courseProgress(course) {
-    if (state.statuses[course.id] === 'done') return 100;
-    const topicPart = course.topics.length ? completedTopicCount(course) / course.topics.length * 60 : 0;
+    // A porcentagem mede conclusão do percurso de estudo, não a nota acadêmica.
+    // Nas matérias com os três componentes: 60% aulas + 20% flashcards + 20% quiz.
+    // O quiz completa sua parcela ao atingir 70%; a melhor nota continua exibida separadamente.
+    // Se uma matéria não tiver algum componente (ex.: optativa sem quiz), os pesos disponíveis
+    // são normalizados para que seja possível chegar a 100% sem inventar atividade inexistente.
+    if ((state.statuses[course.id] || 'todo') === 'done') return 100;
+
+    let earned = 0;
+    let available = 0;
+
+    if (course.topics.length) {
+      available += 60;
+      earned += (completedTopicCount(course) / course.topics.length) * 60;
+    }
+
     const cards = flashcardsForCourse(course);
-    const flashPart = cards.length ? masteredCardCount(course) / cards.length * 20 : 0;
-    const quizPart = (Number(state.quizScores[course.id] || 0) / 100) * 20;
-    // O status "Estudando" não soma pontos: a porcentagem representa apenas progresso real.
-    return Math.min(99, Math.round(topicPart + flashPart + quizPart));
+    if (cards.length) {
+      available += 20;
+      earned += (masteredCardCount(course) / cards.length) * 20;
+    }
+
+    const quiz = quizForCourse(course);
+    if (quiz.length) {
+      available += 20;
+      const score = Number(state.quizScores[course.id] || 0);
+      earned += Math.min(score / 70, 1) * 20;
+    }
+
+    return available ? Math.max(0, Math.min(100, Math.round((earned / available) * 100))) : 0;
   }
 
   function globalProgress() {
@@ -263,7 +297,54 @@
     $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === viewName));
   }
 
-  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+  function isDrawerMode() { return window.matchMedia('(max-width: 960px)').matches; }
+
+  function updateSidebarButtons() {
+    const drawerOpen = sidebar.classList.contains('open');
+    const expanded = isDrawerMode() ? drawerOpen : !state.sidebarCollapsed;
+    const menuBtn = $('#menuBtn');
+    const sideBtn = $('#sidebarToggle');
+    if (menuBtn) {
+      menuBtn.setAttribute('aria-expanded', String(expanded));
+      menuBtn.setAttribute('aria-label', expanded ? 'Fechar menu' : 'Abrir menu');
+      menuBtn.title = expanded ? 'Fechar menu' : 'Abrir menu';
+    }
+    if (sideBtn) {
+      sideBtn.setAttribute('aria-expanded', String(expanded));
+      sideBtn.setAttribute('aria-label', 'Fechar menu');
+      sideBtn.title = 'Fechar menu';
+    }
+  }
+
+  function applySidebarState() {
+    if (isDrawerMode()) {
+      document.body.classList.remove('sidebar-collapsed');
+    } else {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.classList.toggle('sidebar-collapsed', state.sidebarCollapsed === true);
+    }
+    updateSidebarButtons();
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+    updateSidebarButtons();
+  }
+
+  function toggleSidebar() {
+    if (isDrawerMode()) {
+      const willOpen = !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', willOpen);
+      overlay.classList.toggle('show', willOpen);
+    } else {
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      saveState();
+      applySidebarState();
+    }
+    updateSidebarButtons();
+  }
   function navigate(viewName, opts = {}) {
     searchQuery = '';
     const search = $('#searchInput');
@@ -329,7 +410,7 @@
     return `<section class="hero">
       <div class="eyebrow">Bacharelado em Arqueologia · UNEB Campus VIII</div>
       <h1>Um app para estudar a graduação inteira.</h1>
-      <p>O PPP oficial fica separado do material didático. Em cada matéria você tem aulas para ler e estudar, conceitos-chave, exemplos aplicados, perguntas de revisão, flashcards, quiz, bibliografia e anotações.</p>
+      <p>O PPP oficial fica separado do material didático. Em cada matéria você tem aulas para ler e estudar, conceitos-chave, exemplos aplicados, perguntas de revisão, flashcards, quiz, bibliografia e um caderno digital para registrar o que foi aprendido em sala.</p>
       <div class="hero-actions"><button class="btn btn-light" data-go-sem="${sem}">Abrir ${sem}º semestre</button><button class="btn" data-go-review>Ir para revisão</button></div>
     </section>
 
@@ -370,6 +451,23 @@
     return `<div class="section-head top-section"><div><span class="eyebrow">Formação optativa</span><h1>Optativas</h1><p>${DATA.optatives.length} opções listadas no PPP.</p></div></div>
       <div class="notice"><div>i</div><div><strong>Atenção às optativas</strong><p>O PPP lista nomes e cargas horárias, mas não traz ementário específico dessas optativas. Por isso o conteúdo de estudo aqui é uma preparação sugerida e deve ser substituído/complementado pelo plano de ensino quando a disciplina for ofertada.</p></div></div>
       <div class="card-grid">${DATA.optatives.map(courseCard).join('')}</div>`;
+  }
+
+  function notebookView() {
+    const sem = Number(state.currentSemester || 1);
+    const courses = DATA.courses.filter(c => c.semester === sem);
+    const total = courses.reduce((sum, course) => sum + notebookEntriesFor(course).length, 0);
+    const rows = courses.map(course => {
+      const entries = notebookEntriesFor(course);
+      const latest = entries[0];
+      return `<article class="notebook-course-row">
+        <div><span class="eyebrow">${sem}º semestre</span><h3>${esc(course.title)}</h3><p>${entries.length ? `${entries.length} registro(s) de aula${latest?.date ? ` · mais recente: ${esc(formatDateBR(latest.date))}` : ''}` : 'Nenhuma anotação de aula ainda.'}</p></div>
+        <button class="btn ${entries.length ? 'btn-soft' : 'btn-outline'}" data-course-open="${esc(course.id)}" data-open-tab="notes" ${entries.length ? '' : 'data-new-note="1"'}>${entries.length ? 'Abrir caderno' : '+ Começar caderno'}</button>
+      </article>`;
+    }).join('');
+    return `<div class="section-head top-section"><div><span class="eyebrow">Caderno digital</span><h1>Meu caderno do ${sem}º semestre</h1><p>${total} registro(s) salvos nas ${courses.length} matérias do seu semestre atual.</p></div><button class="btn btn-outline" data-course-open="${esc(courses[0]?.id || '')}" data-open-tab="notes" ${courses.length ? '' : 'disabled'}>Abrir caderno</button></div>
+      <div class="notice info"><div>✎</div><div><strong>Este espaço é seu caderno de sala</strong><p>As aulas do app são material de apoio. Aqui você registra o que o professor realmente ensinou, exemplos dados em sala, dúvidas, leituras e tarefas.</p></div></div>
+      <div class="notebook-course-list">${rows}</div>`;
   }
 
   function favoritesView() {
@@ -440,10 +538,11 @@
     const q = normalizeText(query);
     const items = [...DATA.courses, ...DATA.optatives].filter(c => {
       const p = packFor(c);
-      const hay = normalizeText([c.title, c.matrixNameOriginal, c.syllabus, c.ementaryName, ...(c.topics || []), c.bibliographyBasic, c.bibliographyComplementary, p.overview, ...conceptsForCourse(c).flatMap(x => [x.term, x.definition])].join(' '));
+      const personal = [state.notes[c.id] || '', ...Object.values(state.coursePlans[c.id] || {}), ...notebookEntriesFor(c).flatMap(n => [n.title, n.learned, n.concepts, n.questions, n.tasks, n.free])];
+      const hay = normalizeText([c.title, c.matrixNameOriginal, c.syllabus, c.ementaryName, ...(c.topics || []), c.bibliographyBasic, c.bibliographyComplementary, p.overview, ...conceptsForCourse(c).flatMap(x => [x.term, x.definition]), ...personal].join(' '));
       return hay.includes(q);
     });
-    return `<div class="section-head top-section"><div><span class="eyebrow">Busca</span><h1>“${esc(query)}”</h1><p>${items.length} resultado(s) em matérias, ementas, tópicos e conceitos.</p></div></div>${items.length ? `<div class="card-grid">${items.map(courseCard).join('')}</div>` : `<div class="empty"><h3>Nada encontrado</h3><p>Tente termos como “ossos”, “cerâmica”, “estratigrafia”, “patrimônio”, “DNA”, “estatística” ou “campo”.</p></div>`}`;
+    return `<div class="section-head top-section"><div><span class="eyebrow">Busca</span><h1>“${esc(query)}”</h1><p>${items.length} resultado(s) em matérias, ementas, tópicos, conceitos e no seu caderno.</p></div></div>${items.length ? `<div class="card-grid">${items.map(courseCard).join('')}</div>` : `<div class="empty"><h3>Nada encontrado</h3><p>Tente termos como “ossos”, “cerâmica”, “estratigrafia”, “patrimônio”, “DNA”, “estatística” ou “campo”.</p></div>`}`;
   }
 
   function render() {
@@ -451,6 +550,7 @@
     else {
       switch (state.view) {
         case 'semester': view.innerHTML = semesterView(Number(state.semesterFilter || state.currentSemester || 1)); break;
+        case 'notebook': view.innerHTML = notebookView(); break;
         case 'all': view.innerHTML = allView(); break;
         case 'review': view.innerHTML = reviewView(); break;
         case 'optatives': view.innerHTML = optativesView(); break;
@@ -710,6 +810,91 @@
     }).filter(Boolean);
   }
 
+  function notebookEntriesFor(course) {
+    const value = state.notebookEntries[course.id];
+    return Array.isArray(value) ? value : [];
+  }
+
+  function localDateISO() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  function formatDateBR(value) {
+    const m = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : String(value || '');
+  }
+
+  function noteWordCount(entry) {
+    return ['learned', 'concepts', 'questions', 'tasks', 'free'].reduce((sum, key) => {
+      const text = String(entry?.[key] || '').trim();
+      return sum + (text ? text.split(/\s+/).filter(Boolean).length : 0);
+    }, 0);
+  }
+
+  function notebookEntryHtml(entry, index) {
+    const words = noteWordCount(entry);
+    return `<article class="notebook-entry" data-note-entry="${esc(entry.id)}">
+      <div class="notebook-entry-head">
+        <div><span class="eyebrow">Registro ${index + 1}</span><strong data-note-display-title>${esc(entry.title || 'Anotação de aula')}</strong><small><span data-note-display-date>${entry.date ? esc(entry.date) : 'sem data'}</span> · <span data-note-wordcount>${words}</span> palavras</small></div>
+        <button type="button" class="btn btn-outline btn-sm notebook-delete" data-delete-note="${esc(entry.id)}">Excluir</button>
+      </div>
+      <div class="notebook-fields">
+        <label><span>Título da aula</span><input class="plan-input" data-note-field="title" value="${esc(entry.title || '')}" placeholder="Ex.: Cultura material e contexto"></label>
+        <label><span>Data</span><input class="plan-input" type="date" data-note-field="date" value="${esc(entry.date || '')}"></label>
+        <label class="span-2"><span>O que aprendi na sala</span><textarea class="notes-area notebook-area" data-note-field="learned" placeholder="Escreva com suas palavras o que o professor explicou, exemplos dados em aula, comparações e ideias principais...">${esc(entry.learned || '')}</textarea></label>
+        <label class="span-2"><span>Conceitos e palavras-chave</span><textarea class="notes-area notebook-area compact" data-note-field="concepts" placeholder="Termos, autores, métodos, datas, definições ou conceitos que precisam ficar registrados...">${esc(entry.concepts || '')}</textarea></label>
+        <label><span>Dúvidas para perguntar/revisar</span><textarea class="notes-area notebook-area compact" data-note-field="questions" placeholder="O que não ficou claro? O que você quer perguntar ao professor?">${esc(entry.questions || '')}</textarea></label>
+        <label><span>Tarefas, leituras e prazos</span><textarea class="notes-area notebook-area compact" data-note-field="tasks" placeholder="Capítulos, artigos, exercícios, trabalhos, datas de entrega...">${esc(entry.tasks || '')}</textarea></label>
+        <label class="span-2"><span>Observações livres</span><textarea class="notes-area notebook-area compact" data-note-field="free" placeholder="Qualquer detalhe da aula que você queira guardar...">${esc(entry.free || '')}</textarea></label>
+      </div>
+    </article>`;
+  }
+
+  function notebookListHtml(course) {
+    const entries = notebookEntriesFor(course);
+    if (!entries.length) return `<div class="notebook-empty"><strong>Seu caderno desta matéria ainda está vazio.</strong><p>Crie uma anotação para cada aula presencial. Assim o conteúdo do professor fica separado do material didático do app.</p></div>`;
+    return entries.map((entry, index) => notebookEntryHtml(entry, index)).join('');
+  }
+
+  function renderNotebookList(course) {
+    const list = $('[data-notebook-list]', dialogContent);
+    if (!list) return;
+    list.innerHTML = notebookListHtml(course);
+    bindNotebookFields(course);
+  }
+
+  function bindNotebookFields(course) {
+    $$('[data-note-entry]', dialogContent).forEach(card => {
+      const id = card.dataset.noteEntry;
+      $$('[data-note-field]', card).forEach(field => field.addEventListener('input', () => {
+        const entries = notebookEntriesFor(course);
+        const entry = entries.find(item => item.id === id);
+        if (!entry) return;
+        entry[field.dataset.noteField] = field.value;
+        if (field.dataset.noteField === 'title') {
+          const display = $('[data-note-display-title]', card);
+          if (display) display.textContent = field.value.trim() || 'Anotação de aula';
+        }
+        if (field.dataset.noteField === 'date') {
+          const display = $('[data-note-display-date]', card);
+          if (display) display.textContent = field.value || 'sem data';
+        }
+        const wc = $('[data-note-wordcount]', card);
+        if (wc) wc.textContent = String(noteWordCount(entry));
+        saveState();
+      }));
+    });
+    $$('[data-delete-note]', dialogContent).forEach(btn => btn.addEventListener('click', () => {
+      if (!confirm('Excluir esta anotação de aula?')) return;
+      const entries = notebookEntriesFor(course);
+      state.notebookEntries[course.id] = entries.filter(item => item.id !== btn.dataset.deleteNote);
+      saveState();
+      renderNotebookList(course);
+    }));
+  }
+
   function openCourse(course, initialTab = 'guide') {
     if (!course) return;
     const pack = packFor(course), status = state.statuses[course.id] || 'todo';
@@ -721,12 +906,12 @@
     dialogContent.innerHTML = `<header class="course-hero"><div class="badges">
       ${course.semester ? `<span class="badge">${course.semester}º semestre</span>` : `<span class="badge">Optativa</span>`}<span class="badge">${course.matrixHours}h na matriz</span>${course.credits ? `<span class="badge">${esc(course.credits)} no ementário</span>` : ''}${course.officialSyllabusAvailable === false ? `<span class="badge warn">PPP: sem ementa</span>` : course.note ? `<span class="badge warn">PPP ⚠</span>` : ''}
       </div><h2>${esc(course.title)}</h2><p>${course.matrixNameOriginal && course.matrixNameOriginal !== course.title ? `Como aparece na matriz: ${esc(course.matrixNameOriginal)}. ` : ''}${course.ementaryName && course.ementaryName !== course.title ? `Nome no ementário: ${esc(course.ementaryName)}.` : 'Guia organizado a partir do PPP do curso.'}</p>
-      <div class="course-progress-line"><div class="progress-track"><div class="progress-fill" data-dialog-progress-bar style="width:${studyPct}%"></div></div><strong data-dialog-progress-text>${studyPct}%</strong></div>
+      <div class="course-progress-line" title="Progresso de estudo: 60% aulas + 20% flashcards + 20% melhor quiz"><div class="progress-track"><div class="progress-fill" data-dialog-progress-bar style="width:${studyPct}%"></div></div><strong data-dialog-progress-text>${studyPct}%</strong></div><small class="progress-formula">Progresso de estudo: 60% aulas · 20% flashcards · 20% quiz (quiz completa a parcela a partir de 70%)</small>
       <div class="status-row">${[['todo', 'Não iniciada'], ['studying', 'Estudando'], ['done', 'Concluída']].map(([v, l]) => `<button type="button" class="status-btn ${status === v ? 'active' : ''}" data-status="${v}">${l}</button>`).join('')}</div></header>
 
       <div class="course-content">${course.note ? `<div class="notice"><div>${course.officialSyllabusAvailable === false ? 'ℹ' : '⚠'}</div><div><strong>${course.officialSyllabusAvailable === false ? 'Limite da fonte' : 'Divergência no PPP'}</strong><p>${esc(course.note)}</p></div></div>` : ''}
       <div class="source-split"><span class="source-pill official">PPP oficial</span><span>${course.officialSyllabusAvailable === false ? 'nome e carga horária da optativa' : 'ementa e bibliografia'}</span><span class="source-pill support">Apoio</span><span>${course.officialSyllabusAvailable === false ? 'roteiro, conteúdo e flashcards sugeridos' : 'roteiro, conteúdo, flashcards e quiz'}</span></div>
-      <div class="course-tabs">${tabButton('guide', 'Guia', initialTab)}${tabButton('content', 'Aulas', initialTab)}${tabButton('flash', 'Flashcards', initialTab)}${tabButton('quiz', 'Quiz', initialTab)}${tabButton('syllabus', 'Ementa oficial', initialTab)}${tabButton('biblio', 'Bibliografia', initialTab)}${tabButton('class', 'Minha turma', initialTab)}${tabButton('notes', 'Anotações', initialTab)}</div>
+      <div class="course-tabs">${tabButton('guide', 'Guia', initialTab)}${tabButton('content', 'Aulas', initialTab)}${tabButton('flash', 'Flashcards', initialTab)}${tabButton('quiz', 'Quiz', initialTab)}${tabButton('syllabus', 'Ementa oficial', initialTab)}${tabButton('biblio', 'Bibliografia', initialTab)}${tabButton('class', 'Minha turma', initialTab)}${tabButton('notes', 'Caderno', initialTab)}</div>
 
       <section class="tab-panel ${initialTab === 'guide' ? 'active' : ''}" data-panel="guide">
         <div class="guide-intro"><span class="eyebrow">Visão geral</span><h3>Para que serve esta matéria?</h3><p>${esc(pack.overview)}</p></div>
@@ -761,7 +946,12 @@
         <label class="span-2"><span>Plano de ensino / leituras realmente pedidas</span><textarea class="notes-area compact" data-plan-field="teachingPlan" placeholder="Cole aqui os tópicos, leituras e observações do plano da turma...">${esc(plan.teachingPlan || '')}</textarea></label>
       </div></section>
 
-      <section class="tab-panel ${initialTab === 'notes' ? 'active' : ''}" data-panel="notes"><h3>Minhas anotações</h3><p class="muted">Salvas automaticamente neste navegador.</p><textarea class="notes-area" data-notes-id="${course.id}" placeholder="Resumo da aula, páginas do livro, conceitos para revisar, dúvidas para perguntar ao professor...">${esc(state.notes[course.id] || '')}</textarea></section>
+      <section class="tab-panel ${initialTab === 'notes' ? 'active' : ''}" data-panel="notes">
+        <div class="tab-heading notebook-heading"><div><span class="eyebrow">Caderno digital</span><h3>Meu caderno de ${esc(course.title)}</h3><p>Registre o que realmente foi ensinado em sala. Cada aula fica separada por data e entra automaticamente no backup do app.</p></div><button type="button" class="btn" data-add-note>+ Nova anotação</button></div>
+        <div class="notebook-tip"><strong>Sugestão de uso</strong><p>Durante ou depois da aula, escreva primeiro “o que aprendi” com suas próprias palavras. Depois complete conceitos, dúvidas e tarefas. O material do app continua separado para você comparar com o que o professor ensinou.</p></div>
+        <div class="notebook-list" data-notebook-list>${notebookListHtml(course)}</div>
+        <details class="legacy-notes"><summary>Anotação geral da matéria</summary><div><p class="muted">Este campo preserva as anotações das versões anteriores e pode ser usado para um resumo geral da disciplina.</p><textarea class="notes-area" data-notes-id="${course.id}" placeholder="Resumo geral da matéria, páginas do livro, conceitos para revisar...">${esc(state.notes[course.id] || '')}</textarea></div></details>
+      </section>
       </div>`;
 
     bindDialog(course, quiz);
@@ -787,7 +977,7 @@
 
       if (requested === 'todo') {
         const hasStudyProgress = completedTopicCount(course) > 0 || masteredCardCount(course) > 0 || Number(state.quizAttempts[course.id] || 0) > 0 || Number(state.quizScores[course.id] || 0) > 0;
-        if (hasStudyProgress && !confirm('Marcar esta matéria como “Não iniciada” vai zerar tópicos estudados, domínio dos flashcards e quiz desta matéria. Suas anotações e dados da turma serão mantidos. Continuar?')) return;
+        if (hasStudyProgress && !confirm('Marcar esta matéria como “Não iniciada” vai zerar tópicos estudados, domínio dos flashcards e quiz desta matéria. Seu caderno, suas anotações e os dados da turma serão mantidos. Continuar?')) return;
         state.topicChecks[course.id] = {};
         state.flashcardMastery[course.id] = {};
         delete state.quizScores[course.id];
@@ -821,7 +1011,7 @@
       e.preventDefault(); const idx = Number(btn.dataset.flashIndex), value = btn.dataset.flashResult === '1';
       const cardData = flashcardsForCourse(course)[idx];
       state.flashcardMastery[course.id] ||= {}; state.flashcardMastery[course.id][flashKey(cardData, idx)] = value;
-      if (state.statuses[course.id] === 'todo') state.statuses[course.id] = 'studying'; saveState();
+      recomputeCourseStatus(course); saveState();
       const card = btn.closest('.flashcard'); card?.classList.toggle('mastered', value); card?.classList.toggle('missed', !value); refreshDialogProgress(course);
       const chip = $('[data-panel="flash"] .score-chip', dialogContent); if (chip) chip.textContent = `${masteredCardCount(course)}/${flashcardsForCourse(course).length} dominados`;
     }));
@@ -837,7 +1027,7 @@
       });
       const scoreNow = quiz.length ? Math.round(correct / quiz.length * 100) : 0;
       state.quizScores[course.id] = Math.max(Number(state.quizScores[course.id] || 0), scoreNow); state.quizAttempts[course.id] = Number(state.quizAttempts[course.id] || 0) + 1;
-      if (state.statuses[course.id] === 'todo') state.statuses[course.id] = 'studying'; saveState(); refreshDialogProgress(course);
+      recomputeCourseStatus(course); saveState(); refreshDialogProgress(course);
       const result = $('[data-quiz-result]', dialogContent);
       result.innerHTML = `<div class="quiz-score ${scoreNow >= 70 ? 'pass' : 'retry'}"><strong>${scoreNow}%</strong><div><b>${scoreNow >= 70 ? 'Bom resultado' : 'Vale revisar'}</b><p>${correct} de ${quiz.length} corretas${answered < quiz.length ? ` · ${quiz.length - answered} sem resposta` : ''}.</p></div></div>${feedback.length ? `<div class="quiz-feedback"><h4>O que revisar</h4>${feedback.map(f => `<p>${esc(f)}</p>`).join('')}</div>` : `<p class="success-note">Você acertou todas. Tente novamente outro dia sem consultar para confirmar que reteve.</p>`}`;
     });
@@ -847,6 +1037,20 @@
       state.coursePlans[course.id][field.dataset.planField] = field.value;
       saveState();
     }));
+
+    const addNote = $('[data-add-note]', dialogContent);
+    if (addNote) addNote.addEventListener('click', () => {
+      state.notebookEntries[course.id] ||= [];
+      state.notebookEntries[course.id].unshift({
+        id: `note-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        date: localDateISO(), title: '', learned: '', concepts: '', questions: '', tasks: '', free: ''
+      });
+      saveState();
+      renderNotebookList(course);
+      const firstTitle = $('[data-note-entry] [data-note-field="title"]', dialogContent);
+      firstTitle?.focus();
+    });
+    bindNotebookFields(course);
 
     const notes = $('[data-notes-id]', dialogContent); if (notes) notes.addEventListener('input', () => { state.notes[course.id] = notes.value; saveState(); });
   }
@@ -871,6 +1075,25 @@
     if (quizResult && state.statuses[course.id] === 'todo') quizResult.innerHTML = '';
   }
 
+  function recomputeCourseStatus(course) {
+    const topics = course.topics || [];
+    const allTopics = topics.length > 0 && topics.every((_, i) => topicChecked(course, i));
+    const anyTopics = topics.some((_, i) => topicChecked(course, i));
+    const cards = flashcardsForCourse(course);
+    const mastered = masteredCardCount(course);
+    const allFlash = cards.length === 0 || mastered === cards.length;
+    const anyFlash = mastered > 0;
+    const quiz = quizForCourse(course);
+    const quizScore = Number(state.quizScores[course.id] || 0);
+    const quizAttempts = Number(state.quizAttempts[course.id] || 0);
+    const quizRequirementMet = quiz.length === 0 || quizScore >= 70;
+    const anyQuiz = quizAttempts > 0 || quizScore > 0;
+
+    if (allTopics && allFlash && quizRequirementMet) state.statuses[course.id] = 'done';
+    else if (anyTopics || anyFlash || anyQuiz) state.statuses[course.id] = 'studying';
+    else state.statuses[course.id] = 'todo';
+  }
+
   function setTopic(course, idx, value, checkbox) {
     state.topicChecks[course.id] ||= {};
     const checks = state.topicChecks[course.id];
@@ -884,15 +1107,7 @@
       checkbox.closest('.study-item')?.classList.toggle('checked', value);
     }
 
-    const allTopics = course.topics.length > 0 && course.topics.every((_, i) => topicChecked(course, i));
-    const anyTopics = course.topics.some((_, i) => topicChecked(course, i));
-    const anyFlash = masteredCardCount(course) > 0;
-    const anyQuiz = Number(state.quizAttempts[course.id] || 0) > 0 || Number(state.quizScores[course.id] || 0) > 0;
-    const allFlash = masteredCardCount(course) === flashcardsForCourse(course).length;
-
-    if (allTopics && Number(state.quizScores[course.id] || 0) >= 70 && allFlash) state.statuses[course.id] = 'done';
-    else if (anyTopics || anyFlash || anyQuiz) state.statuses[course.id] = 'studying';
-    else state.statuses[course.id] = 'todo';
+    recomputeCourseStatus(course);
 
     saveState();
     refreshDialogProgress(course);
@@ -904,7 +1119,13 @@
       const open = e => { if (e.target.closest('[data-fav-id]')) return; openCourse(courseById(card.dataset.courseId)); };
       card.addEventListener('click', open); card.addEventListener('keydown', e => { if (e.target.closest('[data-fav-id]')) return; if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(e); } });
     });
-    $$('[data-course-open]', view).forEach(btn => btn.addEventListener('click', () => openCourse(courseById(btn.dataset.courseOpen), btn.dataset.openTab || 'guide')));
+    $$('[data-course-open]', view).forEach(btn => btn.addEventListener('click', () => {
+      const course = courseById(btn.dataset.courseOpen);
+      openCourse(course, btn.dataset.openTab || 'guide');
+      if (btn.dataset.newNote === '1' && course && notebookEntriesFor(course).length === 0) {
+        $('[data-add-note]', dialogContent)?.click();
+      }
+    }));
     $$('[data-fav-id]', view).forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); const id = btn.dataset.favId; state.favorites[id] = !state.favorites[id]; saveState(); render(); }));
     $$('[data-sem-chip]', view).forEach(btn => btn.addEventListener('click', () => navigate('semester', { semester: btn.dataset.semChip })));
     $$('[data-go-sem]', view).forEach(btn => btn.addEventListener('click', () => navigate('semester', { semester: btn.dataset.goSem })));
@@ -915,13 +1136,13 @@
   }
 
   function exportBackup() {
-    const payload = { app: 'Arqueologia Study Hub UNEB', version: 6, exportedAt: new Date().toISOString(), state };
+    const payload = { app: 'Arqueologia Study Hub UNEB', version: 7, exportedAt: new Date().toISOString(), state };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `arqueologia-study-hub-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function resetProgress() {
-    if (!confirm('Apagar todo o progresso, quizzes, flashcards, anotações e favoritas deste navegador?')) return;
+    if (!confirm('Apagar todo o progresso, quizzes, flashcards, cadernos, anotações e favoritas deste navegador?')) return;
     state = structuredCloneSafe(defaultState); state.currentSemester = Number($('#currentSemester').value || 1); saveState(); render();
   }
 
@@ -932,7 +1153,7 @@
   });
 
   $$('.nav-item').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.view)));
-  $('#menuBtn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('show'); }); overlay.addEventListener('click', closeSidebar);
+  $('#menuBtn').addEventListener('click', toggleSidebar); $('#sidebarToggle')?.addEventListener('click', toggleSidebar); overlay.addEventListener('click', closeSidebar);
   $('#exportBtn').addEventListener('click', exportBackup); $('#dialogClose').addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); }); dialog.addEventListener('close', () => render());
   $('#searchInput').addEventListener('input', e => { searchQuery = e.target.value; render(); });
@@ -940,5 +1161,7 @@
   const semSelect = $('#currentSemester'); semSelect.innerHTML = Array.from({ length: 8 }, (_, i) => i + 1).map(s => `<option value="${s}">${s}º semestre</option>`).join(''); semSelect.value = state.currentSemester || 1;
   semSelect.addEventListener('change', e => { state.currentSemester = Number(e.target.value); if (state.view === 'semester') state.semesterFilter = state.currentSemester; saveState(); render(); });
 
+  window.addEventListener('resize', () => { if (!isDrawerMode()) closeSidebar(); applySidebarState(); });
+  applySidebarState();
   setActiveNav(state.view); render();
 })();
