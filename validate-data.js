@@ -94,7 +94,7 @@ const expectedOptional = [
 ];
 
 assert(JSON.stringify(json) === JSON.stringify(data), 'data.js e data.json divergem');
-assert(data.meta?.appDataRevision === 'v4-full-audit-2026-09-06', 'revisão de dados não é v4');
+assert(data.meta?.appDataRevision === 'v5-final-release-2026-09-06', 'revisão de dados não é v5');
 assert(data.courses.length === expectedRequired.length, `esperados ${expectedRequired.length} obrigatórios; encontrados ${data.courses.length}`);
 assert(data.optatives.length === expectedOptional.length, `esperadas ${expectedOptional.length} optativas; encontradas ${data.optatives.length}`);
 
@@ -197,7 +197,7 @@ for (const [term, ids] of Object.entries(forbidden)) for (const id of ids) {
   assert(!terms.includes(norm(term)), `conceito contaminado '${term}' em ${id}`);
 }
 
-// Alinhamentos corrigidos na v4: temas essenciais da ementa precisam aparecer no roteiro.
+// Alinhamentos mantidos e validados na v5: temas essenciais da ementa precisam aparecer no roteiro.
 const mustContain = {
   's3-6-arqueologia-historica-i': ['fontes escritas','faiança','vidros'],
   's4-2-tecnologia-ceramica-pre-historica': ['osso','madeira','louça'],
@@ -235,5 +235,5 @@ const summary = {
   studyPacks: Object.keys(study).length,
   conceptsRequired: data.courses.reduce((s,c)=>s+(study[c.id]?.concepts||[]).length,0)
 };
-console.log('OK — auditoria curricular e estrutural v4 aprovada');
+console.log('OK — auditoria curricular, estrutural e de publicação v5.2 aprovada');
 console.log(JSON.stringify(summary, null, 2));

@@ -1,71 +1,75 @@
-# Arqueologia Study Hub · UNEB — v4 auditoria completa
+# Arqueologia Study Hub · UNEB — v5.2 responsiva
 
-Aplicativo de estudos offline para o Bacharelado em Arqueologia da UNEB, Campus VIII (Paulo Afonso), organizado a partir do Projeto Político-Pedagógico (PPP) disponibilizado pela página oficial do curso.
+Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB — Campus VIII (Paulo Afonso), organizado com base no Projeto Político-Pedagógico (PPP) disponibilizado na página oficial do curso.
 
-## O que foi conferido na v4
+> Este projeto não é um sistema oficial da UNEB. O PPP é usado como fonte curricular; roteiros, explicações, flashcards e quizzes são material de apoio e não substituem o plano de ensino da turma.
 
-A matriz curricular foi conferida componente por componente nas páginas 25–28 do PPP, e o ementário foi revisado disciplina por disciplina.
+## Base curricular conferida
+
+A matriz foi conferida componente por componente nas páginas 25–28 do PPP.
 
 - 8 semestres;
-- 65 componentes obrigatórios na distribuição 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
+- 65 componentes obrigatórios, distribuídos em 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
 - cargas semestrais da lista da matriz: 420 / 480 / 560 / 560 / 560 / 560 / 500 / 380 h;
-- 4.020 h na lista de componentes obrigatórios;
-- 14 optativas, totalizando 560 h no catálogo apresentado;
-- ementas, nomes do ementário, créditos e bibliografias mantidos separados do material de apoio;
-- 79 pacotes de estudo, um para cada componente obrigatório/optativo;
-- todos os tópicos cadastrados possuem guia de estudo não vazio;
-- optativas continuam identificadas como roteiros sugeridos a partir do título, porque este PPP não traz ementas específicas para elas.
+- 4.020 h ao somar os componentes obrigatórios efetivamente listados;
+- 14 optativas, somando 560 h no catálogo apresentado;
+- 79 pacotes de estudo no app: 65 obrigatórios + 14 optativas;
+- 397 tópicos de apoio nos componentes obrigatórios;
+- 499 conceitos usados no material de estudo obrigatório.
 
-## Correções importantes da v4
+## O que é oficial e o que é apoio
 
-- corrigida a bibliografia complementar de **Estágio VI**, que na versão anterior havia capturado indevidamente texto das seções seguintes do PDF;
-- roteiros de **Arqueologia Histórica I e II, Tecnologia Cerâmica, Geologia e Geomorfologia, Antropologia Física, Arqueologia Africana, Arqueologia Asiática, Arqueogenética, Arqueologia do Quaternário e Métodos/Relatórios** foram realinhados à ementa oficial;
-- removidos guias vazios e fallbacks excessivamente genéricos;
-- preservados e explicados erros ou trechos estranhos do próprio PPP em vez de transformá-los silenciosamente em “conteúdo oficial”;
-- a navegação agora limpa uma busca ativa, evitando ficar visualmente em uma seção enquanto ainda eram mostrados resultados da busca;
-- corrigido o comportamento de teclado do botão de favorito e adicionados `aria-pressed`/rótulo dinâmico;
-- o painel inicial mostra todos os componentes do semestre selecionado, em vez de ocultar o último atrás de “Ver todas”;
-- sidebar passou a rolar em telas de pouca altura;
-- modal de disciplina passou a ocupar a tela inteira no celular e suas abas ficam acessíveis/roláveis;
-- textos longos de bibliografia, notas e tabelas agora quebram linha com segurança;
-- adicionada preferência de movimento reduzido;
-- migração de progresso da v3 para a v4 preservada.
+**Dados do PPP:** nome e carga horária da matriz, nome/carga/créditos do ementário, ementa e bibliografia quando existentes.
+
+**Material de apoio do app:** roteiros, explicações, tópicos, conceitos, flashcards, quizzes, dicas e revisão. Esses recursos são derivados da ementa para preparação e organização do estudo, mas o plano de ensino do professor deve ser a referência final para ordem, leituras, avaliações e aprofundamento.
+
+As optativas são tratadas com cuidado: o PPP consultado lista nome e carga horária, mas não apresenta ementas específicas. Por isso o app identifica seus conteúdos como roteiros sugeridos.
+
+## O que mudou na v5.2
+
+- responsividade refinada para desktop, notebook, tablet e celular;
+- sidebar fixa em desktop e transformada em menu lateral até 960 px, liberando espaço útil em tablets;
+- grade com 3 colunas em desktop largo, 2 em notebook/tablet e 1 em telas menores;
+- cards, estatísticas, chips, abas e botões adaptados a larguras intermediárias;
+- modal de disciplina responsivo e em tela cheia no mobile;
+- barra de abas rolável horizontalmente quando necessário;
+- ajustes específicos para 320–360 px e para telas de pouca altura;
+- crédito editorial completo restaurado com links para o PPP e para o site oficial do curso;
+- somente **Mei** é clicável na autoria e abre `https://www.instagram.com/meiarqueo/`; o `@meiarqueo` não aparece na interface;
+- a base curricular e todo o material de estudo permanecem os mesmos da v5 auditada, preservando o progresso salvo.
 
 ## Divergências do próprio PPP
 
-O documento tem inconsistências internas que o app **não tenta consertar inventando dados**. Entre elas:
+O documento contém inconsistências internas que o app preserva e sinaliza em vez de inventar uma correção. Entre elas:
 
-- a seção da matriz declara 56 disciplinas, 3 estágios/200 h, 236 créditos e 4.080 h de formação específica, mas a lista efetivamente apresentada contém 65 componentes, Estágio I a VI e soma 4.020 h;
+- a seção da matriz declara 56 disciplinas, 3 estágios/200 h, 236 créditos e 4.080 h de formação específica, enquanto a lista efetivamente apresentada contém 65 componentes, Estágio I a VI e soma 4.020 h;
 - 4.020 + 560 + 200 = 4.780 h, enquanto o PPP declara 4.840 h;
-- os percentuais declarados (74% / 13% / 13%) não correspondem às próprias cargas declaradas de 4.080 / 560 / 200 h; o app exibe também o recálculo aproximado;
 - outra seção registra 265 créditos mínimos, em conflito com os 236 da seção da matriz;
-- há diferenças entre matriz e ementário em nome/carga horária de alguns componentes;
-- Prática de Laboratório II aparece com `1T3T` no ementário, grafia preservada e sinalizada;
+- existem diferenças de nome/carga entre matriz e ementário em alguns componentes;
+- Prática de Laboratório II aparece com `1T3T` no ementário;
 - o TCC é descrito como oito créditos em uma seção, mas aparece como 60 h / 4T no ementário;
-- existem trechos com sinais de edição/cópia no texto oficial, como Arqueologia Asiática e uma frase desconectada na ementa de Métodos/Relatórios.
-
-## Oficial x material de apoio
-
-**Oficial do PPP:** nome e carga da matriz, nome/carga/créditos do ementário, ementa e bibliografias quando existentes.
-
-**Material de apoio:** tópicos explicados, conceitos, flashcards, quizzes, dicas e roteiros. Eles derivam da ementa para ajudar na preparação, mas não substituem o plano de ensino real da turma. Quando a disciplina for ofertada, o plano do professor deve ser a referência final para ordem, leituras, avaliações e aprofundamento.
+- alguns trechos têm sinais de edição/cópia no texto oficial.
 
 ## Arquivos
 
-- `index.html` — estrutura do aplicativo
+- `index.html` — estrutura, metadados e crédito editorial
 - `styles.css` — visual e responsividade
-- `app.js` — navegação, progresso, revisão, glossário, quiz e backup
+- `app.js` — navegação, progresso, revisão, glossário, quiz, backup e migração
 - `data.js` — matriz, ementas, bibliografias e metadados
 - `study-content.js` — material de apoio e guias de estudo
 - `data.json` — espelho JSON dos dados curriculares
 - `validate-data.js` — auditoria automatizada da matriz e dos pacotes de estudo
-- `AUDITORIA.md` — relatório resumido da conferência da v4
+- `AUDITORIA.md` — relatório da revisão final
 
-## Como abrir/publicar
+## Publicação no GitHub / Cloudflare Pages
 
-O projeto é HTML/CSS/JavaScript puro, sem framework, npm, banco de dados ou servidor obrigatório. Pode ser publicado diretamente no Cloudflare Pages/GitHub Pages.
+O projeto usa apenas HTML, CSS e JavaScript. Para atualizar o site:
 
-Para atualizar o site já conectado ao Cloudflare Pages, substitua no repositório os arquivos antigos pelos arquivos **extraídos** deste pacote. Não envie o ZIP como página do site.
+1. extraia o ZIP;
+2. coloque os arquivos acima diretamente na raiz do mesmo repositório;
+3. substitua as versões antigas;
+4. não envie o ZIP como página do site;
+5. aguarde o deploy automático do Cloudflare Pages.
 
 ## Validação local
 
@@ -77,3 +81,8 @@ node --check app.js
 node --check data.js
 node --check study-content.js
 ```
+
+### Fontes oficiais
+
+- Curso de Arqueologia — Campus VIII: https://dedc8.uneb.br/arqueologia/
+- PPP: https://dedc8.uneb.br/wp-content/uploads/2023/05/Projeto-Politico-Pedagogico-Arqueologia-DEDC-VIII.pdf

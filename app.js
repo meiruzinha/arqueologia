@@ -3,7 +3,8 @@
   const STUDY = window.ARCHAEOLOGY_STUDY_CONTENT || {};
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const STORAGE_KEY = 'arqueologia-study-hub-v4';
+  const STORAGE_KEY = 'arqueologia-study-hub-v5';
+  const V4_STORAGE_KEY = 'arqueologia-study-hub-v4';
   const V3_STORAGE_KEY = 'arqueologia-study-hub-v3';
   const V2_STORAGE_KEY = 'arqueologia-study-hub-v2';
   const V1_STORAGE_KEY = 'arqueologia-study-hub-v1';
@@ -36,6 +37,12 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return mergeState(JSON.parse(raw));
+      const v4 = localStorage.getItem(V4_STORAGE_KEY);
+      if (v4) {
+        const migrated = mergeState(JSON.parse(v4));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
       const v3 = localStorage.getItem(V3_STORAGE_KEY);
       if (v3) {
         const migrated = mergeState(JSON.parse(v3));
