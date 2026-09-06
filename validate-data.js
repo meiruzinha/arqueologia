@@ -302,5 +302,5 @@ const summary = {
   minLessonWords,
   maxLessonWords
 };
-console.log('OK — auditoria curricular, estrutural e de conteúdo v7 aprovada');
+console.log('OK — auditoria curricular, estrutural e de conteúdo v7.1 aprovada');
 console.log(JSON.stringify(summary, null, 2));

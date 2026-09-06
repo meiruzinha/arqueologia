@@ -2,7 +2,7 @@
 
 ## Escopo
 
-A auditoria da v7 revisou quatro camadas separadamente:
+A auditoria da v7.1 revisou quatro camadas separadamente:
 
 1. matriz curricular e ementário do PPP;
 2. conteúdo didático e conceitos usados pelo app;
@@ -138,3 +138,13 @@ A auditoria reduz erros estruturais, conceituais e de regressão, mas não trans
 ## Resultado
 
 `node validate-data.js` conclui a auditoria curricular, estrutural e de conteúdo da v7 sem erros. A bateria de navegador também conclui sem erros nas funções e resoluções testadas.
+
+## Ajuste v7.1 — Caderno em folhas
+
+- Cada anotação de aula é apresentada como uma folha numerada e recolhível.
+- Folhas existentes carregam fechadas por padrão.
+- Ao criar uma nova folha, somente a nova é aberta.
+- Ao abrir uma folha, outra folha aberta é recolhida automaticamente.
+- A capa exibe título, data, contagem de palavras e uma prévia curta.
+- A área principal de escrita ganhou aparência pautada, mantendo os campos estruturados de conceitos, dúvidas, tarefas e observações.
+- A estrutura de dados do caderno não mudou, portanto as anotações da v7 continuam compatíveis.

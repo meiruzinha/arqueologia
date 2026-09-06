@@ -1,4 +1,4 @@
-# Arqueologia Study Hub · UNEB — v7
+# Arqueologia Study Hub · UNEB — v7.1
 
 Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB — Campus VIII, organizado a partir do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
@@ -109,3 +109,7 @@ node validate-data.js
 ```
 
 O validador confere matriz curricular, cargas, campos obrigatórios, conceitos, tópicos, estrutura das 397 aulas, perguntas/respostas, arquivos e regressões conceituais já encontradas em versões anteriores.
+
+## Caderno em folhas (v7.1)
+
+O caderno digital passou a usar folhas recolhíveis. Cada aula pode ter uma folha própria, numerada, com título, data, conteúdo aprendido, conceitos, dúvidas, tarefas e observações. As folhas antigas ficam fechadas por padrão; ao criar uma nova folha, somente ela abre. Ao abrir outra folha, a anterior é recolhida automaticamente.

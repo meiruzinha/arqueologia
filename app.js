@@ -461,12 +461,12 @@
       const entries = notebookEntriesFor(course);
       const latest = entries[0];
       return `<article class="notebook-course-row">
-        <div><span class="eyebrow">${sem}º semestre</span><h3>${esc(course.title)}</h3><p>${entries.length ? `${entries.length} registro(s) de aula${latest?.date ? ` · mais recente: ${esc(formatDateBR(latest.date))}` : ''}` : 'Nenhuma anotação de aula ainda.'}</p></div>
+        <div><span class="eyebrow">${sem}º semestre</span><h3>${esc(course.title)}</h3><p>${entries.length ? `${entries.length} folha(s) de aula${latest?.date ? ` · mais recente: ${esc(formatDateBR(latest.date))}` : ''}` : 'Nenhuma folha de aula ainda.'}</p></div>
         <button class="btn ${entries.length ? 'btn-soft' : 'btn-outline'}" data-course-open="${esc(course.id)}" data-open-tab="notes" ${entries.length ? '' : 'data-new-note="1"'}>${entries.length ? 'Abrir caderno' : '+ Começar caderno'}</button>
       </article>`;
     }).join('');
-    return `<div class="section-head top-section"><div><span class="eyebrow">Caderno digital</span><h1>Meu caderno do ${sem}º semestre</h1><p>${total} registro(s) salvos nas ${courses.length} matérias do seu semestre atual.</p></div><button class="btn btn-outline" data-course-open="${esc(courses[0]?.id || '')}" data-open-tab="notes" ${courses.length ? '' : 'disabled'}>Abrir caderno</button></div>
-      <div class="notice info"><div>✎</div><div><strong>Este espaço é seu caderno de sala</strong><p>As aulas do app são material de apoio. Aqui você registra o que o professor realmente ensinou, exemplos dados em sala, dúvidas, leituras e tarefas.</p></div></div>
+    return `<div class="section-head top-section"><div><span class="eyebrow">Caderno digital</span><h1>Meu caderno do ${sem}º semestre</h1><p>${total} folha(s) salvas nas ${courses.length} matérias do seu semestre atual.</p></div><button class="btn btn-outline" data-course-open="${esc(courses[0]?.id || '')}" data-open-tab="notes" ${courses.length ? '' : 'disabled'}>Abrir caderno</button></div>
+      <div class="notice info"><div>✎</div><div><strong>Este espaço é seu caderno de sala</strong><p>As aulas do app são material de apoio. Aqui você cria folhas por aula para registrar o que o professor realmente ensinou, exemplos dados em sala, dúvidas, leituras e tarefas.</p></div></div>
       <div class="notebook-course-list">${rows}</div>`;
   }
 
@@ -833,41 +833,67 @@
     }, 0);
   }
 
-  function notebookEntryHtml(entry, index) {
+  function notePreview(entry) {
+    const source = [entry?.learned, entry?.concepts, entry?.free, entry?.tasks, entry?.questions]
+      .map(value => String(value || '').trim()).find(Boolean) || '';
+    if (!source) return 'Folha vazia · abra para começar a escrever.';
+    return source.length > 115 ? `${source.slice(0, 112).trim()}…` : source;
+  }
+
+  function notebookEntryHtml(entry, index, openEntryId = null) {
     const words = noteWordCount(entry);
-    return `<article class="notebook-entry" data-note-entry="${esc(entry.id)}">
-      <div class="notebook-entry-head">
-        <div><span class="eyebrow">Registro ${index + 1}</span><strong data-note-display-title>${esc(entry.title || 'Anotação de aula')}</strong><small><span data-note-display-date>${entry.date ? esc(entry.date) : 'sem data'}</span> · <span data-note-wordcount>${words}</span> palavras</small></div>
-        <button type="button" class="btn btn-outline btn-sm notebook-delete" data-delete-note="${esc(entry.id)}">Excluir</button>
+    const isOpen = entry.id === openEntryId;
+    const pageLabel = `Folha ${String(index + 1).padStart(2, '0')}`;
+    return `<details class="notebook-page" data-note-entry="${esc(entry.id)}" ${isOpen ? 'open' : ''}>
+      <summary class="notebook-page-cover">
+        <span class="notebook-page-number">${pageLabel}</span>
+        <span class="notebook-page-cover-copy">
+          <strong data-note-display-title>${esc(entry.title || 'Anotação de aula')}</strong>
+          <small><span data-note-display-date>${entry.date ? esc(formatDateBR(entry.date)) : 'sem data'}</span> · <span data-note-wordcount>${words}</span> palavras</small>
+          <span class="notebook-page-preview" data-note-preview>${esc(notePreview(entry))}</span>
+        </span>
+        <span class="notebook-page-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="notebook-sheet">
+        <div class="notebook-sheet-toolbar">
+          <span><b>${pageLabel}</b> · escreva o que aconteceu nesta aula</span>
+          <button type="button" class="btn btn-outline btn-sm notebook-delete" data-delete-note="${esc(entry.id)}">Excluir folha</button>
+        </div>
+        <div class="notebook-fields">
+          <label><span>Título da aula</span><input class="plan-input" data-note-field="title" value="${esc(entry.title || '')}" placeholder="Ex.: Cultura material e contexto"></label>
+          <label><span>Data</span><input class="plan-input" type="date" data-note-field="date" value="${esc(entry.date || '')}"></label>
+          <label class="span-2 notebook-writing-block"><span>O que aprendi na sala</span><textarea class="notes-area notebook-area notebook-paper-area" data-note-field="learned" placeholder="Escreva com suas palavras o que o professor explicou, exemplos dados em aula, comparações e ideias principais...">${esc(entry.learned || '')}</textarea></label>
+          <label class="span-2"><span>Conceitos e palavras-chave</span><textarea class="notes-area notebook-area compact" data-note-field="concepts" placeholder="Termos, autores, métodos, datas, definições ou conceitos que precisam ficar registrados...">${esc(entry.concepts || '')}</textarea></label>
+          <label><span>Dúvidas para perguntar/revisar</span><textarea class="notes-area notebook-area compact" data-note-field="questions" placeholder="O que não ficou claro? O que você quer perguntar ao professor?">${esc(entry.questions || '')}</textarea></label>
+          <label><span>Tarefas, leituras e prazos</span><textarea class="notes-area notebook-area compact" data-note-field="tasks" placeholder="Capítulos, artigos, exercícios, trabalhos, datas de entrega...">${esc(entry.tasks || '')}</textarea></label>
+          <label class="span-2"><span>Observações livres</span><textarea class="notes-area notebook-area compact" data-note-field="free" placeholder="Qualquer detalhe da aula que você queira guardar...">${esc(entry.free || '')}</textarea></label>
+        </div>
       </div>
-      <div class="notebook-fields">
-        <label><span>Título da aula</span><input class="plan-input" data-note-field="title" value="${esc(entry.title || '')}" placeholder="Ex.: Cultura material e contexto"></label>
-        <label><span>Data</span><input class="plan-input" type="date" data-note-field="date" value="${esc(entry.date || '')}"></label>
-        <label class="span-2"><span>O que aprendi na sala</span><textarea class="notes-area notebook-area" data-note-field="learned" placeholder="Escreva com suas palavras o que o professor explicou, exemplos dados em aula, comparações e ideias principais...">${esc(entry.learned || '')}</textarea></label>
-        <label class="span-2"><span>Conceitos e palavras-chave</span><textarea class="notes-area notebook-area compact" data-note-field="concepts" placeholder="Termos, autores, métodos, datas, definições ou conceitos que precisam ficar registrados...">${esc(entry.concepts || '')}</textarea></label>
-        <label><span>Dúvidas para perguntar/revisar</span><textarea class="notes-area notebook-area compact" data-note-field="questions" placeholder="O que não ficou claro? O que você quer perguntar ao professor?">${esc(entry.questions || '')}</textarea></label>
-        <label><span>Tarefas, leituras e prazos</span><textarea class="notes-area notebook-area compact" data-note-field="tasks" placeholder="Capítulos, artigos, exercícios, trabalhos, datas de entrega...">${esc(entry.tasks || '')}</textarea></label>
-        <label class="span-2"><span>Observações livres</span><textarea class="notes-area notebook-area compact" data-note-field="free" placeholder="Qualquer detalhe da aula que você queira guardar...">${esc(entry.free || '')}</textarea></label>
-      </div>
-    </article>`;
+    </details>`;
   }
 
-  function notebookListHtml(course) {
+  function notebookListHtml(course, openEntryId = null) {
     const entries = notebookEntriesFor(course);
-    if (!entries.length) return `<div class="notebook-empty"><strong>Seu caderno desta matéria ainda está vazio.</strong><p>Crie uma anotação para cada aula presencial. Assim o conteúdo do professor fica separado do material didático do app.</p></div>`;
-    return entries.map((entry, index) => notebookEntryHtml(entry, index)).join('');
+    if (!entries.length) return `<div class="notebook-empty"><strong>Seu caderno desta matéria ainda está vazio.</strong><p>Crie uma folha para cada aula presencial. Cada folha fica recolhida quando você não estiver usando, como páginas de um caderno digital.</p></div>`;
+    return entries.map((entry, index) => notebookEntryHtml(entry, index, openEntryId)).join('');
   }
 
-  function renderNotebookList(course) {
+  function renderNotebookList(course, openEntryId = null) {
     const list = $('[data-notebook-list]', dialogContent);
     if (!list) return;
-    list.innerHTML = notebookListHtml(course);
+    list.innerHTML = notebookListHtml(course, openEntryId);
     bindNotebookFields(course);
   }
 
   function bindNotebookFields(course) {
     $$('[data-note-entry]', dialogContent).forEach(card => {
       const id = card.dataset.noteEntry;
+      card.addEventListener('toggle', () => {
+        if (!card.open) return;
+        $$('[data-note-entry]', dialogContent).forEach(other => {
+          if (other !== card) other.open = false;
+        });
+      });
       $$('[data-note-field]', card).forEach(field => field.addEventListener('input', () => {
         const entries = notebookEntriesFor(course);
         const entry = entries.find(item => item.id === id);
@@ -879,15 +905,19 @@
         }
         if (field.dataset.noteField === 'date') {
           const display = $('[data-note-display-date]', card);
-          if (display) display.textContent = field.value || 'sem data';
+          if (display) display.textContent = field.value ? formatDateBR(field.value) : 'sem data';
         }
         const wc = $('[data-note-wordcount]', card);
         if (wc) wc.textContent = String(noteWordCount(entry));
+        const preview = $('[data-note-preview]', card);
+        if (preview) preview.textContent = notePreview(entry);
         saveState();
       }));
     });
-    $$('[data-delete-note]', dialogContent).forEach(btn => btn.addEventListener('click', () => {
-      if (!confirm('Excluir esta anotação de aula?')) return;
+    $$('[data-delete-note]', dialogContent).forEach(btn => btn.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!confirm('Excluir esta folha do caderno?')) return;
       const entries = notebookEntriesFor(course);
       state.notebookEntries[course.id] = entries.filter(item => item.id !== btn.dataset.deleteNote);
       saveState();
@@ -947,8 +977,8 @@
       </div></section>
 
       <section class="tab-panel ${initialTab === 'notes' ? 'active' : ''}" data-panel="notes">
-        <div class="tab-heading notebook-heading"><div><span class="eyebrow">Caderno digital</span><h3>Meu caderno de ${esc(course.title)}</h3><p>Registre o que realmente foi ensinado em sala. Cada aula fica separada por data e entra automaticamente no backup do app.</p></div><button type="button" class="btn" data-add-note>+ Nova anotação</button></div>
-        <div class="notebook-tip"><strong>Sugestão de uso</strong><p>Durante ou depois da aula, escreva primeiro “o que aprendi” com suas próprias palavras. Depois complete conceitos, dúvidas e tarefas. O material do app continua separado para você comparar com o que o professor ensinou.</p></div>
+        <div class="tab-heading notebook-heading"><div><span class="eyebrow">Caderno digital</span><h3>Meu caderno de ${esc(course.title)}</h3><p>Registre o que realmente foi ensinado em sala. Cada aula vira uma folha independente, fechada quando não estiver em uso.</p></div><button type="button" class="btn" data-add-note>+ Nova folha</button></div>
+        <div class="notebook-tip"><strong>Como usar as folhas</strong><p>Crie uma folha por aula. A folha nova abre automaticamente; as anteriores ficam recolhidas. Clique na capa de qualquer folha para abrir ou fechar e consultar suas anotações.</p></div>
         <div class="notebook-list" data-notebook-list>${notebookListHtml(course)}</div>
         <details class="legacy-notes"><summary>Anotação geral da matéria</summary><div><p class="muted">Este campo preserva as anotações das versões anteriores e pode ser usado para um resumo geral da disciplina.</p><textarea class="notes-area" data-notes-id="${course.id}" placeholder="Resumo geral da matéria, páginas do livro, conceitos para revisar...">${esc(state.notes[course.id] || '')}</textarea></div></details>
       </section>
@@ -1041,13 +1071,14 @@
     const addNote = $('[data-add-note]', dialogContent);
     if (addNote) addNote.addEventListener('click', () => {
       state.notebookEntries[course.id] ||= [];
+      const newId = `note-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
       state.notebookEntries[course.id].unshift({
-        id: `note-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        id: newId,
         date: localDateISO(), title: '', learned: '', concepts: '', questions: '', tasks: '', free: ''
       });
       saveState();
-      renderNotebookList(course);
-      const firstTitle = $('[data-note-entry] [data-note-field="title"]', dialogContent);
+      renderNotebookList(course, newId);
+      const firstTitle = $(`[data-note-entry="${newId}"] [data-note-field="title"]`, dialogContent);
       firstTitle?.focus();
     });
     bindNotebookFields(course);
@@ -1136,7 +1167,7 @@
   }
 
   function exportBackup() {
-    const payload = { app: 'Arqueologia Study Hub UNEB', version: 7, exportedAt: new Date().toISOString(), state };
+    const payload = { app: 'Arqueologia Study Hub UNEB', version: '7.1', exportedAt: new Date().toISOString(), state };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `arqueologia-study-hub-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
