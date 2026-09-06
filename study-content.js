@@ -482,6 +482,18 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       {
         "term": "contexto",
         "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+      },
+      {
+        "term": "classe social",
+        "definition": "Posição relacional em estruturas econômicas e sociais; em Marx, classes são definidas por relações com os meios de produção e conflito histórico."
+      },
+      {
+        "term": "racionalização",
+        "definition": "Processo, em Weber, de expansão de formas de cálculo, regras e organização racional em instituições e práticas sociais."
+      },
+      {
+        "term": "coesão social",
+        "definition": "Formas pelas quais vínculos, normas e instituições mantêm integração social; em Durkheim, relaciona-se a diferentes tipos de solidariedade."
       }
     ],
     "topicGuides": [
@@ -581,6 +593,18 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       {
         "term": "signo",
         "definition": "Unidade relacional entre forma significante e conceito/significado em teorias linguísticas. Ajuda a pensar como sistemas de linguagem produzem diferenças e sentidos."
+      },
+      {
+        "term": "língua",
+        "definition": "Sistema social de signos e convenções compartilhadas; distingue-se analiticamente de usos individuais da fala."
+      },
+      {
+        "term": "variação linguística",
+        "definition": "Diferenças sistemáticas de uso relacionadas a região, grupo social, situação, tempo e outros fatores, sem implicar inferioridade de variedades."
+      },
+      {
+        "term": "mudança linguística",
+        "definition": "Transformação de formas, significados e estruturas ao longo do tempo, observável por comparação histórica e documentação."
       }
     ],
     "topicGuides": [
@@ -871,7 +895,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Função social e pública da Arqueologia",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Função social e pública da Arqueologia” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       }
     ]
   },
@@ -1180,7 +1209,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Arte como linguagem, representação e prática social",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Arte como linguagem, representação e prática social” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "História e teorias da arte aplicadas à cultura material",
@@ -2166,106 +2200,128 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s3-6-arqueologia-historica-i": {
-    "overview": "Introduz a Arqueologia Histórica e a integração de fontes materiais, escritas, orais e visuais. Trabalha temas como colonialismo, capitalismo e vida cotidiana, mostrando como fontes distintas podem concordar, complementar-se ou entrar em conflito.",
-    "category": "theory",
+    "overview": "Introduz a Arqueologia Histórica como campo, articula fontes materiais, escritas, orais e visuais e trabalha identificação, classificação, tipologia e cronologia de materiais recorrentes em contextos históricos. A ementa destaca comparações entre literatura brasileira, hispano-americana e norte-americana.",
+    "category": "historical",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Monte uma tabela por classe de material: composição, fabricação, atributos diagnósticos, cronologia e contexto.",
+      "Ao combinar fontes, registre onde elas concordam, divergem ou permanecem silenciosas.",
+      "Evite datar um contexto por um único fragmento; considere associação, deposição e processos de formação."
     ],
     "concepts": [
       {
-        "term": "escolas e debates teóricos",
-        "definition": "Tradições de pesquisa que formulam perguntas e interpretações diferentes. O estudo deve comparar contexto histórico, pressupostos, métodos, contribuições e críticas."
+        "term": "Arqueologia Histórica",
+        "definition": "Campo que investiga sociedades de períodos com documentação histórica, integrando cultura material a fontes textuais, orais e visuais sem tratar uma fonte como simples confirmação da outra."
       },
       {
-        "term": "arqueologia histórica",
-        "definition": "Campo que investiga contextos historicamente documentados combinando evidências materiais com fontes escritas, orais, iconográficas e outras."
+        "term": "fonte multifuente",
+        "definition": "Estratégia que combina evidências materiais, escritas, orais e visuais, avaliando origem, escala, viés, temporalidade e contradições de cada conjunto."
       },
       {
-        "term": "colonialismo",
-        "definition": "Processo de dominação política, econômica e cultural que reorganiza territórios, populações e materialidades. A Arqueologia investiga tanto estruturas coloniais quanto resistência e negociação."
+        "term": "tipologia histórica",
+        "definition": "Classificação de materiais por atributos tecnológicos, morfológicos, decorativos ou funcionais para apoiar comparação e cronologia, sem transformar tipos em identidades automáticas."
       },
       {
-        "term": "capitalismo",
-        "definition": "Sistema histórico de produção e troca baseado em propriedade privada, trabalho assalariado e acumulação; na Arqueologia Histórica pode ser investigado por consumo, produção, paisagem e desigualdade."
+        "term": "faiança",
+        "definition": "Cerâmica de pasta porosa revestida por esmalte opaco; atributos de pasta, esmalte e decoração podem contribuir para identificação e cronologia."
       },
       {
-        "term": "cronologia",
-        "definition": "Organização temporal de eventos, camadas, materiais ou fases culturais. Pode combinar datações relativas, absolutas e correlações contextuais."
+        "term": "faiança fina",
+        "definition": "Categoria de louças refinadas produzidas industrialmente em diferentes variedades; decoração, pasta, esmalte e marca de fabricante podem ajudar na datação e interpretação."
       },
       {
-        "term": "tipologia",
-        "definition": "Classificação de artefatos ou atributos em tipos definidos por critérios explícitos. É uma ferramenta analítica, não uma realidade natural dada."
+        "term": "grés",
+        "definition": "Cerâmica de alta queima, geralmente pouco porosa e resistente, comum em recipientes históricos; deve ser identificada por atributos tecnológicos e contexto."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "materiais construtivos",
+        "definition": "Azulejos, telhas, tijolos, manilhas e outros elementos que informam técnicas construtivas, fases de ocupação, reformas e organização espacial."
       },
       {
-        "term": "escrita",
-        "definition": "Sistema gráfico convencional de registro de linguagem ou informação. Seu aparecimento muda possibilidades documentais, mas não torna a cultura material secundária."
+        "term": "cronologia de materiais",
+        "definition": "Estimativa temporal baseada em datas de produção, circulação e descarte de classes materiais, sempre articulada à estratigrafia e ao contexto."
       },
       {
-        "term": "correntes teóricas",
-        "definition": "Conjuntos de pressupostos que orientam quais perguntas são feitas, que dados ganham importância e como o passado é explicado. Comparar teorias significa comparar seus conceitos, métodos, evidências e limites."
-      },
-      {
-        "term": "problema de pesquisa",
-        "definition": "Pergunta delimitada e investigável que orienta escolhas de evidência, método e análise. Um bom problema não é apenas um tema amplo."
+        "term": "processos de formação",
+        "definition": "Ações humanas e naturais que alteram a posição, associação e preservação dos vestígios após seu uso e descarte."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Formação e história da Arqueologia Histórica",
+        "topic": "História, formação e principais debates da Arqueologia Histórica",
         "points": [
           {
-            "term": "arqueologia histórica",
-            "definition": "Campo que investiga contextos historicamente documentados combinando evidências materiais com fontes escritas, orais, iconográficas e outras."
+            "term": "Arqueologia Histórica",
+            "definition": "Campo que se consolidou por diferentes tradições teóricas e metodológicas; estude sua formação, perguntas e mudanças de enfoque."
           }
         ]
       },
       {
-        "topic": "Principais escolas e debates teóricos",
+        "topic": "Relação entre evidências materiais e fontes escritas, orais e visuais",
         "points": [
           {
-            "term": "escolas e debates teóricos",
-            "definition": "Tradições de pesquisa que formulam perguntas e interpretações diferentes. O estudo deve comparar contexto histórico, pressupostos, métodos, contribuições e críticas."
+            "term": "fonte multifuente",
+            "definition": "Compare criticamente materialidade, documentos, oralidade e imagens, considerando que cada fonte produz visibilidades e silêncios distintos."
           }
         ]
       },
       {
-        "topic": "Integração entre fontes materiais, escritas, orais e visuais",
+        "topic": "Identificação, caracterização, classificação, tipologia e cronologia de materiais históricos",
         "points": [
           {
-            "term": "escrita",
-            "definition": "Sistema gráfico convencional de registro de linguagem ou informação. Seu aparecimento muda possibilidades documentais, mas não torna a cultura material secundária."
+            "term": "tipologia histórica",
+            "definition": "A identificação envolve atributos; a classificação organiza; a tipologia compara padrões; a cronologia relaciona esses padrões ao tempo e ao contexto."
           }
         ]
       },
       {
-        "topic": "Colonialismo, capitalismo e vida cotidiana como temas de estudo",
+        "topic": "Cerâmica neo-brasileira e hispano-americana, faiança, faiança fina e grés",
         "points": [
           {
-            "term": "colonialismo",
-            "definition": "Processo de dominação política, econômica e cultural que reorganiza territórios, populações e materialidades. A Arqueologia investiga tanto estruturas coloniais quanto resistência e negociação."
+            "term": "faiança",
+            "definition": "Observe pasta, esmalte, decoração e tecnologia."
           },
           {
-            "term": "capitalismo",
-            "definition": "Sistema histórico de produção e troca baseado em propriedade privada, trabalho assalariado e acumulação; na Arqueologia Histórica pode ser investigado por consumo, produção, paisagem e desigualdade."
+            "term": "faiança fina",
+            "definition": "Diferencie variedades por atributos tecnológicos e decorativos."
+          },
+          {
+            "term": "grés",
+            "definition": "Reconheça características de alta queima e baixa porosidade."
           }
         ]
       },
       {
-        "topic": "Construção de problemas de pesquisa em contextos históricos",
+        "topic": "Materiais construtivos, vidros, metais e vestígios ósseos em contextos históricos",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "materiais construtivos",
+            "definition": "Use elementos arquitetônicos e construtivos para interpretar fases e usos do espaço."
           },
           {
-            "term": "problema de pesquisa",
-            "definition": "Pergunta delimitada e investigável que orienta escolhas de evidência, método e análise. Um bom problema não é apenas um tema amplo."
+            "term": "processos de formação",
+            "definition": "Considere deposição, reforma, descarte, mistura e conservação."
+          }
+        ]
+      },
+      {
+        "topic": "Comparação de estudos brasileiros, hispano-americanos e norte-americanos",
+        "points": [
+          {
+            "term": "comparação regional",
+            "definition": "Compare cronologias, tradições de pesquisa e conjuntos materiais sem supor equivalência automática entre Brasil, América Hispânica e América do Norte."
+          }
+        ]
+      },
+      {
+        "topic": "Construção de interpretações multifuente e limites do registro histórico-arqueológico",
+        "points": [
+          {
+            "term": "fonte multifuente",
+            "definition": "Uma interpretação forte explicita convergências e contradições entre linhas de evidência."
+          },
+          {
+            "term": "cronologia de materiais",
+            "definition": "Datas de fabricação e circulação devem ser testadas contra estratigrafia e associação."
           }
         ]
       }
@@ -2642,92 +2698,134 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s4-2-tecnologia-ceramica-pre-historica": {
-    "overview": "Estuda desde a escolha da argila até modelagem, acabamento, decoração, queima, uso, quebra e descarte. A cerâmica é analisada como tecnologia, prática social e fonte para discutir escolhas, circulação e identidade.",
+    "overview": "Estuda tecnologia cerâmica e, conforme a própria ementa, também menciona fabricação de artefatos em osso, madeira e louça. O foco de apoio é entender matérias-primas, sequência de produção, atributos, uso, descarte e como decisões técnicas se relacionam ao ambiente e às práticas sociais.",
     "category": "material",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Desenhe a cadeia operatória do preparo da matéria-prima ao descarte.",
+      "Separe atributo observado de interpretação: primeiro descreva, depois explique.",
+      "Para materiais citados lateralmente na ementa, aprenda princípios de identificação sem extrapolar além do plano da turma."
     ],
     "concepts": [
       {
-        "term": "cadeia operatória",
-        "definition": "Reconstrução das etapas técnicas e decisões desde obtenção de matéria-prima até produção, uso, manutenção e descarte."
+        "term": "pasta cerâmica",
+        "definition": "Mistura de argila, inclusões naturais e/ou materiais adicionados; sua composição influencia plasticidade, secagem, queima e propriedades do recipiente."
       },
       {
         "term": "antiplástico",
-        "definition": "Material adicionado ou presente na pasta cerâmica que afeta plasticidade, secagem, resistência e comportamento na queima."
+        "definition": "Material presente ou adicionado à argila para modificar propriedades de trabalho e queima; identificação exige distinguir inclusões naturais de escolhas tecnológicas."
       },
       {
-        "term": "tipologia",
-        "definition": "Classificação de artefatos ou atributos em tipos definidos por critérios explícitos. É uma ferramenta analítica, não uma realidade natural dada."
+        "term": "modelagem",
+        "definition": "Conjunto de técnicas usadas para dar forma ao recipiente, como roletes, placas, moldagem ou combinações."
       },
       {
-        "term": "artefato",
-        "definition": "Objeto produzido, modificado ou utilizado por seres humanos. A interpretação depende de atributos do objeto e de seu contexto."
+        "term": "acabamento de superfície",
+        "definition": "Tratamentos como alisamento, polimento, engobo, incisão ou pintura que podem ter funções técnicas e sociais."
       },
       {
         "term": "queima",
-        "definition": "Transformação térmica da argila em cerâmica. Temperatura, atmosfera e combustível influenciam cor, dureza e propriedades do produto."
+        "definition": "Transformação térmica da argila; atmosfera, temperatura, combustível e estrutura de queima influenciam cor, dureza e preservação."
       },
       {
-        "term": "ambiente, biologia e cultura",
-        "definition": "Dimensões que interagem na história humana. Mudanças biológicas, ambientais e culturais não formam uma cadeia simples de causa e efeito; devem ser analisadas conjuntamente."
+        "term": "cadeia operatória",
+        "definition": "Sequência de obtenção de matéria-prima, preparação, fabricação, uso, manutenção e descarte, usada para estudar escolhas e transmissão de conhecimento."
       },
       {
-        "term": "produção, uso, manutenção e descarte",
-        "definition": "Etapas da trajetória de um artefato que podem deixar traços tecnológicos e funcionais. Reconstruí-las permite estudar decisões técnicas e organização das atividades."
+        "term": "artefato ósseo",
+        "definition": "Objeto produzido a partir de tecido ósseo; análise considera espécie/elemento quando possível, técnicas de modificação, forma, uso e conservação."
+      },
+      {
+        "term": "artefato de madeira",
+        "definition": "Objeto orgânico cuja preservação é seletiva; quando presente, análise exige atenção a anatomia, técnicas de fabricação e condições tafonômicas."
+      },
+      {
+        "term": "louça",
+        "definition": "Termo amplo para recipientes cerâmicos, especialmente históricos; como aparece na ementa, deve ser distinguido da cerâmica pré-histórica pelo contexto e pela tecnologia."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Argilas, antiplásticos e preparação da pasta",
+        "topic": "Artefatos e a relação entre grupos humanos, técnica e ambiente",
         "points": [
+          {
+            "term": "tecnologia",
+            "definition": "Conjunto de conhecimentos, gestos e escolhas empregados na transformação de matérias-primas; relaciona pessoas, ambiente e práticas sociais."
+          }
+        ]
+      },
+      {
+        "topic": "Argilas, antiplásticos e preparação da pasta cerâmica",
+        "points": [
+          {
+            "term": "pasta cerâmica",
+            "definition": "Descreva matéria-prima e inclusões antes de inferir escolhas."
+          },
           {
             "term": "antiplástico",
-            "definition": "Material adicionado ou presente na pasta cerâmica que afeta plasticidade, secagem, resistência e comportamento na queima."
+            "definition": "Avalie função tecnológica e origem das inclusões."
           }
         ]
       },
       {
-        "topic": "Técnicas de modelagem, acabamento, decoração e queima",
+        "topic": "Modelagem, acabamento, decoração e queima",
         "points": [
+          {
+            "term": "modelagem",
+            "definition": "Reconheça técnicas de conformação."
+          },
+          {
+            "term": "acabamento de superfície",
+            "definition": "Diferencie acabamento técnico e decoração."
+          },
           {
             "term": "queima",
-            "definition": "Transformação térmica da argila em cerâmica. Temperatura, atmosfera e combustível influenciam cor, dureza e propriedades do produto."
+            "definition": "Relacione atmosfera e temperatura a alterações observáveis."
           }
         ]
       },
       {
-        "topic": "Tipologia, tecnologia e atributos cerâmicos",
+        "topic": "Classificação, tipologia e análise tecnológica de cerâmicas",
         "points": [
           {
-            "term": "tipologia",
-            "definition": "Classificação de artefatos ou atributos em tipos definidos por critérios explícitos. É uma ferramenta analítica, não uma realidade natural dada."
+            "term": "tipologia cerâmica",
+            "definition": "Agrupe atributos com critérios explícitos e reprodutíveis; tipos são ferramentas analíticas, não povos."
+          },
+          {
+            "term": "atributo",
+            "definition": "Característica observável usada na descrição e comparação, como espessura, pasta, tratamento e decoração."
           }
         ]
       },
       {
-        "topic": "Cadeia operatória da produção cerâmica",
+        "topic": "Cadeia operatória, uso, quebra, descarte e contexto",
         "points": [
           {
             "term": "cadeia operatória",
-            "definition": "Reconstrução das etapas técnicas e decisões desde obtenção de matéria-prima até produção, uso, manutenção e descarte."
+            "definition": "Organize o tema como sequência de escolhas técnicas e efeitos materiais."
           }
         ]
       },
       {
-        "topic": "Uso, quebra, descarte e formação de conjuntos",
+        "topic": "Fabricação e análise de artefatos em osso e madeira mencionados na ementa",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Uso, quebra, descarte e formação de conjuntos. Conecte sua resposta ao foco geral da matéria: Estuda desde a escolha da argila até modelagem, acabamento, decoração, queima, uso, quebra e descarte. A cerâmica é analisada como tecnologia, prática social e fonte para discutir escolhas, circulação e identidade."
+            "term": "artefato ósseo",
+            "definition": "Analise matéria-prima, modificação, forma, uso e tafonomia."
+          },
+          {
+            "term": "artefato de madeira",
+            "definition": "Considere preservação diferencial e técnicas de fabricação."
           }
         ]
       },
       {
-        "topic": "Interpretação social e cultural da tecnologia cerâmica",
-        "points": []
+        "topic": "Louça e outros materiais citados no ementário: identificação e cuidado interpretativo",
+        "points": [
+          {
+            "term": "louça",
+            "definition": "Use tecnologia e contexto para distinguir categorias e cronologias."
+          }
+        ]
       }
     ]
   },
@@ -2832,7 +2930,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Inferências sobre uso do espaço e organização social",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Inferências sobre uso do espaço e organização social” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Tafonomia e fatores de alteração do registro",
@@ -2941,131 +3044,152 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s4-5-arqueologia-historica-ii": {
-    "overview": "Aprofunda métodos e interpretações de contextos históricos, articulando escavação, cultura material e fontes documentais. Trabalha problemas mais complexos de poder, consumo, cotidiano, colonialismo e formação do mundo moderno.",
-    "category": "method",
+    "overview": "Aprofunda a Arqueologia Histórica a partir dos fundamentos da Etnoarqueologia, do uso de fontes históricas e do trabalho de campo antropológico, com foco explícito da ementa em Arqueologia da Escravidão.",
+    "category": "historical",
     "studyTips": [
-      "Transforme cada método em um fluxo: quando usar → como aplicar → que dado produz → limite.",
-      "Pratique com situações fictícias de pesquisa, não apenas definições.",
-      "Separe sempre dado observado de inferência e interpretação."
+      "Leia documentos e cultura material como fontes com histórias próprias, não como espelhos perfeitos.",
+      "Ao usar analogias etnográficas, declare por que a comparação é válida e onde pode falhar.",
+      "Em estudos de escravidão, considere poder, resistência, cotidiano, paisagem e desigualdade sem reduzir pessoas a categorias documentais."
     ],
     "concepts": [
       {
-        "term": "arqueologia histórica",
-        "definition": "Campo que investiga contextos historicamente documentados combinando evidências materiais com fontes escritas, orais, iconográficas e outras."
+        "term": "Etnoarqueologia",
+        "definition": "Abordagem que observa relações entre práticas sociais e materialidade em contextos vivos para formular e testar interpretações arqueológicas, com limites éticos e analógicos."
       },
       {
-        "term": "trabalho de campo",
-        "definition": "Etapa de produção de dados em contexto, envolvendo planejamento, métodos, registro, ética, segurança e organização. A qualidade do dado depende da documentação das decisões tomadas."
+        "term": "analogia",
+        "definition": "Relação comparativa usada para inferir processos não diretamente observáveis; deve explicitar semelhanças relevantes, diferenças e condições de aplicação."
       },
       {
-        "term": "cultura material",
-        "definition": "Objetos, estruturas, resíduos e transformações materiais produzidos ou apropriados por pessoas. Em Arqueologia, são evidências para investigar práticas, relações sociais e mudanças ao longo do tempo."
+        "term": "fonte histórica",
+        "definition": "Documento produzido em contextos sociais específicos; precisa de crítica de autoria, finalidade, circulação, silêncio e representatividade."
       },
       {
-        "term": "etnoarqueologia",
-        "definition": "Abordagem que estuda práticas e materialidades contemporâneas para construir modelos e analogias úteis à interpretação arqueológica, sem presumir equivalência direta com o passado."
+        "term": "trabalho de campo antropológico",
+        "definition": "Produção contextual de dados por observação, entrevistas e participação, exigindo reflexividade e ética."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "Arqueologia da Escravidão",
+        "definition": "Campo que investiga materialidades da escravidão e das populações escravizadas, incluindo cotidiano, trabalho, resistência, identidade, paisagem e relações de poder."
       },
       {
-        "term": "cultura arqueológica",
-        "definition": "Categoria histórico-cultural que agrupa conjuntos materiais recorrentes em tempo e espaço. Não deve ser automaticamente equiparada a um povo ou identidade biológica."
+        "term": "triangulação de evidências",
+        "definition": "Comparação de linhas de evidência independentes para avaliar convergências, divergências e lacunas antes de sustentar uma interpretação."
       },
       {
-        "term": "metodologia e plano de trabalho",
-        "definition": "Descrição coerente de como a pergunta será investigada, incluindo dados, técnicas, amostra, etapas, cronograma, análise, limitações e critérios de registro."
+        "term": "reflexividade",
+        "definition": "Reconhecimento de que perguntas, posição do pesquisador e relações de campo influenciam a produção e interpretação dos dados."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Metodologias avançadas de Arqueologia Histórica",
+        "topic": "Fundamentos teóricos e metodológicos da Etnoarqueologia aplicados à Arqueologia Histórica",
         "points": [
           {
-            "term": "arqueologia histórica",
-            "definition": "Campo que investiga contextos historicamente documentados combinando evidências materiais com fontes escritas, orais, iconográficas e outras."
+            "term": "Etnoarqueologia",
+            "definition": "Estude objetivos, pressupostos e críticas ao uso de observações contemporâneas em problemas históricos."
           }
         ]
       },
       {
-        "topic": "Etnoarqueologia e analogia como ferramentas interpretativas",
+        "topic": "Uso crítico de fontes históricas em pesquisas arqueológicas",
         "points": [
           {
-            "term": "etnoarqueologia",
-            "definition": "Abordagem que estuda práticas e materialidades contemporâneas para construir modelos e analogias úteis à interpretação arqueológica, sem presumir equivalência direta com o passado."
+            "term": "fonte histórica",
+            "definition": "Faça crítica de autoria, propósito, escala e silêncio documental."
           }
         ]
       },
       {
-        "topic": "Integração crítica entre documentos e cultura material",
+        "topic": "Trabalho de campo antropológico e observação etnográfica como apoio interpretativo",
         "points": [
           {
-            "term": "cultura material",
-            "definition": "Objetos, estruturas, resíduos e transformações materiais produzidos ou apropriados por pessoas. Em Arqueologia, são evidências para investigar práticas, relações sociais e mudanças ao longo do tempo."
+            "term": "trabalho de campo antropológico",
+            "definition": "Entenda observação, entrevista, reflexividade e ética."
           }
         ]
       },
       {
-        "topic": "Processos de formação em contextos históricos",
+        "topic": "Integração entre cultura material, documentação histórica e dados etnográficos",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "triangulação de evidências",
+            "definition": "Cruze materialidade, documentos e dados etnográficos sem hierarquizá-los automaticamente."
           }
         ]
       },
       {
-        "topic": "Estudos de caso e construção de interpretações multifuente",
+        "topic": "Arqueologia da Escravidão: problemas, evidências e escalas de análise",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Entenda a finalidade do procedimento, a sequência de aplicação, o tipo de dado produzido, as condições de uso e as principais fontes de viés ou erro. Tópico: Estudos de caso e construção de interpretações multifuente. Conecte sua resposta ao foco geral da matéria: Aprofunda métodos e interpretações de contextos históricos, articulando escavação, cultura material e fontes documentais. Trabalha problemas mais complexos de poder, consumo, cotidiano, colonialismo e formação do mundo moderno."
+            "term": "Arqueologia da Escravidão",
+            "definition": "Investigue poder, trabalho, cotidiano, resistência, mobilidade, consumo e paisagem a partir de múltiplas evidências."
+          }
+        ]
+      },
+      {
+        "topic": "Limites da analogia, ética e construção de interpretações multifuente",
+        "points": [
+          {
+            "term": "analogia",
+            "definition": "Declare limites e diferenças antes de transferir uma observação para outro contexto."
+          },
+          {
+            "term": "reflexividade",
+            "definition": "Explique como escolhas do pesquisador afetam a interpretação."
           }
         ]
       }
     ]
   },
   "s4-6-geologia-e-geomorfologia": {
-    "overview": "Apresenta rochas, minerais, processos geológicos, formas de relevo e dinâmica superficial relevantes para sítios arqueológicos. Ajuda a distinguir processos naturais de ações humanas e a compreender formação e preservação de depósitos.",
-    "category": "science",
+    "overview": "Fornece base para ler a Terra e a paisagem como contexto dos sítios: estrutura terrestre, tectônica, minerais e rochas, processos geomorfológicos, tempo geológico, água, ciclos biogeoquímicos, impactos ambientais e legislação. É uma ponte central para geoarqueologia e formação de sítios.",
+    "category": "earth",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Relacione cada processo geológico ao tipo de evidência que ele pode criar, mover, enterrar ou destruir.",
+      "Treine leitura de perfis, mapas e paisagens, não apenas definições.",
+      "Diferencie escala geológica, geomorfológica e arqueológica ao construir cronologias."
     ],
     "concepts": [
       {
-        "term": "tempo geológico",
-        "definition": "Escala temporal da história da Terra organizada em éons, eras, períodos e épocas, fundamental para contextualizar evolução e paleoambientes."
+        "term": "tectônica de placas",
+        "definition": "Modelo que explica o movimento de placas litosféricas e processos como formação de cadeias, bacias, vulcanismo e terremotos."
       },
       {
-        "term": "geomorfologia",
-        "definition": "Estudo das formas de relevo e dos processos que as criam e transformam, como erosão, sedimentação, dinâmica fluvial e movimentos de massa."
+        "term": "tempo geológico",
+        "definition": "Escala temporal da história da Terra construída por estratigrafia, fósseis e métodos de datação; fornece contexto amplo para processos ambientais."
+      },
+      {
+        "term": "ciclo das rochas",
+        "definition": "Transformações entre rochas ígneas, sedimentares e metamórficas por fusão, cristalização, intemperismo, deposição, metamorfismo e erosão."
       },
       {
         "term": "intemperismo",
-        "definition": "Alteração física e química de rochas na superfície. Atua junto a erosão, transporte e sedimentação na formação e transformação de paisagens e depósitos."
+        "definition": "Alteração física, química ou biológica de rochas e minerais na superfície, contribuindo para solos e sedimentos."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "erosão e sedimentação",
+        "definition": "Remoção, transporte e deposição de materiais; podem expor, retrabalhar, soterrar ou misturar vestígios arqueológicos."
       },
       {
-        "term": "paisagem",
-        "definition": "Resultado dinâmico de relações entre pessoas, lugares, ambiente, memória e práticas. Em Arqueologia, pode ser estudada como configuração material e histórica."
+        "term": "ciclo hidrológico",
+        "definition": "Circulação da água entre atmosfera, superfície, solo e subsuperfície, influenciando erosão, deposição e preservação."
       },
       {
-        "term": "sítio",
-        "definition": "Lugar onde há evidências materiais de atividades humanas passadas reconhecidas arqueologicamente. Seus limites dependem da distribuição dos vestígios, processos de formação e objetivos da pesquisa."
+        "term": "ciclos biogeoquímicos",
+        "definition": "Fluxos de elementos como carbono, nitrogênio e fósforo entre componentes bióticos e abióticos dos ecossistemas."
       },
       {
-        "term": "estrutura da Terra",
-        "definition": "Organização interna em crosta, manto e núcleo, relacionada a processos tectônicos e à formação de rochas e paisagens."
+        "term": "geomorfologia",
+        "definition": "Estudo das formas de relevo e dos processos que as produzem e transformam ao longo do tempo."
       },
       {
-        "term": "minerais e rochas",
-        "definition": "Minerais são substâncias naturais com propriedades definidas; rochas são agregados minerais. Identificação considera textura, composição e origem ígnea, sedimentar ou metamórfica."
+        "term": "geoarqueologia",
+        "definition": "Aplicação de conceitos e métodos das geociências a perguntas arqueológicas, especialmente formação de sítios, sedimentos, solos, paisagens e cronologia."
+      },
+      {
+        "term": "impacto ambiental",
+        "definition": "Alteração ambiental decorrente de processos naturais ou atividades humanas; análise exige escala, intensidade, duração e enquadramento legal."
       }
     ],
     "topicGuides": [
@@ -3073,147 +3197,202 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "topic": "Origem, estrutura e composição da Terra",
         "points": [
           {
-            "term": "estrutura da Terra",
-            "definition": "Organização interna em crosta, manto e núcleo, relacionada a processos tectônicos e à formação de rochas e paisagens."
+            "term": "geoarqueologia",
+            "definition": "Relacione o conteúdo ao contexto, formação e preservação do registro arqueológico."
           }
         ]
       },
       {
-        "topic": "Minerais e principais tipos de rochas",
+        "topic": "Tectônica de placas, ciclo geológico e tempo geológico",
         "points": [
           {
-            "term": "minerais e rochas",
-            "definition": "Minerais são substâncias naturais com propriedades definidas; rochas são agregados minerais. Identificação considera textura, composição e origem ígnea, sedimentar ou metamórfica."
+            "term": "tectônica de placas",
+            "definition": "Associe movimentos de placas à formação e transformação de paisagens."
+          },
+          {
+            "term": "tempo geológico",
+            "definition": "Use escalas temporais adequadas aos processos."
           }
         ]
       },
       {
-        "topic": "Intemperismo, erosão, transporte e sedimentação",
+        "topic": "Minerais, rochas e materiais geológicos relevantes para a Arqueologia",
+        "points": [
+          {
+            "term": "ciclo das rochas",
+            "definition": "Diferencie rochas ígneas, sedimentares e metamórficas e suas transformações."
+          }
+        ]
+      },
+      {
+        "topic": "Intemperismo, erosão, transporte, sedimentação e evolução do relevo",
         "points": [
           {
             "term": "intemperismo",
-            "definition": "Alteração física e química de rochas na superfície. Atua junto a erosão, transporte e sedimentação na formação e transformação de paisagens e depósitos."
+            "definition": "Identifique alteração in situ."
+          },
+          {
+            "term": "erosão e sedimentação",
+            "definition": "Diferencie remoção, transporte e deposição."
           }
         ]
       },
       {
-        "topic": "Relevo, formas de terreno e evolução da paisagem",
+        "topic": "Ciclo hidrológico, ciclos biogeoquímicos, ambientes geológicos e ecossistemas",
         "points": [
           {
-            "term": "paisagem",
-            "definition": "Resultado dinâmico de relações entre pessoas, lugares, ambiente, memória e práticas. Em Arqueologia, pode ser estudada como configuração material e histórica."
+            "term": "ciclo hidrológico",
+            "definition": "Relacione água a relevo, sedimentos e preservação."
+          },
+          {
+            "term": "ciclos biogeoquímicos",
+            "definition": "Observe fluxos de elementos em ambientes e ecossistemas."
           }
         ]
       },
       {
-        "topic": "Geomorfologia aplicada à localização e preservação de sítios",
+        "topic": "Geomorfologia, atividade antrópica e formação/preservação de sítios",
         "points": [
           {
             "term": "geomorfologia",
-            "definition": "Estudo das formas de relevo e dos processos que as criam e transformam, como erosão, sedimentação, dinâmica fluvial e movimentos de massa."
+            "definition": "Leia formas e processos da paisagem."
           },
           {
-            "term": "sítio",
-            "definition": "Lugar onde há evidências materiais de atividades humanas passadas reconhecidas arqueologicamente. Seus limites dependem da distribuição dos vestígios, processos de formação e objetivos da pesquisa."
+            "term": "geoarqueologia",
+            "definition": "Conecte processos naturais e atividade humana à formação do sítio."
           }
         ]
       },
       {
-        "topic": "Leitura geológica e geoarqueológica do contexto",
+        "topic": "Impactos ambientais e noções de legislação mineral e ambiental",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "impacto ambiental",
+            "definition": "Avalie natureza, escala e consequência dos impactos."
+          },
+          {
+            "term": "legislação ambiental e mineral",
+            "definition": "Identifique por que normas de uso do solo e recursos importam para pesquisa, licenciamento e proteção patrimonial."
           }
         ]
       }
     ]
   },
   "s4-7-antropologia-fisica": {
-    "overview": "Introduz estudo biológico de populações humanas, osteologia, variação, crescimento, saúde e evolução. Em contexto arqueológico, serve de base para bioarqueologia, análise de restos humanos e interpretação responsável de dados biológicos.",
-    "category": "science",
+    "overview": "Estuda evolução humana, anatomia e restos humanos, incluindo osteologia, estimativas biológicas, patologias e técnicas genéticas mencionadas na ementa. O roteiro acrescenta cautela científica: sexo, idade, doença, trauma e causa de morte são inferências com graus distintos de incerteza.",
+    "category": "bio",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Aprenda anatomia com localização e função, não só nomes de ossos.",
+      "Separe observação, diagnóstico diferencial e grau de confiança.",
+      "Trate restos humanos como pessoas e patrimônio sensível, considerando ética, legislação e comunidades relacionadas."
     ],
     "concepts": [
       {
-        "term": "esqueleto humano",
-        "definition": "Conjunto de ossos e dentes do corpo. Identificação anatômica é a base para estimativas biológicas e para reconhecer alterações tafonômicas, patológicas ou traumáticas."
-      },
-      {
-        "term": "antropologia",
-        "definition": "Ciência que estuda diversidade humana em dimensões sociais, culturais e biológicas. A Arqueologia dialoga especialmente com conceitos antropológicos para interpretar cultura material e práticas sociais."
-      },
-      {
         "term": "hominização",
-        "definition": "Processo evolutivo envolvendo mudanças biológicas e comportamentais na linhagem humana, incluindo bipedalismo, encefalização, tecnologia e transformações sociais."
+        "definition": "Processo evolutivo de diversificação dos hominínios e emergência do gênero Homo, estudado por evidências fósseis, arqueológicas e biológicas."
       },
       {
-        "term": "osteologia",
-        "definition": "Estudo dos ossos. Em Antropologia Biológica e Bioarqueologia, envolve identificação, anatomia, variação, idade, sexo estimado e sinais patológicos ou traumáticos."
+        "term": "osteologia humana",
+        "definition": "Estudo dos ossos e dentes humanos, sua anatomia, desenvolvimento, variação e alterações."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "estimativa de sexo",
+        "definition": "Inferência probabilística de características sexuais do esqueleto, mais informativa em adultos e dependente de método, população de referência e preservação."
       },
       {
-        "term": "genética",
-        "definition": "Estudo da hereditariedade e variação biológica. Conceitos como DNA, alelos, recombinação e população são base para interpretar dados arqueogenéticos."
+        "term": "estimativa de idade",
+        "definition": "Estimativa de idade à morte por indicadores de desenvolvimento e degeneração; apresenta intervalos e incerteza, especialmente em adultos."
       },
       {
-        "term": "ética",
-        "definition": "Reflexão sobre responsabilidades, deveres, consequências e relações de poder na pesquisa e na profissão. Em Arqueologia envolve patrimônio, comunidades, restos humanos, dados, autoria e impactos sociais."
+        "term": "paleopatologia",
+        "definition": "Estudo de doenças e alterações em restos humanos antigos, com diagnóstico diferencial e atenção a processos tafonômicos."
+      },
+      {
+        "term": "trauma",
+        "definition": "Lesão observável em osso; análise considera momento relativo à morte, mecanismo possível e limitações de inferência."
+      },
+      {
+        "term": "causa de morte",
+        "definition": "Conclusão sobre o processo que levou à morte. Em restos esqueletizados, raramente pode ser determinada com segurança apenas pelo osso; é essencial distinguir trauma observado de causa de morte."
+      },
+      {
+        "term": "DNA",
+        "definition": "Material genético usado em diferentes análises biológicas; contexto, preservação, contaminação e ética limitam interpretações em restos humanos."
+      },
+      {
+        "term": "ética em restos humanos",
+        "definition": "Princípios de respeito, autorização, documentação, conservação, consulta a comunidades e minimização de dano na pesquisa com restos humanos."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Evolução humana e diversidade biológica",
-        "points": []
-      },
-      {
-        "topic": "Anatomia básica do esqueleto humano",
+        "topic": "Hominização, evolução humana e renovação das teorias científicas",
         "points": [
           {
-            "term": "esqueleto humano",
-            "definition": "Conjunto de ossos e dentes do corpo. Identificação anatômica é a base para estimativas biológicas e para reconhecer alterações tafonômicas, patológicas ou traumáticas."
+            "term": "hominização",
+            "definition": "Compare hipóteses evolutivas com evidências e cronologia."
           }
         ]
       },
       {
-        "topic": "Noções de osteologia e identificação de elementos",
+        "topic": "Anatomia humana e osteologia aplicadas ao estudo de restos humanos",
         "points": [
           {
-            "term": "osteologia",
-            "definition": "Estudo dos ossos. Em Antropologia Biológica e Bioarqueologia, envolve identificação, anatomia, variação, idade, sexo estimado e sinais patológicos ou traumáticos."
+            "term": "osteologia humana",
+            "definition": "Identifique ossos, regiões e elementos diagnósticos."
           }
         ]
       },
       {
-        "topic": "Variação, crescimento, sexo e idade em contexto bioantropológico",
+        "topic": "Identificação biológica: estimativas de sexo, idade e variação esquelética",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "estimativa de sexo",
+            "definition": "Use métodos e população de referência adequados."
+          },
+          {
+            "term": "estimativa de idade",
+            "definition": "Reporte intervalos e incerteza."
           }
         ]
       },
       {
-        "topic": "Saúde, dieta, atividade e marcas no esqueleto",
+        "topic": "Paleopatologia, doenças, trauma e alterações observáveis no esqueleto",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Defina o processo ou indicador, reconheça como ele é observado ou medido e explique de que modo pode informar o contexto arqueológico sem ultrapassar os limites da evidência. Tópico: Saúde, dieta, atividade e marcas no esqueleto. Conecte sua resposta ao foco geral da matéria: Introduz estudo biológico de populações humanas, osteologia, variação, crescimento, saúde e evolução. Em contexto arqueológico, serve de base para bioarqueologia, análise de restos humanos e interpretação responsável de dados biológicos."
+            "term": "paleopatologia",
+            "definition": "Construa diagnóstico diferencial."
+          },
+          {
+            "term": "trauma",
+            "definition": "Diferencie lesão, alteração tafonômica e temporalidade."
           }
         ]
       },
       {
-        "topic": "Ética e limites da análise de restos humanos",
+        "topic": "Causa de morte: possibilidades, limites e cautela na inferência bioantropológica",
         "points": [
           {
-            "term": "ética",
-            "definition": "Reflexão sobre responsabilidades, deveres, consequências e relações de poder na pesquisa e na profissão. Em Arqueologia envolve patrimônio, comunidades, restos humanos, dados, autoria e impactos sociais."
+            "term": "causa de morte",
+            "definition": "Evite conclusões além do que o esqueleto sustenta; trauma não equivale automaticamente a causa de morte."
+          }
+        ]
+      },
+      {
+        "topic": "Genética e análise de DNA mencionadas na ementa",
+        "points": [
+          {
+            "term": "DNA",
+            "definition": "Entenda o princípio da análise e suas limitações de preservação e interpretação."
+          }
+        ]
+      },
+      {
+        "topic": "Ética, conservação e responsabilidade no estudo de restos humanos",
+        "points": [
+          {
+            "term": "ética em restos humanos",
+            "definition": "Priorize respeito, documentação, consulta e minimização de dano."
           }
         ]
       }
@@ -3500,233 +3679,264 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s5-2-arqueologia-africana": {
-    "overview": "Explora a enorme diversidade arqueológica africana, desde evolução humana até sociedades complexas, redes de troca, metalurgia e experiências coloniais. Também problematiza leituras eurocêntricas e a história da produção de conhecimento sobre a África.",
+    "overview": "Segue a ementa oficial, que combina introdução à História Africana com forte ênfase em afrodescendentes na América Latina, pós-abolição, cidadania, quilombos, territórios negros, religiões de matriz africana, ancestralidade, identidade e intolerância religiosa.",
     "category": "regional",
     "studyTips": [
-      "Construa linhas do tempo e mapas, mas evite tratar culturas arqueológicas como povos fixos.",
-      "Associe sítios e materiais a perguntas, contextos e debates, não só a nomes.",
-      "Compare regiões observando cronologia, ambiente, tecnologia e organização social."
+      "Monte uma linha do tempo que conecte África, diáspora, escravidão/pós-abolição e formações comunitárias sem tratar experiências afrodescendentes como homogêneas.",
+      "Diferencie categorias jurídicas, identidades sociais e conceitos analíticos como quilombo e etnogênese.",
+      "Leia religião e performance em seus contextos, evitando explicar práticas por “sobrevivências” fixas ou estereótipos."
     ],
     "concepts": [
       {
-        "term": "perspectivas eurocêntricas",
-        "definition": "Interpretações que tomam trajetórias europeias como medida universal. A crítica busca recentrar histórias, categorias e evidências locais, incluindo impactos coloniais na produção científica."
+        "term": "diáspora africana",
+        "definition": "Processos históricos de deslocamento forçado e voluntário de populações africanas e formação de comunidades afrodescendentes, envolvendo continuidade, transformação e criação cultural."
       },
       {
-        "term": "evolução humana na África",
-        "definition": "A África concentra evidências fundamentais da evolução de hominínios e das primeiras populações de Homo sapiens; interpretações combinam fósseis, arqueologia, cronologia e genética."
+        "term": "pós-abolição",
+        "definition": "Período e campo de estudos sobre experiências após o fim jurídico da escravidão, incluindo cidadania, trabalho, racismo, mobilidade, família, território e estratégias políticas."
       },
       {
-        "term": "sociedades complexas",
-        "definition": "Expressão usada para contextos com diferenciação social, especialização, redes amplas, instituições políticas ou centralização. Não deve ser entendida como sinônimo de superioridade cultural."
+        "term": "quilombo",
+        "definition": "Categoria histórica e jurídica com significados variáveis; sua análise exige contexto, autoidentificação, territorialidade, memória e relações políticas."
       },
       {
-        "term": "caçadores-coletores",
-        "definition": "Sociedades cuja subsistência depende principalmente de recursos silvestres obtidos por caça, pesca e coleta. Apresentam grande diversidade de mobilidade, tecnologia e organização social."
+        "term": "etnogênese",
+        "definition": "Processos históricos de formação, reformulação ou afirmação de identidades coletivas em relação a memória, território, relações sociais e contextos políticos."
+      },
+      {
+        "term": "direitos costumeiros",
+        "definition": "Normas e práticas reconhecidas socialmente em comunidades, que podem se articular ou entrar em tensão com ordenamentos estatais."
+      },
+      {
+        "term": "territórios negros",
+        "definition": "Espaços historicamente apropriados, vividos e significados por comunidades negras, relacionados a parentesco, trabalho, memória, ancestralidade e direitos."
+      },
+      {
+        "term": "sincretismo religioso",
+        "definition": "Conceito usado para analisar combinações e transformações entre tradições religiosas; deve ser empregado criticamente para não apagar agência e diferenças históricas."
+      },
+      {
+        "term": "reafricanização",
+        "definition": "Processos de valorização, reconstrução ou reivindicação de referências africanas em práticas e identidades religiosas/culturais."
       },
       {
         "term": "ancestralidade",
-        "definition": "Inferência estatística de afinidades genéticas entre indivíduos e populações. Não equivale automaticamente a identidade cultural, etnia ou pertencimento social."
+        "definition": "Relação social, histórica e cosmológica com antepassados e pertencimentos; neste componente deve ser entendida no contexto cultural, e não reduzida a genética."
       },
       {
-        "term": "redes de troca",
-        "definition": "Circuitos de circulação de matérias-primas, objetos, pessoas e informações. São investigados por distribuição espacial, proveniência, tecnologia e contexto."
-      },
-      {
-        "term": "colonialismo",
-        "definition": "Processo de dominação política, econômica e cultural que reorganiza territórios, populações e materialidades. A Arqueologia investiga tanto estruturas coloniais quanto resistência e negociação."
-      },
-      {
-        "term": "metalurgia",
-        "definition": "Conjunto de técnicas de extração, transformação e trabalho de metais, associado a conhecimentos especializados, redes de obtenção e diferentes usos sociais."
-      },
-      {
-        "term": "território",
-        "definition": "Espaço apropriado, vivido e disputado por grupos sociais, envolvendo relações de poder, pertencimento, uso e controle."
-      },
-      {
-        "term": "estado",
-        "definition": "Forma de organização política com instituições, autoridade e administração territorial. Em Arqueologia, sua identificação exige indicadores múltiplos e não apenas monumentalidade."
-      },
-      {
-        "term": "arqueologia e sociedade",
-        "definition": "Relação entre produção de conhecimento arqueológico, interesses públicos, memórias, identidades e efeitos sociais da pesquisa. O passado é interpretado no presente e pode gerar disputas."
-      },
-      {
-        "term": "cultura arqueológica",
-        "definition": "Categoria histórico-cultural que agrupa conjuntos materiais recorrentes em tempo e espaço. Não deve ser automaticamente equiparada a um povo ou identidade biológica."
+        "term": "intolerância religiosa",
+        "definition": "Discriminação, violência ou restrição de direitos motivada por pertença ou prática religiosa, especialmente relevante para tradições de matriz africana no Brasil e na América Latina."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Diversidade histórica e arqueológica do continente africano",
+        "topic": "Introdução à História Africana e à diversidade de experiências africanas",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: Diversidade histórica e arqueológica do continente africano. Conecte sua resposta ao foco geral da matéria: Explora a enorme diversidade arqueológica africana, desde evolução humana até sociedades complexas, redes de troca, metalurgia e experiências coloniais. Também problematiza leituras eurocêntricas e a história da produção de conhecimento sobre a África."
+            "term": "Como estudar este tópico",
+            "definition": "Localize atores, conceitos, contexto histórico, relações de poder e evidências usadas na literatura; diferencie descrição, categoria jurídica e interpretação."
           }
         ]
       },
       {
-        "topic": "Origem e evolução humana na África",
+        "topic": "Afrodescendentes, Estado-nação, pós-abolição e cidadania na América Latina",
         "points": [
           {
-            "term": "evolução humana na África",
-            "definition": "A África concentra evidências fundamentais da evolução de hominínios e das primeiras populações de Homo sapiens; interpretações combinam fósseis, arqueologia, cronologia e genética."
-          }
-        ]
-      },
-      {
-        "topic": "Caçadores-coletores, pastoreio, agricultura e metalurgia",
-        "points": [
-          {
-            "term": "caçadores-coletores",
-            "definition": "Sociedades cuja subsistência depende principalmente de recursos silvestres obtidos por caça, pesca e coleta. Apresentam grande diversidade de mobilidade, tecnologia e organização social."
+            "term": "pós-abolição",
+            "definition": "Relacione cidadania, racismo, trabalho, Estado e estratégias sociais."
           },
           {
-            "term": "metalurgia",
-            "definition": "Conjunto de técnicas de extração, transformação e trabalho de metais, associado a conhecimentos especializados, redes de obtenção e diferentes usos sociais."
+            "term": "diáspora africana",
+            "definition": "Considere deslocamento e recriação cultural sem pressupor continuidade imutável."
           }
         ]
       },
       {
-        "topic": "Formação de sociedades complexas e redes de troca",
+        "topic": "Diversidade étnico-racial e paradigmas de interpretação",
         "points": [
           {
-            "term": "sociedades complexas",
-            "definition": "Expressão usada para contextos com diferenciação social, especialização, redes amplas, instituições políticas ou centralização. Não deve ser entendida como sinônimo de superioridade cultural."
+            "term": "Como estudar este tópico",
+            "definition": "Localize atores, conceitos, contexto histórico, relações de poder e evidências usadas na literatura; diferencie descrição, categoria jurídica e interpretação."
+          }
+        ]
+      },
+      {
+        "topic": "Acamponesamento, aquilombamento, parentesco, direitos costumeiros e territórios negros",
+        "points": [
+          {
+            "term": "direitos costumeiros",
+            "definition": "Observe normas e práticas comunitárias."
           },
           {
-            "term": "redes de troca",
-            "definition": "Circuitos de circulação de matérias-primas, objetos, pessoas e informações. São investigados por distribuição espacial, proveniência, tecnologia e contexto."
+            "term": "territórios negros",
+            "definition": "Relacione parentesco, memória, trabalho e direito territorial."
           }
         ]
       },
       {
-        "topic": "Diáspora africana, colonialismo e pós-colonialidade",
+        "topic": "Quilombo, etnogênese, comunidades remanescentes, legislação e políticas quilombolas",
         "points": [
           {
-            "term": "colonialismo",
-            "definition": "Processo de dominação política, econômica e cultural que reorganiza territórios, populações e materialidades. A Arqueologia investiga tanto estruturas coloniais quanto resistência e negociação."
+            "term": "quilombo",
+            "definition": "Diferencie usos históricos, sociais e jurídicos do termo."
+          },
+          {
+            "term": "etnogênese",
+            "definition": "Analise formação e afirmação de identidades em processos históricos."
           }
         ]
       },
       {
-        "topic": "Crítica a perspectivas eurocêntricas na interpretação",
+        "topic": "Religiões de matriz africana, sincretismo e reafricanização",
         "points": [
           {
-            "term": "perspectivas eurocêntricas",
-            "definition": "Interpretações que tomam trajetórias europeias como medida universal. A crítica busca recentrar histórias, categorias e evidências locais, incluindo impactos coloniais na produção científica."
+            "term": "sincretismo religioso",
+            "definition": "Use o conceito criticamente."
+          },
+          {
+            "term": "reafricanização",
+            "definition": "Observe reivindicações e reconstruções de referências africanas."
+          }
+        ]
+      },
+      {
+        "topic": "Mitologia, performance, ancestralidade, identidade, política, globalização e intolerância religiosa",
+        "points": [
+          {
+            "term": "ancestralidade",
+            "definition": "Entenda ancestralidade como relação social/cosmológica contextual."
+          },
+          {
+            "term": "intolerância religiosa",
+            "definition": "Relacione práticas, poder, direitos e violência discriminatória."
           }
         ]
       }
     ]
   },
   "s5-3-arqueologia-asiatica": {
-    "overview": "Apresenta processos arqueológicos de diferentes regiões da Ásia, incluindo agricultura, urbanização, estados, religião, tecnologia e intercâmbios. Incentiva comparações sem reduzir a diversidade asiática a uma única narrativa.",
+    "overview": "O ementário apresenta uma introdução à História Asiática e, em seguida, temas sobre asiodescendentes, Estado-nação, cidadania, parentesco, territórios, mitologia, ancestralidade, religião, política, globalização e intolerância religiosa. Como há formulações possivelmente editoriais no PPP, o roteiro evita inventar uma arqueologia continental que não está escrita na ementa.",
     "category": "regional",
     "studyTips": [
-      "Construa linhas do tempo e mapas, mas evite tratar culturas arqueológicas como povos fixos.",
-      "Associe sítios e materiais a perguntas, contextos e debates, não só a nomes.",
-      "Compare regiões observando cronologia, ambiente, tecnologia e organização social."
+      "Estude primeiro o que o documento efetivamente diz e marque pontos estranhos para confirmar com o professor.",
+      "Evite tratar “Ásia” como uma unidade cultural; sempre localize país/região, período e comunidade.",
+      "Diferencie identidade, ancestralidade, nacionalidade, religião e território em vez de usá-los como sinônimos."
     ],
     "concepts": [
       {
-        "term": "diversidade regional",
-        "definition": "Reconhecimento de que processos históricos variam entre regiões; comparações devem respeitar cronologias, ambientes e tradições locais."
+        "term": "História Asiática",
+        "definition": "Campo amplo que exige recorte regional e temporal; não existe uma trajetória única para o continente asiático."
       },
       {
-        "term": "estudos comparativos",
-        "definition": "Comparações entre casos feitas com variáveis e escalas explícitas. Devem identificar semelhanças e diferenças sem pressupor que todos os processos seguem a mesma sequência."
+        "term": "asiodescendentes",
+        "definition": "Pessoas e comunidades descendentes de populações asiáticas em contextos diaspóricos; experiências variam por origem, geração, território, classe e contexto nacional."
       },
       {
-        "term": "cultura material",
-        "definition": "Objetos, estruturas, resíduos e transformações materiais produzidos ou apropriados por pessoas. Em Arqueologia, são evidências para investigar práticas, relações sociais e mudanças ao longo do tempo."
+        "term": "Estado-nação",
+        "definition": "Forma política que articula instituições estatais, território e projetos de pertencimento nacional, frequentemente em tensão com diversidade cultural e diásporas."
+      },
+      {
+        "term": "cidadania",
+        "definition": "Conjunto de direitos, deveres e formas de participação/pertencimento político, historicamente distribuídos de modo desigual."
+      },
+      {
+        "term": "parentesco",
+        "definition": "Relações socialmente reconhecidas de filiação, aliança e pertencimento; não se reduzem à biologia."
+      },
+      {
+        "term": "territorialidade",
+        "definition": "Formas de viver, significar, usar e reivindicar espaços, articulando identidade, memória e relações de poder."
       },
       {
         "term": "ancestralidade",
-        "definition": "Inferência estatística de afinidades genéticas entre indivíduos e populações. Não equivale automaticamente a identidade cultural, etnia ou pertencimento social."
+        "definition": "Relações com antepassados, origens e pertencimentos que assumem sentidos distintos conforme contexto cultural e religioso."
       },
       {
-        "term": "sedentarização",
-        "definition": "Aumento da permanência em determinados lugares. Pode acompanhar agricultura, pesca intensiva, armazenamento ou outras estratégias, sem seguir uma sequência universal."
+        "term": "globalização",
+        "definition": "Intensificação e reorganização de fluxos de pessoas, capital, objetos, informações e práticas em escala transnacional."
       },
       {
-        "term": "colonialismo",
-        "definition": "Processo de dominação política, econômica e cultural que reorganiza territórios, populações e materialidades. A Arqueologia investiga tanto estruturas coloniais quanto resistência e negociação."
-      },
-      {
-        "term": "urbanização",
-        "definition": "Processo de concentração populacional, infraestrutura, especialização e organização espacial em assentamentos urbanos, variável conforme tempo e região."
-      },
-      {
-        "term": "território",
-        "definition": "Espaço apropriado, vivido e disputado por grupos sociais, envolvendo relações de poder, pertencimento, uso e controle."
-      },
-      {
-        "term": "estado",
-        "definition": "Forma de organização política com instituições, autoridade e administração territorial. Em Arqueologia, sua identificação exige indicadores múltiplos e não apenas monumentalidade."
-      },
-      {
-        "term": "mito",
-        "definition": "Narrativa socialmente significativa que pode organizar cosmologias, memórias, origens e valores; não deve ser reduzida a ficção ou tomada literalmente sem contexto."
+        "term": "intolerância religiosa",
+        "definition": "Discriminação ou violência por pertencimento/prática religiosa, analisada em relação a poder, Estado e direitos."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Diversidade regional e cronológica da Ásia",
+        "topic": "Introdução à História Asiática",
         "points": [
           {
-            "term": "diversidade regional",
-            "definition": "Reconhecimento de que processos históricos variam entre regiões; comparações devem respeitar cronologias, ambientes e tradições locais."
+            "term": "História Asiática",
+            "definition": "Trabalhe sempre com recortes regionais e temporais explícitos."
           }
         ]
       },
       {
-        "topic": "Processos de sedentarização, agricultura e urbanização",
+        "topic": "Asiodescendentes e relações com Estado-nação na América Latina segundo a ementa",
         "points": [
           {
-            "term": "sedentarização",
-            "definition": "Aumento da permanência em determinados lugares. Pode acompanhar agricultura, pesca intensiva, armazenamento ou outras estratégias, sem seguir uma sequência universal."
+            "term": "asiodescendentes",
+            "definition": "Compare experiências diaspóricas sem homogeneizar origens."
           },
           {
-            "term": "urbanização",
-            "definition": "Processo de concentração populacional, infraestrutura, especialização e organização espacial em assentamentos urbanos, variável conforme tempo e região."
+            "term": "Estado-nação",
+            "definition": "Relacione políticas nacionais e pertencimentos."
           }
         ]
       },
       {
-        "topic": "Grandes tradições culturais e redes de intercâmbio",
-        "points": []
-      },
-      {
-        "topic": "Estado, religião, tecnologia e cultura material",
+        "topic": "Cidadania, diversidade étnico-racial e o trecho de “pós-abolição” presente no PPP",
         "points": [
           {
-            "term": "cultura material",
-            "definition": "Objetos, estruturas, resíduos e transformações materiais produzidos ou apropriados por pessoas. Em Arqueologia, são evidências para investigar práticas, relações sociais e mudanças ao longo do tempo."
+            "term": "cidadania",
+            "definition": "Examine direitos, exclusões e participação."
           },
           {
-            "term": "estado",
-            "definition": "Forma de organização política com instituições, autoridade e administração territorial. Em Arqueologia, sua identificação exige indicadores múltiplos e não apenas monumentalidade."
+            "term": "alerta editorial",
+            "definition": "A expressão “pós-abolição” está escrita no PPP, mas parece deslocada neste componente; trate-a como ponto a confirmar com o professor."
           }
         ]
       },
       {
-        "topic": "Colonialismo, nacionalismo e produção do conhecimento arqueológico",
+        "topic": "Acamponesamento, parentesco, direitos costumeiros e constituição de territórios asiáticos",
         "points": [
           {
-            "term": "colonialismo",
-            "definition": "Processo de dominação política, econômica e cultural que reorganiza territórios, populações e materialidades. A Arqueologia investiga tanto estruturas coloniais quanto resistência e negociação."
+            "term": "parentesco",
+            "definition": "Observe formas sociais de pertença e aliança."
+          },
+          {
+            "term": "territorialidade",
+            "definition": "Relacione espaço, identidade e poder."
           }
         ]
       },
       {
-        "topic": "Estudos comparativos entre regiões asiáticas",
+        "topic": "Mitologia, construção social da pessoa, ancestralidade, identidade e religiões",
         "points": [
           {
-            "term": "estudos comparativos",
-            "definition": "Comparações entre casos feitas com variáveis e escalas explícitas. Devem identificar semelhanças e diferenças sem pressupor que todos os processos seguem a mesma sequência."
+            "term": "ancestralidade",
+            "definition": "Considere significados culturais e religiosos específicos."
+          }
+        ]
+      },
+      {
+        "topic": "Política, globalização e intolerância religiosa",
+        "points": [
+          {
+            "term": "globalização",
+            "definition": "Analise fluxos e transformações transnacionais."
+          },
+          {
+            "term": "intolerância religiosa",
+            "definition": "Relacione diversidade religiosa a direitos e conflitos."
+          }
+        ]
+      },
+      {
+        "topic": "Leitura crítica da própria ementa e confirmação com o plano de ensino da turma",
+        "points": [
+          {
+            "term": "leitura crítica da fonte",
+            "definition": "Separe transcrição oficial, interpretação do app e conteúdo a confirmar com o plano de ensino."
           }
         ]
       }
@@ -3765,7 +3975,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Sociedades do Mediterrâneo antigo",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Sociedades do Mediterrâneo antigo” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Egeu, etruscos, gregos e romanos",
@@ -4143,6 +4358,22 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       {
         "term": "dano patrimonial",
         "definition": "Prejuízo físico, informacional ou social a bens patrimoniais. Responsabilização e reparação dependem de normas, nexo causal e circunstâncias do caso."
+      },
+      {
+        "term": "desenvolvimento sustentável",
+        "definition": "Princípio que busca articular necessidades sociais/econômicas e manutenção das condições ambientais, sujeito a disputas sobre critérios e escalas."
+      },
+      {
+        "term": "tutela administrativa",
+        "definition": "Instrumentos de proteção exercidos pela administração pública, como licenciamento, fiscalização, sanções e medidas preventivas."
+      },
+      {
+        "term": "tutela judicial",
+        "definition": "Proteção de direitos e bens por mecanismos judiciais, incluindo ações e medidas destinadas a prevenir, reparar ou responsabilizar danos."
+      },
+      {
+        "term": "biodiversidade",
+        "definition": "Variedade de genes, espécies e ecossistemas, relacionada a políticas de conservação, uso de recursos e direitos coletivos."
       }
     ],
     "topicGuides": [
@@ -4903,123 +5134,132 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s6-7-arqueogenetica": {
-    "overview": "Introduz genética aplicada a restos antigos, com atenção a DNA antigo, contaminação, linhagens, parentesco, ancestralidade e mobilidade. A integração com contexto arqueológico e os limites éticos são centrais.",
-    "category": "quant",
+    "overview": "Apesar do título “Arqueogenética”, a ementa oficial é essencialmente uma introdução à Genética: história da hereditariedade, Mendel, desvios das proporções mendelianas, herança extranuclear, gene molecular, regulação gênica e herança relacionada ao sexo. A v4 segue esse texto sem transformar DNA antigo em conteúdo oficial.",
+    "category": "bio",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Resolva cruzamentos simples antes de decorar proporções.",
+      "Diferencie gene, alelo, genótipo e fenótipo em exemplos concretos.",
+      "Conecte genética clássica e molecular: uma proporção observada é resultado de mecanismos celulares e moleculares."
     ],
     "concepts": [
       {
-        "term": "DNA mitocondrial",
-        "definition": "DNA presente nas mitocôndrias e herdado principalmente pela linha materna; útil para estudar linhagens, mas representa apenas parte da história biológica."
+        "term": "hereditariedade",
+        "definition": "Transmissão de características biológicas entre gerações, estudada por padrões de segregação, recombinação, expressão e mecanismos moleculares."
       },
       {
-        "term": "ancestralidade",
-        "definition": "Inferência estatística de afinidades genéticas entre indivíduos e populações. Não equivale automaticamente a identidade cultural, etnia ou pertencimento social."
+        "term": "gene",
+        "definition": "Unidade funcional de informação genética; em nível molecular, corresponde a uma região de DNA cuja atividade contribui para um produto funcional e sua regulação."
       },
       {
-        "term": "consentimento",
-        "definition": "Processo ético de informação e decisão voluntária sobre participação, coleta ou uso de dados e materiais, especialmente relevante em pesquisas com comunidades e restos humanos."
+        "term": "alelo",
+        "definition": "Uma das versões possíveis de um locus gênico; combinações de alelos compõem o genótipo de um indivíduo para determinado locus."
       },
       {
-        "term": "cromossomo Y",
-        "definition": "Cromossomo sexual herdado pela linha paterna em indivíduos com Y; marcadores podem informar certas linhagens, com limitações amostrais e demográficas."
+        "term": "genótipo",
+        "definition": "Conjunto de alelos considerado em um ou mais loci; não determina isoladamente todo o fenótipo."
       },
       {
-        "term": "DNA antigo",
-        "definition": "Material genético recuperado de restos antigos. É geralmente fragmentado e suscetível a contaminação, exigindo protocolos rigorosos e interpretação contextual."
+        "term": "fenótipo",
+        "definition": "Características observáveis resultantes da interação entre genótipo, desenvolvimento e ambiente."
       },
       {
-        "term": "amostragem",
-        "definition": "Seleção planejada de parte de um universo de interesse. Em Arqueologia, precisa considerar representatividade, escala, preservação e vieses de recuperação."
+        "term": "segregação mendeliana",
+        "definition": "Separação de alelos durante a formação de gametas, fundamento da primeira lei de Mendel em modelos simples."
       },
       {
-        "term": "mobilidade",
-        "definition": "Movimentos de pessoas, grupos ou atividades pela paisagem. Pode ser residencial, logística, sazonal ou ocorrer em outras escalas."
+        "term": "assortimento independente",
+        "definition": "Distribuição independente de alelos de loci distintos quando não há ligação relevante, fundamento da segunda lei de Mendel em condições específicas."
       },
       {
-        "term": "genética",
-        "definition": "Estudo da hereditariedade e variação biológica. Conceitos como DNA, alelos, recombinação e população são base para interpretar dados arqueogenéticos."
+        "term": "herança extranuclear",
+        "definition": "Transmissão de material genético fora do núcleo, como genomas mitocondriais e plastidiais, com padrões diferentes dos modelos nucleares simples."
       },
       {
-        "term": "ética",
-        "definition": "Reflexão sobre responsabilidades, deveres, consequências e relações de poder na pesquisa e na profissão. Em Arqueologia envolve patrimônio, comunidades, restos humanos, dados, autoria e impactos sociais."
+        "term": "regulação gênica",
+        "definition": "Controle de quando, onde e em que intensidade genes são expressos, envolvendo múltiplos mecanismos moleculares."
+      },
+      {
+        "term": "herança ligada ao sexo",
+        "definition": "Padrões de transmissão relacionados a genes localizados em cromossomos sexuais ou a mecanismos associados ao sexo biológico."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Fundamentos de genética e hereditariedade",
+        "topic": "História das ideias sobre hereditariedade e consolidação da Genética como ciência",
         "points": [
           {
-            "term": "genética",
-            "definition": "Estudo da hereditariedade e variação biológica. Conceitos como DNA, alelos, recombinação e população são base para interpretar dados arqueogenéticos."
-          },
-          {
-            "term": "ética",
-            "definition": "Reflexão sobre responsabilidades, deveres, consequências e relações de poder na pesquisa e na profissão. Em Arqueologia envolve patrimônio, comunidades, restos humanos, dados, autoria e impactos sociais."
+            "term": "hereditariedade",
+            "definition": "Acompanhe como explicações sobre transmissão mudaram até a genética moderna."
           }
         ]
       },
       {
-        "topic": "DNA antigo: preservação, contaminação e amostragem",
+        "topic": "Genética mendeliana: genes, alelos, genótipo, fenótipo e proporções de Mendel",
         "points": [
           {
-            "term": "DNA antigo",
-            "definition": "Material genético recuperado de restos antigos. É geralmente fragmentado e suscetível a contaminação, exigindo protocolos rigorosos e interpretação contextual."
+            "term": "gene",
+            "definition": "Relacione unidade conceitual e base molecular."
           },
           {
-            "term": "amostragem",
-            "definition": "Seleção planejada de parte de um universo de interesse. Em Arqueologia, precisa considerar representatividade, escala, preservação e vieses de recuperação."
+            "term": "alelo",
+            "definition": "Diferencie versões de um locus."
+          },
+          {
+            "term": "genótipo",
+            "definition": "Diferencie constituição genética de característica observada."
+          },
+          {
+            "term": "fenótipo",
+            "definition": "Inclua ambiente e desenvolvimento na expressão."
           }
         ]
       },
       {
-        "topic": "DNA mitocondrial, cromossomo Y e genoma",
+        "topic": "Alterações das proporções mendelianas e mecanismos de herança",
         "points": [
           {
-            "term": "DNA mitocondrial",
-            "definition": "DNA presente nas mitocôndrias e herdado principalmente pela linha materna; útil para estudar linhagens, mas representa apenas parte da história biológica."
+            "term": "segregação mendeliana",
+            "definition": "Use como modelo-base para reconhecer desvios."
           },
           {
-            "term": "cromossomo Y",
-            "definition": "Cromossomo sexual herdado pela linha paterna em indivíduos com Y; marcadores podem informar certas linhagens, com limitações amostrais e demográficas."
+            "term": "assortimento independente",
+            "definition": "Saiba as condições em que a proporção clássica é esperada."
           }
         ]
       },
       {
-        "topic": "Parentesco, ancestralidade e mobilidade",
+        "topic": "Herança extranuclear",
         "points": [
           {
-            "term": "ancestralidade",
-            "definition": "Inferência estatística de afinidades genéticas entre indivíduos e populações. Não equivale automaticamente a identidade cultural, etnia ou pertencimento social."
-          },
-          {
-            "term": "mobilidade",
-            "definition": "Movimentos de pessoas, grupos ou atividades pela paisagem. Pode ser residencial, logística, sazonal ou ocorrer em outras escalas."
+            "term": "herança extranuclear",
+            "definition": "Compare padrões nucleares e citoplasmáticos."
           }
         ]
       },
       {
-        "topic": "Integração entre dados genéticos e arqueológicos",
+        "topic": "Estrutura e função do gene em nível molecular",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Integração entre dados genéticos e arqueológicos. Conecte sua resposta ao foco geral da matéria: Introduz genética aplicada a restos antigos, com atenção a DNA antigo, contaminação, linhagens, parentesco, ancestralidade e mobilidade. A integração com contexto arqueológico e os limites éticos são centrais."
+            "term": "gene",
+            "definition": "Conecte DNA, transcrição, produto funcional e variação."
           }
         ]
       },
       {
-        "topic": "Ética, consentimento e limites de interpretações populacionais",
+        "topic": "Regulação gênica e bases moleculares dos resultados de Mendel",
         "points": [
           {
-            "term": "consentimento",
-            "definition": "Processo ético de informação e decisão voluntária sobre participação, coleta ou uso de dados e materiais, especialmente relevante em pesquisas com comunidades e restos humanos."
-          },
+            "term": "regulação gênica",
+            "definition": "Explique como expressão pode variar sem mudança na sequência do gene."
+          }
+        ]
+      },
+      {
+        "topic": "Relações entre herança genética e sexo",
+        "points": [
           {
-            "term": "ética",
-            "definition": "Reflexão sobre responsabilidades, deveres, consequências e relações de poder na pesquisa e na profissão. Em Arqueologia envolve patrimônio, comunidades, restos humanos, dados, autoria e impactos sociais."
+            "term": "herança ligada ao sexo",
+            "definition": "Resolva padrões simples e diferencie cromossomo, gene e expressão do fenótipo."
           }
         ]
       }
@@ -5054,7 +5294,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Aprofundamento de tema de Arqueologia Pré-Histórica",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Aprofundamento de tema de Arqueologia Pré-Histórica” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Leitura crítica de bibliografia especializada",
@@ -5499,227 +5744,240 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s7-4-arqueologia-do-quaternario": {
-    "overview": "Estuda o Pleistoceno e Holoceno, mudanças climáticas, geomorfologia, paleoambientes e dispersão humana. Ajuda a relacionar cronologia humana a processos naturais em escalas de tempo profundas.",
-    "category": "science",
+    "overview": "Estuda o Quaternário como contexto temporal e ambiental das sociedades humanas, com ênfase em mudanças de processos naturais, desafios metodológicos, transformações no Brasil e Nordeste, mapeamento geomorfológico e aplicação ao planejamento ambiental.",
+    "category": "earth",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Construa uma linha do tempo Pleistoceno–Holoceno e associe eventos a evidências, não a datas isoladas.",
+      "Para cada proxy paleoambiental, pergunte que processo ele registra e qual a resolução temporal/espacial.",
+      "Relacione mapeamento geomorfológico a formação de sítios e planejamento ambiental."
     ],
     "concepts": [
       {
-        "term": "correlação de registros",
-        "definition": "Relacionamento temporal ou ambiental entre sequências distintas usando cronologia, estratigrafia e marcadores comparáveis, com atenção a incertezas."
+        "term": "Quaternário",
+        "definition": "Período geológico mais recente, iniciado há cerca de 2,58 milhões de anos, abrangendo Pleistoceno e Holoceno."
       },
       {
-        "term": "formação de sítios",
-        "definition": "Processos culturais e naturais que criam, transformam, misturam, removem ou preservam vestígios antes da escavação."
+        "term": "Pleistoceno",
+        "definition": "Época marcada por grandes oscilações climáticas e glaciais, anterior ao Holoceno."
       },
       {
-        "term": "geomorfologia",
-        "definition": "Estudo das formas de relevo e dos processos que as criam e transformam, como erosão, sedimentação, dinâmica fluvial e movimentos de massa."
+        "term": "Holoceno",
+        "definition": "Época iniciada há cerca de 11,7 mil anos, com importantes mudanças ambientais e ampla diversidade de trajetórias humanas."
       },
       {
-        "term": "paleoambiente",
-        "definition": "Reconstrução de condições ambientais do passado por indicadores geológicos, biológicos e arqueológicos."
+        "term": "proxy paleoambiental",
+        "definition": "Indicador indireto usado para reconstruir condições passadas, como pólen, sedimentos, isótopos ou assembleias faunísticas; cada proxy tem limites."
       },
       {
-        "term": "pleistoceno",
-        "definition": "Época do Quaternário marcada por ciclos glaciais e grande parte da evolução e dispersão humana do gênero Homo."
+        "term": "correlação estratigráfica",
+        "definition": "Relação entre sequências de diferentes locais por posição, propriedades, eventos ou idades, sempre explicitando critérios e incerteza."
       },
       {
-        "term": "cronologia",
-        "definition": "Organização temporal de eventos, camadas, materiais ou fases culturais. Pode combinar datações relativas, absolutas e correlações contextuais."
+        "term": "mapeamento geomorfológico",
+        "definition": "Representação sistemática de formas, materiais e processos da paisagem para analisar sua evolução e distribuição espacial."
       },
       {
-        "term": "dispersão",
-        "definition": "Grau de variabilidade dos dados, descrito por medidas como amplitude, variância e desvio-padrão."
+        "term": "planejamento ambiental",
+        "definition": "Uso integrado de informações ambientais para orientar ocupação, conservação e gestão, considerando riscos, recursos e patrimônio."
       },
       {
-        "term": "holoceno",
-        "definition": "Época iniciada após o último grande período glacial, associada a mudanças ambientais e a muitas transformações sociais recentes, incluindo agricultura em várias regiões."
-      },
-      {
-        "term": "sítio",
-        "definition": "Lugar onde há evidências materiais de atividades humanas passadas reconhecidas arqueologicamente. Seus limites dependem da distribuição dos vestígios, processos de formação e objetivos da pesquisa."
-      },
-      {
-        "term": "evolução humana na África",
-        "definition": "A África concentra evidências fundamentais da evolução de hominínios e das primeiras populações de Homo sapiens; interpretações combinam fósseis, arqueologia, cronologia e genética."
+        "term": "mudança ambiental",
+        "definition": "Alteração em clima, vegetação, hidrologia, relevo ou ecossistemas; sua relação com sociedades humanas deve ser demonstrada, não presumida."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Cronologia e subdivisões do Quaternário",
+        "topic": "Caracterização, cronologia e subdivisões do Quaternário",
         "points": [
           {
-            "term": "cronologia",
-            "definition": "Organização temporal de eventos, camadas, materiais ou fases culturais. Pode combinar datações relativas, absolutas e correlações contextuais."
-          }
-        ]
-      },
-      {
-        "topic": "Pleistoceno, Holoceno e mudanças climáticas",
-        "points": [
-          {
-            "term": "pleistoceno",
-            "definition": "Época do Quaternário marcada por ciclos glaciais e grande parte da evolução e dispersão humana do gênero Homo."
+            "term": "Quaternário",
+            "definition": "Diferencie Quaternário, Pleistoceno e Holoceno."
           },
           {
-            "term": "holoceno",
-            "definition": "Época iniciada após o último grande período glacial, associada a mudanças ambientais e a muitas transformações sociais recentes, incluindo agricultura em várias regiões."
-          }
-        ]
-      },
-      {
-        "topic": "Geomorfologia e processos naturais em escalas quaternárias",
-        "points": [
-          {
-            "term": "geomorfologia",
-            "definition": "Estudo das formas de relevo e dos processos que as criam e transformam, como erosão, sedimentação, dinâmica fluvial e movimentos de massa."
-          }
-        ]
-      },
-      {
-        "topic": "Evolução e dispersão humana no período",
-        "points": [
-          {
-            "term": "dispersão",
-            "definition": "Grau de variabilidade dos dados, descrito por medidas como amplitude, variância e desvio-padrão."
+            "term": "Pleistoceno",
+            "definition": "Relacione oscilações ambientais e escalas temporais."
           },
           {
-            "term": "evolução humana na África",
-            "definition": "A África concentra evidências fundamentais da evolução de hominínios e das primeiras populações de Homo sapiens; interpretações combinam fósseis, arqueologia, cronologia e genética."
+            "term": "Holoceno",
+            "definition": "Considere mudanças ambientais recentes sem tratá-las como uniformes."
           }
         ]
       },
       {
-        "topic": "Paleoambientes e formação de sítios",
+        "topic": "Mudanças nas taxas de processos naturais e transformações ambientais",
         "points": [
           {
-            "term": "formação de sítios",
-            "definition": "Processos culturais e naturais que criam, transformam, misturam, removem ou preservam vestígios antes da escavação."
-          },
-          {
-            "term": "paleoambiente",
-            "definition": "Reconstrução de condições ambientais do passado por indicadores geológicos, biológicos e arqueológicos."
-          },
-          {
-            "term": "sítio",
-            "definition": "Lugar onde há evidências materiais de atividades humanas passadas reconhecidas arqueologicamente. Seus limites dependem da distribuição dos vestígios, processos de formação e objetivos da pesquisa."
+            "term": "mudança ambiental",
+            "definition": "Identifique processo, evidência, escala e direção da mudança."
           }
         ]
       },
       {
-        "topic": "Desafios de datação e correlação de registros",
+        "topic": "Seres humanos no Quaternário e relações com mudanças ambientais",
         "points": [
           {
-            "term": "correlação de registros",
-            "definition": "Relacionamento temporal ou ambiental entre sequências distintas usando cronologia, estratigrafia e marcadores comparáveis, com atenção a incertezas."
+            "term": "interação humano-ambiente",
+            "definition": "Analise como populações respondem e também transformam ambientes; evite determinismo ambiental."
+          }
+        ]
+      },
+      {
+        "topic": "Desafios metodológicos no estudo de registros quaternários",
+        "points": [
+          {
+            "term": "proxy paleoambiental",
+            "definition": "Diferencie indicador de interpretação."
+          },
+          {
+            "term": "correlação estratigráfica",
+            "definition": "Explique critérios de correlação e incerteza."
+          }
+        ]
+      },
+      {
+        "topic": "Transformações ambientais quaternárias no Brasil e no Nordeste",
+        "points": [
+          {
+            "term": "escala regional",
+            "definition": "Compare registros locais e regionais sem extrapolar um sítio para todo o Nordeste."
+          }
+        ]
+      },
+      {
+        "topic": "Mapeamentos geomorfológicos aplicados ao Quaternário",
+        "points": [
+          {
+            "term": "mapeamento geomorfológico",
+            "definition": "Use formas, materiais e processos para interpretar a paisagem."
+          }
+        ]
+      },
+      {
+        "topic": "Aplicações dos estudos do Quaternário ao planejamento ambiental",
+        "points": [
+          {
+            "term": "planejamento ambiental",
+            "definition": "Conecte conhecimento quaternário a riscos, uso do solo e conservação."
           }
         ]
       }
     ]
   },
   "s7-5-metodos-e-tecnicas-de-elaboracao-de-relatorio-de-pesquisa": {
-    "overview": "Ensina a estruturar projetos e relatórios com problema, objetivos, métodos, dados, resultados, discussão e referências. Valoriza clareza, rastreabilidade da evidência e adequação a normas acadêmicas e técnicas.",
-    "category": "professional",
+    "overview": "Trabalha a lógica de projetos e relatórios de pesquisa: preparação, execução, acompanhamento, avaliação e comunicação técnica. A frase final da ementa sobre “fabricação de artefatos em osso, madeira e chifre” é tratada como provável ruído editorial e não orienta o roteiro.",
+    "category": "methods",
     "studyTips": [
-      "Treine escrita técnica com estrutura, evidência e conclusão claramente separadas.",
-      "Guarde modelos de fichas, relatórios e checklists produzidos nas disciplinas práticas.",
-      "Revise ética, rastreabilidade e comunicação profissional em cada atividade."
+      "Escreva um mini-projeto de uma página e depois transforme-o em estrutura de relatório.",
+      "Em cada seção do relatório, pergunte qual evidência sustenta a afirmação.",
+      "Use tabelas, figuras e anexos apenas quando acrescentarem rastreabilidade ou clareza."
     ],
     "concepts": [
       {
-        "term": "resultados e discussão",
-        "definition": "Resultados apresentam o que foi observado ou analisado; discussão interpreta esses achados em relação às perguntas, hipóteses e literatura."
+        "term": "projeto de pesquisa",
+        "definition": "Documento de planejamento que define problema, objetivos, justificativa, métodos, cronograma, recursos, riscos e produtos esperados."
       },
       {
-        "term": "estrutura de projeto",
-        "definition": "Organização de problema, objetivos, escopo, métodos, cronograma, equipe, orçamento, riscos, produtos e critérios de qualidade."
-      },
-      {
-        "term": "relatório científico",
-        "definition": "Documento que apresenta problema, métodos, dados, análises, resultados e discussão de modo verificável e argumentado."
-      },
-      {
-        "term": "normas técnicas",
-        "definition": "Regras de apresentação, procedimento ou documentação adotadas por instituições e áreas profissionais. Devem ser verificadas na versão vigente."
-      },
-      {
-        "term": "artefato",
-        "definition": "Objeto produzido, modificado ou utilizado por seres humanos. A interpretação depende de atributos do objeto e de seu contexto."
+        "term": "relatório de pesquisa",
+        "definition": "Documento que registra o que foi feito, como, com quais dados, resultados, limitações e conclusões, permitindo avaliação e rastreabilidade."
       },
       {
         "term": "problema de pesquisa",
-        "definition": "Pergunta delimitada e investigável que orienta escolhas de evidência, método e análise. Um bom problema não é apenas um tema amplo."
+        "definition": "Pergunta delimitada e investigável que orienta coleta, análise e argumento."
+      },
+      {
+        "term": "objetivo",
+        "definition": "Resultado cognitivo ou prático que a pesquisa busca alcançar; deve ser coerente com o problema e verificável pelos métodos."
+      },
+      {
+        "term": "metodologia",
+        "definition": "Justificativa articulada dos métodos, amostra, procedimentos de registro e análise escolhidos para responder ao problema."
+      },
+      {
+        "term": "relatório de avaliação",
+        "definition": "Registro de acompanhamento que compara execução e resultados parciais ao planejamento, documentando mudanças e justificativas."
+      },
+      {
+        "term": "rastreabilidade",
+        "definition": "Capacidade de reconstruir a origem de dados, decisões, procedimentos e versões que sustentam um resultado."
+      },
+      {
+        "term": "resultado e discussão",
+        "definition": "Resultados apresentam evidências/achados; discussão interpreta seu significado à luz do problema, teoria, literatura, limites e alternativas."
       }
     ],
     "topicGuides": [
       {
-        "topic": "Estrutura de projeto e relatório científico",
+        "topic": "Características e finalidades de projetos de pesquisa científica",
         "points": [
           {
-            "term": "estrutura de projeto",
-            "definition": "Organização de problema, objetivos, escopo, métodos, cronograma, equipe, orçamento, riscos, produtos e critérios de qualidade."
+            "term": "projeto de pesquisa",
+            "definition": "Mapeie problema, objetivos, método, cronograma e produtos."
+          }
+        ]
+      },
+      {
+        "topic": "Características e finalidades de relatórios de pesquisa",
+        "points": [
+          {
+            "term": "relatório de pesquisa",
+            "definition": "Diferencie planejamento de documentação da execução e resultados."
+          }
+        ]
+      },
+      {
+        "topic": "Raciocínios preparatórios: problema, objetivos, justificativa e metodologia",
+        "points": [
+          {
+            "term": "problema de pesquisa",
+            "definition": "Transforme tema em pergunta investigável."
           },
           {
-            "term": "relatório científico",
-            "definition": "Documento que apresenta problema, métodos, dados, análises, resultados e discussão de modo verificável e argumentado."
+            "term": "objetivo",
+            "definition": "Escreva objetivos coerentes e observáveis."
+          },
+          {
+            "term": "metodologia",
+            "definition": "Justifique métodos em função do problema."
           }
         ]
       },
       {
-        "topic": "Problema, objetivos, justificativa e metodologia",
+        "topic": "Planejamento e execução da pesquisa",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Transforme o tema em prática profissional: objetivo, procedimento, evidência/documentação produzida, responsabilidade ética e forma de comunicar o resultado. Tópico: Problema, objetivos, justificativa e metodologia. Conecte sua resposta ao foco geral da matéria: Ensina a estruturar projetos e relatórios com problema, objetivos, métodos, dados, resultados, discussão e referências. Valoriza clareza, rastreabilidade da evidência e adequação a normas acadêmicas e técnicas."
+            "term": "projeto de pesquisa",
+            "definition": "Acompanhe cronograma, recursos, riscos e alterações."
           }
         ]
       },
       {
-        "topic": "Planejamento, execução e acompanhamento de pesquisa",
+        "topic": "Acompanhamento da pesquisa por relatórios de avaliação",
         "points": [
           {
-            "term": "Como dominar este tópico",
-            "definition": "Transforme o tema em prática profissional: objetivo, procedimento, evidência/documentação produzida, responsabilidade ética e forma de comunicar o resultado. Tópico: Planejamento, execução e acompanhamento de pesquisa. Conecte sua resposta ao foco geral da matéria: Ensina a estruturar projetos e relatórios com problema, objetivos, métodos, dados, resultados, discussão e referências. Valoriza clareza, rastreabilidade da evidência e adequação a normas acadêmicas e técnicas."
+            "term": "relatório de avaliação",
+            "definition": "Registre andamento, desvios, justificativas e próximos passos."
           }
         ]
       },
       {
-        "topic": "Organização de dados, resultados e discussão",
+        "topic": "Organização de dados, resultados, discussão e documentação",
         "points": [
           {
-            "term": "resultados e discussão",
-            "definition": "Resultados apresentam o que foi observado ou analisado; discussão interpreta esses achados em relação às perguntas, hipóteses e literatura."
+            "term": "resultado e discussão",
+            "definition": "Separe apresentação de evidência de sua interpretação."
+          },
+          {
+            "term": "rastreabilidade",
+            "definition": "Mantenha ligação entre dado, análise e conclusão."
           }
         ]
       },
       {
-        "topic": "Normas técnicas e referências",
+        "topic": "Redação técnica, normas, referências e rastreabilidade das evidências",
         "points": [
           {
-            "term": "normas técnicas",
-            "definition": "Regras de apresentação, procedimento ou documentação adotadas por instituições e áreas profissionais. Devem ser verificadas na versão vigente."
-          }
-        ]
-      },
-      {
-        "topic": "Redação clara, evidências e argumentação",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Transforme o tema em prática profissional: objetivo, procedimento, evidência/documentação produzida, responsabilidade ética e forma de comunicar o resultado. Tópico: Redação clara, evidências e argumentação. Conecte sua resposta ao foco geral da matéria: Ensina a estruturar projetos e relatórios com problema, objetivos, métodos, dados, resultados, discussão e referências. Valoriza clareza, rastreabilidade da evidência e adequação a normas acadêmicas e técnicas."
-          }
-        ]
-      },
-      {
-        "topic": "Produção de relatórios técnicos de Arqueologia",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Transforme o tema em prática profissional: objetivo, procedimento, evidência/documentação produzida, responsabilidade ética e forma de comunicar o resultado. Tópico: Produção de relatórios técnicos de Arqueologia. Conecte sua resposta ao foco geral da matéria: Ensina a estruturar projetos e relatórios com problema, objetivos, métodos, dados, resultados, discussão e referências. Valoriza clareza, rastreabilidade da evidência e adequação a normas acadêmicas e técnicas."
+            "term": "rastreabilidade",
+            "definition": "Use citações, referências, tabelas, figuras e anexos de modo verificável."
           }
         ]
       }
@@ -6015,7 +6273,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Estrutura, descrição e argumento em textos etnográficos",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Estrutura, descrição e argumento em textos etnográficos” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Posicionamento do pesquisador e reflexividade",
@@ -6028,7 +6291,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Como dados etnográficos podem dialogar com problemas arqueológicos",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Como dados etnográficos podem dialogar com problemas arqueológicos” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       }
     ]
   },
@@ -6348,7 +6616,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Análise crítica de documentos técnicos e jurídicos",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Análise crítica de documentos técnicos e jurídicos” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Fundamentação de conclusões e responsabilidade profissional",
@@ -6580,7 +6853,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Periodização do Egito antigo",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Periodização do Egito antigo” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Arquitetura, escultura, pintura e iconografia",
@@ -6978,7 +7256,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Diagnóstico do estado de conservação",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Diagnóstico do estado de conservação” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       },
       {
         "topic": "Limpeza e estabilização",
@@ -7123,7 +7406,12 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Debates sobre complexidade social",
-        "points": []
+        "points": [
+          {
+            "term": "Como estudar este tópico",
+            "definition": "Explique “Debates sobre complexidade social” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
+          }
+        ]
       }
     ]
   },

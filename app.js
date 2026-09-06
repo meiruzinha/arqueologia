@@ -3,7 +3,8 @@
   const STUDY = window.ARCHAEOLOGY_STUDY_CONTENT || {};
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const STORAGE_KEY = 'arqueologia-study-hub-v3';
+  const STORAGE_KEY = 'arqueologia-study-hub-v4';
+  const V3_STORAGE_KEY = 'arqueologia-study-hub-v3';
   const V2_STORAGE_KEY = 'arqueologia-study-hub-v2';
   const V1_STORAGE_KEY = 'arqueologia-study-hub-v1';
   const defaultState = {
@@ -35,6 +36,12 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return mergeState(JSON.parse(raw));
+      const v3 = localStorage.getItem(V3_STORAGE_KEY);
+      if (v3) {
+        const migrated = mergeState(JSON.parse(v3));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
       const v2 = localStorage.getItem(V2_STORAGE_KEY);
       if (v2) {
         const migrated = mergeState(JSON.parse(v2));
@@ -192,6 +199,9 @@
 
   function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
   function navigate(viewName, opts = {}) {
+    searchQuery = '';
+    const search = $('#searchInput');
+    if (search) search.value = '';
     state.view = viewName;
     if (opts.semester) state.semesterFilter = Number(opts.semester);
     if (viewName === 'semester' && !opts.semester) state.semesterFilter = Number(state.currentSemester || 1);
@@ -215,7 +225,7 @@
         ${course.semester ? `<span class="badge">${course.semester}º sem.</span>` : `<span class="badge">Optativa</span>`}
         <span class="badge">${course.matrixHours}h</span>${course.officialSyllabusAvailable === false ? `<span class="badge warn">PPP: sem ementa</span>` : course.note ? `<span class="badge warn">PPP ⚠</span>` : ''}${statusBadge(course)}
         ${score !== undefined ? `<span class="badge quiz-badge">Quiz ${score}%</span>` : ''}
-      </div><button class="favorite-btn ${fav ? 'active' : ''}" data-fav-id="${esc(course.id)}" aria-label="Favoritar matéria">${fav ? '★' : '☆'}</button></div>
+      </div><button class="favorite-btn ${fav ? 'active' : ''}" data-fav-id="${esc(course.id)}" aria-label="${fav ? 'Remover dos favoritos' : 'Favoritar matéria'}" aria-pressed="${fav ? 'true' : 'false'}">${fav ? '★' : '☆'}</button></div>
       <h3>${esc(course.title)}</h3><p>${esc(excerpt)}</p>
       <div class="course-card-footer"><div class="progress-track"><div class="progress-fill" style="width:${p}%"></div></div><small>${p}%</small></div>
     </article>`;
@@ -270,7 +280,7 @@
     </section>` : `<div class="notice info"><div>✓</div><div><strong>Semestre concluído</strong><p>Você marcou todas as matérias do ${sem}º semestre como concluídas. Use a revisão para manter os conceitos vivos.</p></div></div>`}
 
     <div class="section-head"><div><span class="eyebrow">Seu semestre atual</span><h2>${sem}º semestre</h2><p>${stats.count} componentes · ${stats.hours}h pela matriz.</p></div><button class="btn btn-outline btn-sm" data-go-sem="${sem}">Ver todas</button></div>
-    <div class="card-grid">${current.slice(0, 6).map(courseCard).join('')}</div>
+    <div class="card-grid">${current.map(courseCard).join('')}</div>
 
     <div class="notice" style="margin-top:24px"><div>⚠</div><div><strong>O plano do professor continua mandando</strong><p>O app cobre a matriz e o ementário do PPP e cria material de preparação a partir deles. Quando você receber o plano de ensino de uma disciplina, ele deve ser usado para atualizar a ordem, leituras e avaliações daquela turma.</p></div></div>`;
   }
@@ -348,6 +358,12 @@
         <div class="audit-card"><span>Soma da matriz</span><strong>${m.matrixRequiredHoursSum}h</strong><small>pelas cargas listadas</small></div>
         <div class="audit-card warn"><span>PPP declara</span><strong>${m.pppDeclaredRequiredHours}h</strong><small>diferença de ${m.pppDeclaredRequiredHours - m.matrixRequiredHoursSum}h</small></div>
         <div class="audit-card warn"><span>Estágios</span><strong>${m.matrixListedStages}</strong><small>o texto introdutório fala em ${m.pppDeclaredStages}</small></div>
+      </div>
+      <div class="audit-grid audit-grid-secondary">
+        <div class="audit-card warn"><span>Créditos no item 2.11</span><strong>${m.pppDeclaredCreditsMatrixSection}</strong><small>créditos mínimos declarados</small></div>
+        <div class="audit-card warn"><span>Créditos no item 2.13</span><strong>${m.pppDeclaredCreditsRegimeSection}</strong><small>o mesmo PPP declara outro total</small></div>
+        <div class="audit-card warn"><span>Percentuais declarados</span><strong>${m.pppDeclaredSpecificPercent}/${m.pppDeclaredOptionalPercent}/${m.pppDeclaredFreePercent}%</strong><small>específica / optativa / livre</small></div>
+        <div class="audit-card"><span>Percentuais pela conta do PPP</span><strong>${m.recomputedSpecificPercent}/${m.recomputedOptionalPercent}/${m.recomputedFreePercent}%</strong><small>usando 4.840h como denominador</small></div>
       </div>
       <div class="notice"><div>⚠</div><div><strong>O PPP não fecha matematicamente</strong><p>A matriz listada soma ${m.matrixRequiredHoursSum}h. Somando as ${m.optionalCatalogHoursSum}h de optativas e ${m.freeFormationHours}h de formação livre, o total recomposto seria ${m.recomputedTotalFromListedMatrix}h, enquanto o documento declara ${m.pppDeclaredTotalHours}h. O app não inventa uma disciplina de 60h para completar a conta.</p></div></div>
       <div class="section-head"><div><h2>Divergências por disciplina</h2><p>Diferenças de nome ou carga horária encontradas entre matriz e ementário.</p></div></div><section class="panel"><table class="detail-table">${discrepancyRows}</table></section>
@@ -551,7 +567,7 @@
   function bindDynamic() {
     $$('[data-course-id]', view).forEach(card => {
       const open = e => { if (e.target.closest('[data-fav-id]')) return; openCourse(courseById(card.dataset.courseId)); };
-      card.addEventListener('click', open); card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(e); } });
+      card.addEventListener('click', open); card.addEventListener('keydown', e => { if (e.target.closest('[data-fav-id]')) return; if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(e); } });
     });
     $$('[data-course-open]', view).forEach(btn => btn.addEventListener('click', () => openCourse(courseById(btn.dataset.courseOpen), btn.dataset.openTab || 'guide')));
     $$('[data-fav-id]', view).forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); const id = btn.dataset.favId; state.favorites[id] = !state.favorites[id]; saveState(); render(); }));
@@ -564,7 +580,7 @@
   }
 
   function exportBackup() {
-    const payload = { app: 'Arqueologia Study Hub UNEB', version: 3, exportedAt: new Date().toISOString(), state };
+    const payload = { app: 'Arqueologia Study Hub UNEB', version: 4, exportedAt: new Date().toISOString(), state };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `arqueologia-study-hub-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }

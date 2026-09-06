@@ -1,34 +1,54 @@
-# Arqueologia Study Hub · UNEB — v3 auditada
+# Arqueologia Study Hub · UNEB — v4 auditoria completa
 
 Aplicativo de estudos offline para o Bacharelado em Arqueologia da UNEB, Campus VIII (Paulo Afonso), organizado a partir do Projeto Político-Pedagógico (PPP) disponibilizado pela página oficial do curso.
 
-## O que foi auditado na v3
+## O que foi conferido na v4
 
-- os 8 semestres da matriz curricular foram conferidos;
-- 65 componentes obrigatórios estão cadastrados, na distribuição 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
-- as 14 optativas listadas no PPP estão cadastradas;
-- a soma da lista efetiva da matriz é 4.020 h obrigatórias e 560 h de optativas;
-- as ementas e bibliografias foram mantidas separadas do material de apoio;
-- optativas sem ementário no PPP agora aparecem explicitamente como **sem ementa específica neste PPP**;
-- créditos de Prática de Campo I, Prática de Laboratório I, Prática de Campo II e Prática de Laboratório II foram corrigidos conforme o ementário;
-- conceitos automáticos fora de contexto foram removidos;
-- quizzes agora eliminam alternativas com definições duplicadas;
-- progresso de tópicos e flashcards passou a usar chaves estáveis, evitando trocar de assunto após futuras reorganizações;
-- importação de backup tem validação mais defensiva;
-- busca ignora acentos;
-- foram adicionados Glossário e a aba **Minha turma** para registrar professor, horários, avaliações e o plano de ensino real.
+A matriz curricular foi conferida componente por componente nas páginas 25–28 do PPP, e o ementário foi revisado disciplina por disciplina.
 
-## Atenção às divergências do próprio PPP
+- 8 semestres;
+- 65 componentes obrigatórios na distribuição 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
+- cargas semestrais da lista da matriz: 420 / 480 / 560 / 560 / 560 / 560 / 500 / 380 h;
+- 4.020 h na lista de componentes obrigatórios;
+- 14 optativas, totalizando 560 h no catálogo apresentado;
+- ementas, nomes do ementário, créditos e bibliografias mantidos separados do material de apoio;
+- 79 pacotes de estudo, um para cada componente obrigatório/optativo;
+- todos os tópicos cadastrados possuem guia de estudo não vazio;
+- optativas continuam identificadas como roteiros sugeridos a partir do título, porque este PPP não traz ementas específicas para elas.
 
-O PPP contém inconsistências internas. O texto introdutório declara 56 disciplinas, 3 estágios (200 h), 4.080 h de formação específica e 4.840 h no total. Porém, a lista efetiva da matriz contém 65 componentes obrigatórios, incluindo 6 estágios, e soma 4.020 h. Somando a lista obrigatória (4.020 h), as optativas catalogadas (560 h) e a formação livre declarada (200 h), chega-se a 4.780 h, não 4.840 h.
+## Correções importantes da v4
 
-O app **não inventa uma disciplina ou 60 h para fechar essa diferença**. Ele reproduz a matriz listada e sinaliza as divergências. Também mantém alertas quando matriz e ementário divergem em nome ou carga horária.
+- corrigida a bibliografia complementar de **Estágio VI**, que na versão anterior havia capturado indevidamente texto das seções seguintes do PDF;
+- roteiros de **Arqueologia Histórica I e II, Tecnologia Cerâmica, Geologia e Geomorfologia, Antropologia Física, Arqueologia Africana, Arqueologia Asiática, Arqueogenética, Arqueologia do Quaternário e Métodos/Relatórios** foram realinhados à ementa oficial;
+- removidos guias vazios e fallbacks excessivamente genéricos;
+- preservados e explicados erros ou trechos estranhos do próprio PPP em vez de transformá-los silenciosamente em “conteúdo oficial”;
+- a navegação agora limpa uma busca ativa, evitando ficar visualmente em uma seção enquanto ainda eram mostrados resultados da busca;
+- corrigido o comportamento de teclado do botão de favorito e adicionados `aria-pressed`/rótulo dinâmico;
+- o painel inicial mostra todos os componentes do semestre selecionado, em vez de ocultar o último atrás de “Ver todas”;
+- sidebar passou a rolar em telas de pouca altura;
+- modal de disciplina passou a ocupar a tela inteira no celular e suas abas ficam acessíveis/roláveis;
+- textos longos de bibliografia, notas e tabelas agora quebram linha com segurança;
+- adicionada preferência de movimento reduzido;
+- migração de progresso da v3 para a v4 preservada.
 
-## O que é oficial e o que é apoio
+## Divergências do próprio PPP
 
-**Oficial do PPP:** nome/carga horária da matriz, ementa quando existe no documento, créditos e bibliografias do ementário.
+O documento tem inconsistências internas que o app **não tenta consertar inventando dados**. Entre elas:
 
-**Material de apoio:** roteiros de estudo, explicações, tópicos, conceitos, flashcards, quizzes e dicas. Esses itens servem para preparação, mas não significam que o professor dará exatamente aquelas aulas ou cobrará exatamente aquelas questões. O plano de ensino da turma é a referência final para a disciplina ofertada.
+- a seção da matriz declara 56 disciplinas, 3 estágios/200 h, 236 créditos e 4.080 h de formação específica, mas a lista efetivamente apresentada contém 65 componentes, Estágio I a VI e soma 4.020 h;
+- 4.020 + 560 + 200 = 4.780 h, enquanto o PPP declara 4.840 h;
+- os percentuais declarados (74% / 13% / 13%) não correspondem às próprias cargas declaradas de 4.080 / 560 / 200 h; o app exibe também o recálculo aproximado;
+- outra seção registra 265 créditos mínimos, em conflito com os 236 da seção da matriz;
+- há diferenças entre matriz e ementário em nome/carga horária de alguns componentes;
+- Prática de Laboratório II aparece com `1T3T` no ementário, grafia preservada e sinalizada;
+- o TCC é descrito como oito créditos em uma seção, mas aparece como 60 h / 4T no ementário;
+- existem trechos com sinais de edição/cópia no texto oficial, como Arqueologia Asiática e uma frase desconectada na ementa de Métodos/Relatórios.
+
+## Oficial x material de apoio
+
+**Oficial do PPP:** nome e carga da matriz, nome/carga/créditos do ementário, ementa e bibliografias quando existentes.
+
+**Material de apoio:** tópicos explicados, conceitos, flashcards, quizzes, dicas e roteiros. Eles derivam da ementa para ajudar na preparação, mas não substituem o plano de ensino real da turma. Quando a disciplina for ofertada, o plano do professor deve ser a referência final para ordem, leituras, avaliações e aprofundamento.
 
 ## Arquivos
 
@@ -38,18 +58,18 @@ O app **não inventa uma disciplina ou 60 h para fechar essa diferença**. Ele r
 - `data.js` — matriz, ementas, bibliografias e metadados
 - `study-content.js` — material de apoio e guias de estudo
 - `data.json` — espelho JSON dos dados curriculares
-- `validate-data.js` — auditoria automatizada dos dados
-- `AUDITORIA.md` — resumo das verificações e correções da v3
+- `validate-data.js` — auditoria automatizada da matriz e dos pacotes de estudo
+- `AUDITORIA.md` — relatório resumido da conferência da v4
 
-## Como abrir
+## Como abrir/publicar
 
-Abra `index.html` diretamente para uma visualização rápida. Para uso normal, prefira publicar a pasta em HTTPS (por exemplo, Cloudflare Pages) para que o armazenamento local seja consistente.
+O projeto é HTML/CSS/JavaScript puro, sem framework, npm, banco de dados ou servidor obrigatório. Pode ser publicado diretamente no Cloudflare Pages/GitHub Pages.
 
-Não há npm, framework, banco de dados ou servidor obrigatório: o app é HTML/CSS/JavaScript puro.
+Para atualizar o site já conectado ao Cloudflare Pages, substitua no repositório os arquivos antigos pelos arquivos **extraídos** deste pacote. Não envie o ZIP como página do site.
 
-## Validação opcional
+## Validação local
 
-Com Node.js instalado, rode:
+Com Node.js instalado:
 
 ```bash
 node validate-data.js
