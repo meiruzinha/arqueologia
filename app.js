@@ -1,9 +1,11 @@
 (() => {
   const DATA = window.ARCHAEOLOGY_DATA;
   const STUDY = window.ARCHAEOLOGY_STUDY_CONTENT || {};
+  const LESSONS = window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const STORAGE_KEY = 'arqueologia-study-hub-v5-3';
+  const STORAGE_KEY = 'arqueologia-study-hub-v6';
+  const V53_STORAGE_KEY = 'arqueologia-study-hub-v5-3';
   const V5_STORAGE_KEY = 'arqueologia-study-hub-v5';
   const V4_STORAGE_KEY = 'arqueologia-study-hub-v4';
   const V3_STORAGE_KEY = 'arqueologia-study-hub-v3';
@@ -38,6 +40,13 @@
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return mergeState(JSON.parse(raw));
+      const v53 = localStorage.getItem(V53_STORAGE_KEY);
+      if (v53) {
+        const migrated = mergeState(JSON.parse(v53));
+        canonicalizeTopicChecks(migrated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
       const v5 = localStorage.getItem(V5_STORAGE_KEY);
       if (v5) {
         const migrated = mergeState(JSON.parse(v5));
@@ -304,7 +313,7 @@
     return `<section class="hero">
       <div class="eyebrow">Bacharelado em Arqueologia · UNEB Campus VIII</div>
       <h1>Um app para estudar a graduação inteira.</h1>
-      <p>O PPP oficial fica separado do material de apoio. Em cada matéria você tem roteiro, explicações, conceitos-chave, flashcards, quiz, bibliografia e anotações.</p>
+      <p>O PPP oficial fica separado do material didático. Em cada matéria você tem aulas para ler e estudar, conceitos-chave, exemplos aplicados, perguntas de revisão, flashcards, quiz, bibliografia e anotações.</p>
       <div class="hero-actions"><button class="btn btn-light" data-go-sem="${sem}">Abrir ${sem}º semestre</button><button class="btn" data-go-review>Ir para revisão</button></div>
     </section>
 
@@ -438,12 +447,148 @@
     bindDynamic(); updateGlobalProgress();
   }
 
-  function lessonText(topic, course) {
+  const CATEGORY_LESSON = {
+    theory: {
+      approach: 'Neste tipo de conteúdo, o objetivo não é decorar nomes isolados. Compare problemas, conceitos, pressupostos, evidências e críticas. Pergunte sempre o que cada abordagem consegue explicar e o que deixa de fora.',
+      example: 'Pegue a mesma evidência e imagine duas interpretações diferentes. Depois identifique qual conceito ou pressuposto faz cada leitura chegar a uma conclusão distinta.'
+    },
+    heritage: {
+      approach: 'Relacione patrimônio, memória, território, instituições e pessoas afetadas. Diferencie valor científico, valor social, obrigação legal e decisão ética, porque eles podem convergir ou entrar em conflito.',
+      example: 'Imagine uma área com interesse arqueológico afetada por uma obra. Liste pesquisadores, comunidade, órgão público e empreendedor e pergunte quais valores, responsabilidades e riscos cada ator percebe.'
+    },
+    material: {
+      approach: 'A análise material começa pela cadeia de ações: obtenção da matéria-prima, produção, uso, manutenção, descarte e transformação pós-deposicional. Forma, matéria-prima e contexto precisam ser interpretados em conjunto.',
+      example: 'Compare dois objetos visualmente semelhantes encontrados em contextos diferentes e pergunte se foram produzidos, usados e descartados da mesma maneira.'
+    },
+    quant: {
+      approach: 'Defina unidade de análise, variável, procedimento de coleta e forma de comparação antes de calcular ou classificar. Um número só é útil quando sabemos exatamente o que foi medido, como e com qual margem de incerteza.',
+      example: 'Monte uma pequena tabela hipotética com dez vestígios e pergunte quais variáveis realmente ajudam a responder à pergunta de pesquisa e quais apenas acrescentam números sem interpretação.'
+    },
+    science: {
+      approach: 'Conecte observação, amostragem, processos naturais e hipótese arqueológica. Em conteúdos bioambientais, identificar um vestígio é apenas o começo: é preciso entender preservação, formação e significado contextual.',
+      example: 'Imagine uma amostra biológica retirada de um sítio e descreva o caminho desde a coleta até a interpretação, incluindo riscos de contaminação, identificação e contexto.'
+    },
+    law: {
+      approach: 'Separe norma, competência institucional, procedimento e responsabilidade profissional. Em Direito aplicado, não basta saber que uma proteção existe: é preciso entender quando ela se aplica e quem deve agir.',
+      example: 'Construa um caso hipotético de obra com patrimônio arqueológico e identifique quais decisões são técnicas, quais são administrativas e quais dependem de obrigação legal.'
+    },
+    regional: {
+      approach: 'Organize cronologia, ambiente, tipos de sítio, cultura material e modelos interpretativos. Evite transformar regiões inteiras em uma única cultura: compare diversidade interna e mudanças no tempo.',
+      example: 'Escolha dois sítios ou conjuntos de uma mesma região e compare cronologia, ambiente, materiais e interpretação antes de concluir que pertencem ao mesmo processo histórico.'
+    },
+    method: {
+      approach: 'Pense como um fluxo de trabalho: entrada de dados, procedimento, controle de qualidade, produto e interpretação. Métodos arqueológicos precisam ser repetíveis o suficiente para que outra pessoa entenda como o resultado foi produzido.',
+      example: 'Desenhe um passo a passo do procedimento e marque em que etapas um erro de registro poderia alterar a conclusão final.'
+    },
+    historical: {
+      approach: 'Cruze cultura material com documentos, imagens, oralidade e contexto arquitetônico. Fontes diferentes podem concordar, complementar-se ou contradizer-se; nenhuma deve ser tomada automaticamente como mais verdadeira.',
+      example: 'Imagine que um inventário descreve poucos bens, mas a escavação encontra grande variedade de objetos. Liste hipóteses para explicar a diferença antes de escolher uma interpretação.'
+    },
+    earth: {
+      approach: 'Relacione processos geológicos e geomorfológicos à formação, preservação e leitura do registro arqueológico. Escala temporal, transporte e deposição são essenciais para não confundir contexto original com material retrabalhado.',
+      example: 'Considere um artefato encontrado em depósito fluvial e pergunte se ele foi deixado ali por pessoas ou transportado depois por processos naturais.'
+    },
+    bio: {
+      approach: 'Diferencie identificação, inferência e diagnóstico. Dados biológicos exigem protocolos, comparação e incerteza explícita; uma característica isolada raramente sustenta uma conclusão forte.',
+      example: 'Imagine um conjunto de restos humanos ou dados genéticos e escreva quais observações seriam necessárias antes de inferir idade, ancestralidade, parentesco ou condição de saúde.'
+    },
+    field: {
+      approach: 'Trabalho de campo é documentação irreversível. Planejamento, segurança, contexto, proveniência e cadeia de registro são tão importantes quanto encontrar materiais.',
+      example: 'Monte um checklist de campo desde a abertura de uma unidade até o acondicionamento do material e identifique onde uma informação pode ser perdida.'
+    },
+    lab: {
+      approach: 'No laboratório, preserve proveniência e rastreabilidade. Limpeza, catalogação, classificação e armazenamento precisam seguir protocolos porque toda análise depende da ligação correta entre material e contexto.',
+      example: 'Imagine duas caixas com materiais semelhantes e etiquetas trocadas. Explique quais interpretações se tornam inseguras e por que cadeia de custódia é parte do dado.'
+    },
+    professional: {
+      approach: 'A formação profissional exige ler criticamente, sintetizar argumentos, comunicar evidências e reconhecer limites. O foco é transformar informação dispersa em uma posição acadêmica clara e verificável.',
+      example: 'Escolha dois textos que discordam e produza uma síntese curta indicando pergunta, evidência, argumento e ponto de divergência.'
+    },
+    methods: {
+      approach: 'Relatórios e projetos precisam permitir rastrear pergunta, método, evidência e conclusão. Estrutura textual não é burocracia: ela ajuda o leitor a verificar se o argumento realmente decorre dos dados.',
+      example: 'Pegue uma conclusão hipotética e trabalhe de trás para frente: que resultado, método e dado seriam necessários para sustentá-la?' 
+    }
+  };
+
+  function guidePoints(course, topic) {
     const guide = (packFor(course).topicGuides || []).find(g => g.topic === topic);
-    const points = (guide?.points || []).filter(c => conceptIsRelevant(course, c));
-    if (points.length) return points.map(c => `<div class="concept-inline"><strong>${esc(c.term)}</strong><p>${esc(c.definition)}</p></div>`).join('');
-    const prefix = course.officialSyllabusAvailable === false ? 'Roteiro sugerido para uma optativa sem ementa no PPP.' : 'Roteiro de apoio derivado da ementa oficial.';
-    return `<div class="concept-inline"><strong>Como estudar este tópico</strong><p>${esc(prefix)} Entenda “${esc(topic)}”, identifique evidências, métodos, exemplos e limites de interpretação. Quando houver plano de ensino da turma, use-o como referência principal.</p></div>`;
+    const direct = (guide?.points || []).filter(c => conceptIsRelevant(course, c));
+    if (direct.length) return direct;
+    const topicNorm = normalizeText(topic);
+    const matched = conceptsForCourse(course).filter(c => topicNorm.includes(normalizeText(c.term)) || normalizeText(c.term).split(' ').some(w => w.length > 5 && topicNorm.includes(w)));
+    return matched.slice(0, 3);
+  }
+
+  function topicSpecificExample(topic, course, fallback) {
+    const t = normalizeText(`${topic} ${course.title}`);
+    const rules = [
+      ['estratig', 'Imagine três camadas sobrepostas. Antes de atribuir idade, verifique se há cortes, raízes, fossas ou retrabalhamento que possam ter misturado os depósitos.'],
+      ['ceram', 'Compare fragmentos por pasta, tratamento de superfície, forma, decoração, marcas de uso e contexto. Um tipo só ganha significado quando sua distribuição e cronologia são conhecidas.'],
+      ['litic', 'Observe matéria-prima, córtex, plataforma, negativos de retirada, retoques e desgaste para reconstruir etapas de produção e uso.'],
+      ['zooarque', 'Num conjunto de ossos, combine identificação anatômica, taxonomia, marcas de corte, queima, fraturas e quantificação antes de inferir dieta ou atividade.'],
+      ['arqueogen', 'Antes de interpretar um resultado genético, pergunte sobre qualidade da amostra, contaminação, laboratório, população comparativa e limite estatístico da inferência.'],
+      ['cartografia', 'Mapeie pontos de um sítio em um sistema de referência e teste como escala, projeção e precisão do equipamento influenciam a leitura espacial.'],
+      ['geoprocess', 'Crie camadas separadas para sítios, relevo, hidrografia e uso do solo; depois pergunte se a relação espacial observada é histórica ou efeito do modo de amostragem.'],
+      ['estat', 'Com um conjunto de medidas, calcule tendência central e dispersão, mas também olhe a distribuição: duas amostras podem ter a mesma média e comportamentos muito diferentes.'],
+      ['arte rupestre', 'Documente técnica, suporte, sobreposição, conservação e contexto do painel antes de propor significado simbólico.'],
+      ['paleontolog', 'Um fóssil só contribui para reconstrução paleoambiental quando identificação, posição estratigráfica e processos de fossilização são controlados.'],
+      ['antropologia fisica', 'Ao analisar um esqueleto, separe observação anatômica de estimativa biológica e registre incerteza em vez de apresentar categorias como certezas absolutas.'],
+      ['licenciamento', 'Em um empreendimento, organize o fluxo entre diagnóstico, autorização, pesquisa, medidas de gestão, guarda do acervo e entrega dos relatórios.'],
+      ['tcc', 'Transforme um tema amplo em problema delimitado, escolha um corpus que realmente possa respondê-lo e mantenha uma tabela ligando objetivos, dados e capítulos.'],
+      ['etnograf', 'Ao usar uma descrição etnográfica, identifique quem observou, em que contexto, qual foi a relação com interlocutores e quais categorias foram usadas na escrita.'],
+      ['muse', 'Ao montar uma exposição, compare o que o objeto comunica sozinho com a narrativa criada por legenda, seleção, iluminação e sequência espacial.'],
+      ['patrimonio', 'Considere um sítio valorizado de formas diferentes por pesquisadores, moradores e poder público. A gestão precisa reconhecer esses valores sem reduzi-los a uma única escala.']
+    ];
+    for (const [needle, text] of rules) if (t.includes(needle)) return text;
+    return fallback;
+  }
+
+  function buildLessonData(topic, course) {
+    const deep = LESSONS.deep?.[course.id]?.[topic];
+    const points = guidePoints(course, topic);
+    const cat = CATEGORY_LESSON[packFor(course).category] || CATEGORY_LESSON.theory;
+    const overview = packFor(course).overview || course.syllabus || '';
+    const definitionBridge = points.length
+      ? `Os conceitos centrais desta aula são ${points.map(p => p.term).join(', ')}. Eles devem ser entendidos em relação ao problema da aula, e não como definições soltas.`
+      : `O ponto principal é transformar o tema “${topic}” em perguntas observáveis: o que precisa ser descrito, que evidência pode responder e quais interpretações alternativas existem.`;
+    const conceptNarrative = points.length
+      ? points.map((p, i) => `${i === 0 ? 'Comece por' : 'Relacione também'} ${p.term}: ${p.definition}`).join(' ')
+      : '';
+    const explanation = deep?.explanation || `Esta aula aborda ${topic.toLocaleLowerCase('pt-BR')} dentro de ${course.title}. ${overview}
+
+${definitionBridge} ${conceptNarrative}
+
+${cat.approach}`;
+    const fallbackExample = cat.example;
+    const example = deep?.example || topicSpecificExample(topic, course, fallbackExample);
+    const remember = deep?.remember || [
+      `Explique com suas palavras o que “${topic}” significa dentro de ${course.title}.`,
+      points.length ? `Domine os conceitos: ${points.map(p => p.term).join(', ')}.` : 'Relacione pergunta, evidência, método e interpretação.',
+      'Consiga dar um exemplo e também apontar pelo menos um limite ou cuidado na interpretação.'
+    ];
+    const review = deep?.review || [
+      `Qual é a ideia central de “${topic}”?`,
+      points.length ? `Como ${points[0].term} ajuda a compreender esse assunto?` : 'Que evidência seria necessária para investigar esse tema?',
+      'Que erro de interpretação alguém poderia cometer ao estudar esse assunto de forma superficial?'
+    ];
+    return { explanation, example, remember, review, points, expanded: !!deep };
+  }
+
+  function paragraphsHtml(text) {
+    return String(text || '').split(/\n\s*\n/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('');
+  }
+
+  function lessonText(topic, course) {
+    const data = buildLessonData(topic, course);
+    const conceptHtml = data.points.length
+      ? `<div class="lesson-concepts"><h4>Conceitos essenciais</h4><div class="concept-grid">${data.points.map(c => `<div class="concept-inline"><strong>${esc(c.term)}</strong><p>${esc(c.definition)}</p></div>`).join('')}</div></div>`
+      : '';
+    return `<div class="lesson-depth ${data.expanded ? 'expanded' : ''}"><span>${data.expanded ? 'Aula expandida' : 'Aula guiada'}</span><small>${data.expanded ? 'leitura aprofundada do 1º semestre' : 'material didático baseado na ementa'}</small></div>
+      <div class="lesson-section"><h4>Entenda o assunto</h4>${paragraphsHtml(data.explanation)}</div>
+      ${conceptHtml}
+      <div class="lesson-section lesson-example"><h4>Exemplo aplicado</h4><p>${esc(data.example)}</p></div>
+      <div class="lesson-section lesson-remember"><h4>O que você precisa guardar</h4><ul>${data.remember.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      <div class="lesson-section lesson-review"><h4>Perguntas de revisão</h4><ol>${data.review.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>`;
   }
 
   function tabButton(id, label, active) { return `<button type="button" class="course-tab ${active === id ? 'active' : ''}" data-tab="${id}">${label}</button>`; }
@@ -487,7 +632,7 @@
 
       <div class="course-content">${course.note ? `<div class="notice"><div>${course.officialSyllabusAvailable === false ? 'ℹ' : '⚠'}</div><div><strong>${course.officialSyllabusAvailable === false ? 'Limite da fonte' : 'Divergência no PPP'}</strong><p>${esc(course.note)}</p></div></div>` : ''}
       <div class="source-split"><span class="source-pill official">PPP oficial</span><span>${course.officialSyllabusAvailable === false ? 'nome e carga horária da optativa' : 'ementa e bibliografia'}</span><span class="source-pill support">Apoio</span><span>${course.officialSyllabusAvailable === false ? 'roteiro, conteúdo e flashcards sugeridos' : 'roteiro, conteúdo, flashcards e quiz'}</span></div>
-      <div class="course-tabs">${tabButton('guide', 'Guia', initialTab)}${tabButton('content', 'Conteúdo', initialTab)}${tabButton('flash', 'Flashcards', initialTab)}${tabButton('quiz', 'Quiz', initialTab)}${tabButton('syllabus', 'Ementa oficial', initialTab)}${tabButton('biblio', 'Bibliografia', initialTab)}${tabButton('class', 'Minha turma', initialTab)}${tabButton('notes', 'Anotações', initialTab)}</div>
+      <div class="course-tabs">${tabButton('guide', 'Guia', initialTab)}${tabButton('content', 'Aulas', initialTab)}${tabButton('flash', 'Flashcards', initialTab)}${tabButton('quiz', 'Quiz', initialTab)}${tabButton('syllabus', 'Ementa oficial', initialTab)}${tabButton('biblio', 'Bibliografia', initialTab)}${tabButton('class', 'Minha turma', initialTab)}${tabButton('notes', 'Anotações', initialTab)}</div>
 
       <section class="tab-panel ${initialTab === 'guide' ? 'active' : ''}" data-panel="guide">
         <div class="guide-intro"><span class="eyebrow">Visão geral</span><h3>Para que serve esta matéria?</h3><p>${esc(pack.overview)}</p></div>
@@ -495,8 +640,8 @@
         <aside class="study-tips"><h3>Como estudar</h3><ol>${(pack.studyTips || []).map(t => `<li>${esc(t)}</li>`).join('')}</ol><div class="mini-rule"><strong>Teste de domínio</strong><p>Marque um tópico somente quando conseguir explicá-lo sem copiar a definição e dar pelo menos um exemplo ou aplicação.</p></div></aside></div>
       </section>
 
-      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material de apoio</span><h3>Conteúdo guiado</h3><p>Os tópicos abaixo são um roteiro de apoio baseado na ementa. Abra cada bloco para estudar os conceitos associados e compare depois com o plano da sua turma.</p></div></div>
-        <div class="lesson-list">${course.topics.map((topic, i) => `<details class="lesson-card" ${i === 0 ? 'open' : ''}><summary><span class="lesson-number">${String(i + 1).padStart(2, '0')}</span><span>${esc(topic)}</span><span class="lesson-state">${topicChecked(course, i) ? '✓ estudado' : 'abrir'}</span></summary><div class="lesson-body">${lessonText(topic, course)}<div class="recall-box"><strong>Antes de fechar, responda:</strong><ul><li>Como eu explicaria este assunto em 3 frases?</li><li>Que evidência, fonte ou método permite investigá-lo?</li><li>Qual é um limite ou cuidado na interpretação?</li></ul></div><button type="button" class="btn btn-soft btn-sm" data-mark-topic="${i}">${topicChecked(course, i) ? 'Marcar como não estudado' : 'Marcar tópico como estudado'}</button></div></details>`).join('')}</div>
+      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material didático</span><h3>Aulas da matéria</h3><p>Cada aula traz explicação, conceitos, exemplo aplicado, resumo e perguntas de revisão. O 1º semestre possui aulas expandidas; os demais semestres têm aulas guiadas que também podem ser estudadas dentro do app.</p></div></div>
+        <div class="lesson-list">${course.topics.map((topic, i) => `<details class="lesson-card" ${i === 0 ? 'open' : ''}><summary><span class="lesson-number">${String(i + 1).padStart(2, '0')}</span><span>${esc(topic)}</span><span class="lesson-state">${topicChecked(course, i) ? '✓ estudado' : 'abrir'}</span></summary><div class="lesson-body">${lessonText(topic, course)}<div class="recall-box"><strong>Fechamento da aula</strong><p>Se você consegue responder às perguntas de revisão sem olhar e dar um exemplo próprio, já pode marcar esta aula como estudada.</p></div><button type="button" class="btn btn-soft btn-sm" data-mark-topic="${i}">${topicChecked(course, i) ? 'Marcar como não estudado' : 'Marcar tópico como estudado'}</button></div></details>`).join('')}</div>
       </section>
 
       <section class="tab-panel ${initialTab === 'flash' ? 'active' : ''}" data-panel="flash"><div class="tab-heading"><div><span class="eyebrow">Recordação ativa</span><h3>Flashcards</h3><p>Clique no cartão para revelar. Depois diga se conseguiu responder antes de olhar.</p></div><div class="score-chip">${masteredCardCount(course)}/${cards.length} dominados</div></div>
@@ -676,7 +821,7 @@
   }
 
   function exportBackup() {
-    const payload = { app: 'Arqueologia Study Hub UNEB', version: 4, exportedAt: new Date().toISOString(), state };
+    const payload = { app: 'Arqueologia Study Hub UNEB', version: 6, exportedAt: new Date().toISOString(), state };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `arqueologia-study-hub-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }

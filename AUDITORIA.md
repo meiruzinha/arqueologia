@@ -1,8 +1,10 @@
-# Auditoria final da v5.3 — 06/09/2026
+# Auditoria da v6 — aulas e conteúdo
 
-## 1. Conferência da matriz curricular
+Data da revisão: 06/09/2026.
 
-A matriz foi novamente conferida visualmente nas páginas 25–28 do PPP do Bacharelado em Arqueologia — UNEB Campus VIII.
+## 1. Matriz curricular
+
+A base curricular permanece igual à versão auditada anterior e foi novamente validada pelo `validate-data.js`.
 
 | Semestre | Componentes | Carga da lista |
 |---|---:|---:|
@@ -16,115 +18,129 @@ A matriz foi novamente conferida visualmente nas páginas 25–28 do PPP do Bach
 | 8º | 6 | 380 h |
 | **Total** | **65** | **4.020 h** |
 
-As 14 optativas listadas também estão cadastradas e somam 560 h.
+As 14 optativas listadas no PPP continuam cadastradas e somam 560 h.
 
-O `validate-data.js` mantém uma referência independente da sequência de nomes, semestres e cargas da matriz. A validação falha se um componente obrigatório for removido, duplicado, deslocado de semestre ou tiver sua carga da matriz alterada por engano.
+## 2. Nova camada de conteúdo
 
-## 2. Integridade do material
+A v6 adiciona uma camada de aulas que não existia de forma satisfatória nas versões anteriores.
 
-Resultado da validação estrutural da v5.3:
+### Componentes obrigatórios
 
-- 65 componentes obrigatórios;
-- 14 optativas;
-- 8 semestres;
-- 397 tópicos de apoio obrigatórios;
-- 467 guias de tópico considerando todo o material;
-- 79 pacotes de estudo;
-- 499 conceitos nos componentes obrigatórios;
-- nenhum ID duplicado;
-- nenhum componente sem pacote de estudo;
-- nenhum componente obrigatório sem ementa cadastrada;
-- nenhum componente obrigatório sem bibliografia básica cadastrada;
-- nenhum tópico obrigatório sem guia associado.
+- 65 disciplinas/componentes conferidos;
+- 397 aulas/tópicos no total;
+- **46 aulas expandidas no 1º semestre**;
+- **351 aulas guiadas do 2º ao 8º semestre**;
+- 499 conceitos de apoio;
+- todas as 397 aulas renderizam explicação, exemplo, resumo e perguntas de revisão.
 
-Bibliografia complementar é exibida apenas quando há conteúdo correspondente no ementário. A ausência em alguns componentes não é preenchida artificialmente.
+### Estrutura de uma aula
 
-## 3. Separação entre fonte oficial e apoio
+Cada aula possui:
 
-A interface distingue claramente:
+- “Entenda o assunto”;
+- conceitos essenciais quando disponíveis;
+- exemplo aplicado;
+- pontos que precisam ser guardados;
+- perguntas de revisão;
+- controle reversível de estudado/não estudado.
 
-- **PPP oficial:** dados curriculares, ementa e bibliografia;
-- **Apoio:** roteiro de estudo, conteúdo explicado, flashcards e quiz;
-- **Minha turma:** professor, horários, avaliações e plano de ensino real do semestre.
+As 46 aulas do 1º semestre possuem textos próprios com aprofundamento específico. As demais usam a ementa, o roteiro da disciplina, os conceitos revisados e uma abordagem metodológica adequada à área para produzir uma aula guiada.
 
-Nas optativas, como o PPP consultado não apresenta ementas específicas, o app não chama o roteiro sugerido de “ementa oficial”.
+## 3. Teste automatizado das 65 disciplinas
 
-## 4. Inconsistências preservadas do PPP
+Foi executado um teste em Chromium que abriu **cada um dos 65 componentes obrigatórios** individualmente.
 
-O app sinaliza, entre outras:
+Para cada componente, o teste verificou:
+
+- abertura do modal;
+- presença das 8 abas;
+- aba **Aulas** abrindo corretamente;
+- quantidade de aulas igual à quantidade de tópicos cadastrados;
+- presença de “Entenda o assunto”, “Exemplo aplicado”, “O que você precisa guardar” e “Perguntas de revisão”;
+- conteúdo mínimo não vazio na primeira aula.
+
+Resultado:
+
+- **65/65 componentes aprovados**;
+- **397/397 aulas encontradas**;
+- **0 erros** nessa bateria.
+
+As 14 optativas também foram abertas em teste separado e seus 70 tópicos sugeridos renderizaram corretamente.
+
+## 4. Progresso
+
+O bug relatado na v5.2 não voltou.
+
+Foi testado o seguinte ciclo:
+
+1. abrir uma matéria;
+2. marcar a primeira aula como estudada;
+3. confirmar aumento da porcentagem;
+4. desmarcar a mesma aula;
+5. confirmar retorno da porcentagem ao valor anterior.
+
+Resultado: aprovado.
+
+A porcentagem continua sendo composta por:
+
+- 60% aulas/tópicos;
+- 20% flashcards;
+- 20% quiz.
+
+O status “Estudando” não soma pontos artificialmente.
+
+## 5. Responsividade
+
+Bateria executada em:
+
+- 1440 × 900 — desktop;
+- 1024 × 768 — notebook;
+- 834 × 1112 — tablet;
+- 768 × 1024 — tablet retrato;
+- 390 × 844 — mobile;
+- 320 × 700 — mobile estreito.
+
+Resultado:
+
+- zero overflow horizontal detectado;
+- zero erros JavaScript detectados na bateria principal;
+- sidebar fixa em desktop e drawer em tablet/mobile;
+- modal sem overflow horizontal;
+- conteúdo de aula reorganizado para uma coluna em telas menores;
+- abas permanecem navegáveis horizontalmente quando necessário.
+
+## 6. Separação entre fonte oficial e material didático
+
+O app continua distinguindo:
+
+- **PPP oficial:** matriz, ementa, créditos, cargas e bibliografia;
+- **material didático:** aulas, exemplos, resumos, conceitos, flashcards e quizzes;
+- **Minha turma:** informações reais do professor, horários, avaliações e plano de ensino.
+
+As aulas não são apresentadas como transcrição oficial do que o professor necessariamente ministrará. O plano de ensino da turma continua sendo a referência final para ordem, leituras e avaliações.
+
+## 7. Inconsistências do PPP preservadas
+
+Continuam registradas e visíveis as inconsistências já auditadas, incluindo:
 
 - 56 disciplinas / 3 estágios / 200 h / 236 créditos declarados versus 65 componentes / 6 estágios na lista;
 - 4.080 h declaradas versus 4.020 h somadas da lista;
 - 4.840 h declaradas versus 4.780 h ao somar 4.020 + 560 + 200;
 - 236 créditos em uma seção versus 265 em outra;
+- diferenças de nome e carga entre matriz e ementário;
 - Metodologia da Pesquisa Quantitativa na matriz versus Qualitativa no ementário;
-- Metodologia da Pesquisa Arqueológica: 60 h na matriz versus 68 h no ementário;
-- Estágio IV: 80 h versus 60 h;
-- Prática de Campo II: 60 h versus 68 h;
-- Zooarqueologia: 60 h versus 68 h;
-- Estágio V: 80 h versus 60 h;
-- Leituras Etnográficas versus Leituras Etnográficas I;
-- Prática de Laboratório II com `1T3T`;
-- divergências editoriais em alguns trechos do ementário.
+- outros possíveis erros editoriais preservados e sinalizados.
 
-Essas diferenças não são normalizadas silenciosamente porque não há base segura para decidir qual versão a instituição pretende adotar.
+## 8. Crédito do projeto
 
-## 5. Revisão de código e funcionamento
-
-Foram executados nesta v5.3:
-
-- `node validate-data.js`;
-- `node --check` em `app.js`, `data.js`, `study-content.js` e `validate-data.js`;
-- carregamento completo do app em Chromium headless com CSS e JavaScript reais da versão;
-- visualização `Toda a grade`, confirmando 65 cartões;
-- busca sem acento (`arqueogenetica` → `Arqueogenética`);
-- abertura de disciplina e navegação pelas 8 abas;
-- abertura/fechamento do menu lateral em tablet e mobile;
-- verificação do link de autoria para `https://www.instagram.com/meiarqueo/`;
-- monitoramento de erros JavaScript durante a bateria de testes.
-
-A validação curricular retornou 65 obrigatórias, 14 optativas, 397 tópicos de apoio obrigatórios, 79 pacotes de estudo e 499 conceitos nos componentes obrigatórios.
-
-## 6. Layout e responsividade
-
-A v5.3 foi conferida em cenários representativos de desktop, notebook, tablet e mobile:
-
-- 1440 × 900 — desktop;
-- 1024 × 768 — notebook / tablet em paisagem;
-- 834 × 1112 — tablet;
-- 768 × 1024 — tablet retrato;
-- 390 × 844 — celular;
-- 320 × 700 — celular estreito.
-
-Resultado:
-
-- nenhum overflow horizontal da página nas larguras testadas;
-- nenhum erro JavaScript detectado na bateria principal;
-- sidebar permanece fixa em desktop e vira drawer até 960 px;
-- menu lateral abre e fecha corretamente em tablet e celular;
-- 65 cartões são renderizados em `Toda a grade`;
-- busca e abertura das disciplinas continuam funcionando;
-- as 8 abas do modal permanecem navegáveis;
-- grade usa 3, 2 ou 1 coluna conforme a largura disponível;
-- modal ocupa a tela inteira em celulares até 520 px;
-- abas, chips e controles horizontais podem rolar quando a largura é insuficiente;
-- o menu lateral mantém rolagem vertical em telas baixas, permitindo acessar o crédito completo sem comprimir a navegação.
-
-## 7. Crédito e identificação do projeto
-
-O texto exibido no rodapé lateral é:
+O rodapé continua exibindo:
 
 > Desenvolvido para fins de estudo, com organização baseada no Projeto Político-Pedagógico (PPP) do Bacharelado em Arqueologia da UNEB — Campus VIII, disponibilizado no site oficial do curso.
 >
 > Projeto independente, sem vínculo institucional com a UNEB. — Mei.
 
-Na interface:
+Somente **Mei** é linkado ao Instagram configurado (`https://www.instagram.com/meiarqueo/`).
 
-- **Projeto Político-Pedagógico (PPP)** abre o PDF disponibilizado pela UNEB;
-- **site oficial do curso** abre a página do Bacharelado em Arqueologia do Campus VIII;
-- somente **Mei** é clicável na autoria e aponta para `https://www.instagram.com/meiarqueo/`;
-- o identificador `@meiarqueo` não é mostrado.
+## 9. Resultado
 
-## 8. Resultado
-
-A v5.3 mantém a base curricular e as funções da versão auditada e acrescenta uma camada responsiva mais robusta para PC, tablet e celular. O plano de ensino de cada professor continua sendo a referência final para ordem das aulas, leituras e avaliações durante o semestre.
+A v6 deixa de ser apenas um rastreador do que estudar. Ela passa a oferecer material legível dentro das disciplinas, preservando a matriz auditada, o acompanhamento de progresso, flashcards, quiz, bibliografia, anotações e responsividade.

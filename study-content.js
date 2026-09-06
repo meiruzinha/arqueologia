@@ -5134,7 +5134,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     ]
   },
   "s6-7-arqueogenetica": {
-    "overview": "Apesar do título “Arqueogenética”, a ementa oficial é essencialmente uma introdução à Genética: história da hereditariedade, Mendel, desvios das proporções mendelianas, herança extranuclear, gene molecular, regulação gênica e herança relacionada ao sexo. A v4 segue esse texto sem transformar DNA antigo em conteúdo oficial.",
+    "overview": "Apesar do título “Arqueogenética”, a ementa oficial é essencialmente uma introdução à Genética: história da hereditariedade, Mendel, desvios das proporções mendelianas, herança extranuclear, gene molecular, regulação gênica e herança relacionada ao sexo. O material de apoio segue esse texto sem transformar DNA antigo em conteúdo oficial.",
     "category": "bio",
     "studyTips": [
       "Resolva cruzamentos simples antes de decorar proporções.",

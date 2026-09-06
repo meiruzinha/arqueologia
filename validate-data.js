@@ -8,8 +8,10 @@ const ctx = { window: {} };
 vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'data.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'study-content.js'), 'utf8'), ctx);
+vm.runInContext(fs.readFileSync(path.join(root, 'lesson-content.js'), 'utf8'), ctx);
 const data = ctx.window.ARCHAEOLOGY_DATA;
 const study = ctx.window.ARCHAEOLOGY_STUDY_CONTENT;
+const lessons = ctx.window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
 
 const errors = [];
 const assert = (cond, msg) => { if (!cond) errors.push(msg); };
@@ -167,6 +169,23 @@ for (const c of data.optatives) {
   assert((study[c.id]?.concepts || []).length === 0, `optativa possui conceitos tratados como oficiais: ${c.id}`);
 }
 
+
+// v6: o 1º semestre possui aulas expandidas próprias; os demais tópicos são renderizados como aulas guiadas.
+const firstSemesterCourses = data.courses.filter(c => c.semester === 1);
+const firstSemesterTopicCount = firstSemesterCourses.reduce((s,c)=>s+(c.topics||[]).length,0);
+const deepLessonCount = Object.values(lessons.deep || {}).reduce((s,courseLessons)=>s+Object.keys(courseLessons || {}).length,0);
+assert(deepLessonCount === firstSemesterTopicCount, `v6: esperadas ${firstSemesterTopicCount} aulas expandidas do 1º semestre; encontradas ${deepLessonCount}`);
+for (const c of firstSemesterCourses) {
+  for (const topic of c.topics || []) {
+    const lesson = lessons.deep?.[c.id]?.[topic];
+    assert(Boolean(lesson), `v6: aula expandida ausente em ${c.id}: ${topic}`);
+    assert(String(lesson?.explanation || '').trim().length > 250, `v6: explicação curta em ${c.id}: ${topic}`);
+    assert(String(lesson?.example || '').trim().length > 80, `v6: exemplo curto/ausente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.remember) && lesson.remember.length >= 3, `v6: resumo insuficiente em ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson?.review) && lesson.review.length >= 3, `v6: revisão insuficiente em ${c.id}: ${topic}`);
+  }
+}
+
 // Divergências e erros editoriais do PPP que devem continuar visíveis, não “corrigidos” silenciosamente.
 const byId = Object.fromEntries(data.courses.map(c => [c.id,c]));
 assert(byId['s1-6-metodologia-da-pesquisa-quantitativa'].ementaryName === 'Metodologia da Pesquisa Qualitativa', 'divergência Quantitativa/Qualitativa perdida');
@@ -233,7 +252,9 @@ const summary = {
   supportTopics: data.courses.reduce((s,c)=>s+(c.topics||[]).length,0),
   allTopicGuides: all.reduce((s,c)=>s+(study[c.id]?.topicGuides||[]).length,0),
   studyPacks: Object.keys(study).length,
-  conceptsRequired: data.courses.reduce((s,c)=>s+(study[c.id]?.concepts||[]).length,0)
+  conceptsRequired: data.courses.reduce((s,c)=>s+(study[c.id]?.concepts||[]).length,0),
+  expandedLessonsFirstSemester: deepLessonCount,
+  guidedLessonsOtherSemesters: data.courses.filter(c=>c.semester>1).reduce((s,c)=>s+(c.topics||[]).length,0)
 };
-console.log('OK — auditoria curricular, estrutural e de publicação v5.3 aprovada');
+console.log('OK — auditoria curricular, estrutural e de conteúdo v6 aprovada');
 console.log(JSON.stringify(summary, null, 2));
