@@ -12,7 +12,7 @@ window.ARCHAEOLOGY_DATA = {
     "sourceUrl": "https://dedc8.uneb.br/wp-content/uploads/2023/05/Projeto-Politico-Pedagogico-Arqueologia-DEDC-VIII.pdf",
     "sourceDate": "2023",
     "warning": "O PPP apresenta algumas divergências internas de nomenclatura e carga horária. O app usa a matriz curricular como referência principal e sinaliza diferenças encontradas no ementário.",
-    "appDataRevision": "v5-final-release-2026-09-06",
+    "appDataRevision": "v7.3-final-audit-2026-09-06",
     "matrixListedComponents": 65,
     "matrixListedStages": 6,
     "pppDeclaredDisciplines": 56,

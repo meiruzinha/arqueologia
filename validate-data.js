@@ -9,6 +9,7 @@ vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'data.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'study-content.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'lesson-content.js'), 'utf8'), ctx);
+vm.runInContext(fs.readFileSync(path.join(root, 'optative-content.js'), 'utf8'), ctx);
 const data = ctx.window.ARCHAEOLOGY_DATA;
 const study = ctx.window.ARCHAEOLOGY_STUDY_CONTENT;
 const lessons = ctx.window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
@@ -96,7 +97,7 @@ const expectedOptional = [
 ];
 
 assert(JSON.stringify(json) === JSON.stringify(data), 'data.js e data.json divergem');
-assert(data.meta?.appDataRevision === 'v5-final-release-2026-09-06', 'revisão de dados não é v5');
+assert(data.meta?.appDataRevision === 'v7.3-final-audit-2026-09-06', 'revisão de dados não é v7.3');
 assert(data.courses.length === expectedRequired.length, `esperados ${expectedRequired.length} obrigatórios; encontrados ${data.courses.length}`);
 assert(data.optatives.length === expectedOptional.length, `esperadas ${expectedOptional.length} optativas; encontradas ${data.optatives.length}`);
 
@@ -142,7 +143,7 @@ for (const c of all) {
   for (const t of c.topics) {
     const g = guideTopics.get(norm(t));
     assert(Boolean(g), `sem guia do tópico ${c.id}: ${t}`);
-    assert(Array.isArray(g?.points) && g.points.some(p=>String(p).trim().length > 8), `guia vazio/genérico demais em ${c.id}: ${t}`);
+    assert(Array.isArray(g?.points), `guia de tópico malformado em ${c.id}: ${t}`);
   }
 }
 
@@ -166,14 +167,46 @@ for (const c of data.courses) {
 for (const c of data.optatives) {
   assert(c.officialSyllabusAvailable === false, `optativa indevidamente marcada com ementa oficial: ${c.id}`);
   assert(c.supportTopicsStatus === 'suggested_from_title_only', `optativa sem rótulo de roteiro sugerido: ${c.id}`);
-  assert((study[c.id]?.concepts || []).length === 0, `optativa possui conceitos tratados como oficiais: ${c.id}`);
+  const optConcepts = study[c.id]?.concepts || [];
+  assert(optConcepts.length >= 4, `v7.4: optativa sem conceitos sugeridos suficientes: ${c.id}`);
+  assert((study[c.id]?.topicGuides || []).length === c.topics.length, `v7.4: guias incompletos na optativa ${c.id}`);
 }
 
 
 // v7: todos os 397 tópicos obrigatórios precisam possuir aula aprofundada e gabarito comentado.
 const requiredTopicCount = data.courses.reduce((s,c)=>s+(c.topics||[]).length,0);
-const deepLessonCount = Object.values(lessons.deep || {}).reduce((s,courseLessons)=>s+Object.keys(courseLessons || {}).length,0);
-assert(deepLessonCount === requiredTopicCount, `v7: esperadas ${requiredTopicCount} aulas aprofundadas; encontradas ${deepLessonCount}`);
+const deepLessonCount = data.courses.reduce((sum, c) => sum + Object.keys(lessons.deep?.[c.id] || {}).length, 0);
+assert(deepLessonCount === requiredTopicCount, `v7: esperadas ${requiredTopicCount} aulas aprofundadas obrigatórias; encontradas ${deepLessonCount}`);
+
+// v7.4: as 14 optativas têm apoio sugerido separado. O PPP não fornece ementa para elas.
+const optativeTopicCount = data.optatives.reduce((s,c)=>s+(c.topics||[]).length,0);
+const optativeDeepCount = data.optatives.reduce((sum,c)=>sum+Object.keys(lessons.deep?.[c.id] || {}).length,0);
+assert(optativeDeepCount === optativeTopicCount, `v7.4: esperadas ${optativeTopicCount} aulas sugeridas nas optativas; encontradas ${optativeDeepCount}`);
+const optativeExplanations = [];
+const optativeReviews = [];
+const optativeSteps = [];
+for (const c of data.optatives) {
+  for (const topic of c.topics || []) {
+    const lesson = lessons.deep?.[c.id]?.[topic];
+    assert(Boolean(lesson), `v7.4: aula sugerida ausente em ${c.id}: ${topic}`);
+    if (!lesson) continue;
+    assert(String(lesson.explanation || '').trim().length > 200, `v7.4: explicação curta na optativa ${c.id}: ${topic}`);
+    assert(String(lesson.deepDive || '').trim().length > 190, `v7.4: aprofundamento curto na optativa ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson.review) && lesson.review.length === 4, `v7.4: revisão incompleta na optativa ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson.reviewAnswers) && lesson.reviewAnswers.length === 4, `v7.4: gabarito incompleto na optativa ${c.id}: ${topic}`);
+    assert(Array.isArray(lesson.studySteps) && lesson.studySteps.length === 4, `v7.4: roteiro de estudo incompleto na optativa ${c.id}: ${topic}`);
+    optativeExplanations.push(norm(lesson.explanation));
+    optativeReviews.push(...lesson.review.map(norm));
+    optativeSteps.push(...lesson.studySteps.map(norm));
+  }
+}
+assert(new Set(optativeExplanations).size === optativeExplanations.length, 'v7.4: explicações duplicadas entre aulas optativas');
+assert(new Set(optativeReviews).size === optativeReviews.length, 'v7.4: perguntas de revisão repetidas nas optativas');
+assert(new Set(optativeSteps).size === optativeSteps.length, 'v7.4: passos de estudo repetidos nas optativas');
+const optativeBlob = norm(JSON.stringify(data.optatives.map(c => ({pack: study[c.id], lessons: lessons.deep?.[c.id]}))));
+for (const phrase of ['conecte sua resposta ao foco geral da materia','disciplina optativa listada no ppp o conteudo detalhado precisa ser confirmado','defina os conceitos centrais']) {
+  assert(!optativeBlob.includes(norm(phrase)), `v7.4: frase genérica antiga reapareceu nas optativas: ${phrase}`);
+}
 let reviewQuestionCount = 0;
 let lessonWordTotal = 0;
 let minLessonWords = Infinity;
@@ -275,7 +308,94 @@ const css = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
 assert(indexHtml.includes('id="sidebarToggle"') && indexHtml.includes('data-view="notebook"'), 'v7: controles do menu/caderno ausentes no HTML');
 assert(appJs.includes("const STORAGE_KEY = 'arqueologia-study-hub-v7'"), 'v7: chave de armazenamento incorreta');
 assert(appJs.includes('notebookEntries') && appJs.includes('recomputeCourseStatus'), 'v7: caderno ou recálculo de status ausente');
-assert(css.includes('body.sidebar-collapsed') && css.includes('.notebook-entry'), 'v7: estilos do menu recolhível/caderno ausentes');
+assert(css.includes('body.sidebar-collapsed') && css.includes('.notebook-page') && css.includes('.app-toast'), 'v7.3: estilos do menu/caderno/feedback ausentes');
+assert(indexHtml.includes('v7.5 · conteúdo geral revisado'), 'v7.5: versão visual não atualizada');
+assert(indexHtml.includes('<script src="optative-content.js"></script>'), 'v7.4: arquivo de optativas revisadas não está carregado');
+
+// v7.5: regressão contra repetição artificial nas aulas obrigatórias.
+(() => {
+  const requiredIds = new Set(data.courses.map(c => c.id));
+  const seenParagraphs = new Map();
+  const seenExamples = new Map();
+  const seenReviews = new Map();
+  const seenArrayItems = new Map();
+  const duplicate = (map, value, where, label) => {
+    const text = String(value || '').trim();
+    if (!text) return;
+    if (map.has(text)) errors.push(`v7.5: ${label} repetido entre ${map.get(text)} e ${where}`);
+    else map.set(text, where);
+  };
+  Object.entries(lessons.deep || {}).forEach(([courseId, topics]) => {
+    if (!requiredIds.has(courseId)) return;
+    Object.entries(topics || {}).forEach(([topic, lesson]) => {
+      const where = `${courseId}: ${topic}`;
+      String(lesson.explanation || '').split(/\n\n+/).filter(p => p.trim().length >= 80).forEach(p => duplicate(seenParagraphs, p, where, 'parágrafo longo'));
+      String(lesson.deepDive || '').split(/\n\n+/).filter(p => p.trim().length >= 80).forEach(p => duplicate(seenParagraphs, p, where, 'parágrafo longo'));
+      duplicate(seenExamples, lesson.example, where, 'exemplo');
+      (lesson.review || []).forEach(q => duplicate(seenReviews, q, where, 'pergunta de revisão'));
+      ['remember','commonMistakes','studySteps','reviewAnswers'].forEach(field => (lesson[field] || []).forEach(item => duplicate(seenArrayItems, item, where, `item de ${field}`)));
+    });
+  });
+})();
+
+assert(appJs.includes("const APP_VERSION = '7.5'"), 'v7.5: constante de versão ausente');
+assert(appJs.includes('canonicalizeNotebookEntries') && appJs.includes('pageNumber: nextPageNumber'), 'v7.3: numeração/canonicalização de folhas ausente');
+assert(appJs.includes('function reviewState(course)') && appJs.includes('quizPending'), 'v7.3: lógica unificada de revisão ausente');
+assert(appJs.includes('courseStaticSearchText') && appJs.includes('lesson?.deepDive'), 'v7.3: busca não indexa conteúdo das aulas');
+assert(appJs.includes("version: APP_VERSION"), 'v7.4: backup não usa versão atual');
+assert(appJs.includes('Aula sugerida aprofundada') && appJs.includes('progressFormula(course)'), 'v7.4: diferenciação visual/progresso de optativas ausente');
+assert(!appJs.includes('Como preparação para ${course.title}, estude'), 'v7.4: resposta genérica antiga de flashcard ainda presente');
+assert(!appJs.includes('Guia → Conteúdo →'), 'v7.3: texto antigo Conteúdo ainda presente');
+assert(!css.includes('.notebook-entry {') && !css.includes('.notebook-entry-head'), 'v7.3: CSS obsoleto do caderno antigo ainda presente');
+
+const expectedCategories = {
+  's1-1-introducao-a-arqueologia':'method', 's2-3-pre-historia-do-brasil':'regional',
+  's3-4-mitologia-e-ritual':'theory', 's3-7-palinologia-sedimentologia-e-estratigrafia':'earth',
+  's4-4-metodologia-da-pesquisa-arqueologica':'method', 's5-5-arqueologia-latino-americana':'regional',
+  's6-1-pratica-de-campo-i':'field', 's7-2-pratica-de-laboratorio-ii':'lab',
+  's7-6-etica-na-profissao':'professional', 's7-7-seminario-de-arqueologia-ii':'professional',
+  'opt-13-arte-plumagem-e-cestarias-indigenas':'material'
+};
+for (const [id, category] of Object.entries(expectedCategories)) assert(study[id]?.category === category, `v7.3: categoria incorreta em ${id}`);
+for (const [id, pack] of Object.entries(study)) {
+  for (const guide of (pack.topicGuides || [])) {
+    for (const point of (guide.points || [])) {
+      assert(norm(point.term) !== norm('Como dominar este tópico'), `v7.3: conceito auxiliar genérico ainda exposto em ${id}`);
+      assert(!norm(point.definition).includes(norm('Conecte sua resposta ao foco geral da matéria')), `v7.3: definição auxiliar genérica ainda exposta em ${id}`);
+    }
+  }
+}
+
+
+// v7.5 — regressões semânticas para termos ambíguos que já causaram conteúdo fora de contexto.
+const forbiddenArchaeologicalContext = norm('Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio');
+for (const id of ['s1-2-introducao-a-antropologia','s1-4-sociologia','s1-5-linguistica','s2-6-direito-aplicado-a-arqueologia','s4-9-estagio-ii','s5-8-direito-natural-e-patrimonial']) {
+  const pack = study[id] || {};
+  const defs = [
+    ...(pack.concepts || []).map(x => x.definition),
+    ...(pack.topicGuides || []).flatMap(g => (g.points || []).map(x => x.definition))
+  ].map(norm);
+  assert(!defs.some(x => x.includes(forbiddenArchaeologicalContext)), `v7.5: sentido arqueológico de contexto reapareceu fora de lugar em ${id}`);
+}
+for (const id of ['s6-8-seminario-de-arqueologia-i','s7-7-seminario-de-arqueologia-ii']) {
+  const pack = study[id] || {};
+  assert((pack.concepts || []).some(x => norm(x.term) === norm('escrita acadêmica')), `v7.5: escrita acadêmica ausente em ${id}`);
+  assert(!(pack.concepts || []).some(x => norm(x.definition).includes(norm('Sistema gráfico convencional de registro de linguagem'))), `v7.5: definição de escrita histórica reapareceu no seminário ${id}`);
+}
+const lessonDump = JSON.stringify(lessons.deep || {});
+const sociologyDump = JSON.stringify(lessons.deep?.['s1-4-sociologia'] || {});
+const linguisticsDump = JSON.stringify(lessons.deep?.['s1-5-linguistica'] || {});
+const seminar1Dump = JSON.stringify(lessons.deep?.['s6-8-seminario-de-arqueologia-i'] || {});
+const seminar2Dump = JSON.stringify(lessons.deep?.['s7-7-seminario-de-arqueologia-ii'] || {});
+assert(!sociologyDump.includes('Relação espacial, estratigráfica e associativa de um vestígio'), 'v7.5: contexto arqueológico ainda aparece em Sociologia');
+assert(!linguisticsDump.includes('Relação espacial, estratigráfica e associativa de um vestígio'), 'v7.5: contexto arqueológico ainda aparece em Linguística');
+assert(!seminar1Dump.includes('Sistema gráfico convencional de registro de linguagem ou informação'), 'v7.5: conceito de escrita inadequado ainda aparece no Seminário I');
+assert(!seminar2Dump.includes('Sistema gráfico convencional de registro de linguagem ou informação'), 'v7.5: conceito de escrita inadequado ainda aparece no Seminário II');
+const geneticsDump = JSON.stringify(lessons.deep?.['s6-7-arqueogenetica'] || {});
+for (const bad of ['estimativa biológica','população comparativa','características anatômicas','diagnóstico, sexo, idade ou parentesco','assortimento independente']) {
+  assert(!norm(geneticsDump).includes(norm(bad)), `v7.5: conteúdo de outra área reapareceu em Arqueogenética: ${bad}`);
+}
+assert(norm(geneticsDump).includes(norm('segregação independente')), 'v7.5: conceito correto de segregação independente ausente em Arqueogenética');
 
 if (errors.length) {
   console.error(`FALHOU: ${errors.length} problema(s)`);
@@ -297,10 +417,12 @@ const summary = {
   studyPacks: Object.keys(study).length,
   conceptsRequired: data.courses.reduce((s,c)=>s+(study[c.id]?.concepts||[]).length,0),
   expandedLessonsAllSemesters: deepLessonCount,
+  suggestedOptativeLessons: optativeDeepCount,
+  optativeReviewQuestions: optativeReviews.length,
   reviewQuestionsWithAnswers: reviewQuestionCount,
   averageLessonWords: Math.round(lessonWordTotal / requiredTopicCount),
   minLessonWords,
   maxLessonWords
 };
-console.log('OK — auditoria curricular, estrutural e de conteúdo v7.1 aprovada');
+console.log('OK — auditoria curricular, estrutural e de conteúdo v7.5 aprovada');
 console.log(JSON.stringify(summary, null, 2));

@@ -1,93 +1,80 @@
-# Arqueologia Study Hub · UNEB — v7.1
+# Arqueologia Study Hub · UNEB — v7.5
 
 Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB — Campus VIII, organizado a partir do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
-## O que muda na v7
+## O que esta versão consolida
 
-A v7 consolida o app como **material de estudo + caderno digital de sala**.
+A v7.5 é uma revisão geral do conteúdo e do código. Ela mantém a estrutura curricular auditada, o caderno digital em folhas, exportação de folhas para PDF, progresso, flashcards, quiz, busca, favoritos, glossário e menu responsivo. Também corrige cruzamentos semânticos encontrados durante a auditoria final.
 
-### Caderno digital
-
-Cada disciplina ganhou um caderno próprio com registros separados por aula. Cada registro pode guardar:
-
-- título da aula;
-- data;
-- o que foi aprendido em sala;
-- conceitos e palavras-chave;
-- dúvidas para perguntar/revisar;
-- tarefas, leituras e prazos;
-- observações livres.
-
-As anotações são salvas automaticamente no navegador, entram no backup do app e podem ser encontradas pela busca. A anotação geral das versões anteriores continua preservada.
-
-Há também uma visão **Caderno** no menu principal, reunindo as matérias do semestre atual e mostrando quantos registros existem em cada uma.
-
-### Menu recolhível
-
-O menu lateral agora pode ser aberto e fechado pelo botão sanduíche também no desktop. Ao recolher o menu, o conteúdo ocupa a largura liberada. Em tablet e celular ele continua funcionando como drawer sobreposto.
-
-### Progresso
-
-A porcentagem mede conclusão do percurso de estudo, não a nota acadêmica.
-
-Nas matérias com todos os componentes:
-
-- 60% — aulas/tópicos estudados;
-- 20% — flashcards dominados;
-- 20% — quiz.
-
-A parcela do quiz é considerada completa a partir de 70%. A melhor nota do quiz continua registrada separadamente. Matérias sem algum componente têm os pesos disponíveis normalizados, para que nenhuma atividade inexistente seja necessária para chegar a 100%.
-
-Marcar e desmarcar aulas ou flashcards recalcula a porcentagem imediatamente. Uma matéria concluída mostra 100%; se um item necessário for desmarcado, o status volta a “Estudando” e a porcentagem diminui.
-
-## Cobertura acadêmica
+### Cobertura
 
 - 8 semestres;
 - 65 componentes obrigatórios;
 - 14 optativas;
-- 397 aulas aprofundadas;
-- 498 conceitos de apoio nas obrigatórias após a revisão conceitual da v7;
-- 1.588 perguntas de revisão;
-- 1.588 respostas comentadas;
-- média aproximada de 755 palavras por aula na camada principal validada;
-- menor aula validada: 540 palavras;
-- maior aula validada: 1.046 palavras.
+- 397 aulas aprofundadas nas obrigatórias;
+- 70 aulas sugeridas nas optativas;
+- 1.588 perguntas de revisão com respostas comentadas nas obrigatórias;
+- 280 perguntas de revisão nas optativas;
+- 498 conceitos de apoio nas obrigatórias;
+- 4.020 h ao somar os componentes obrigatórios listados na matriz;
+- 560 h ao somar as optativas listadas.
 
-A matriz continua auditada contra as páginas 25–28 do PPP. A lista efetiva da matriz soma 4.020 h de componentes obrigatórios e 560 h nas 14 optativas listadas. Divergências internas do próprio PPP permanecem sinalizadas em vez de serem corrigidas silenciosamente.
+A matriz continua preservando as divergências internas do próprio PPP em vez de “corrigi-las” silenciosamente.
 
-## Revisão conceitual da v7
+## Revisão semântica da v7.5
 
-A revisão final separa com mais rigor **transcrição oficial do PPP** e **conteúdo didático**. Alguns trechos do documento exigem cautela terminológica e receberam notas críticas sem alterar a ementa oficial exibida no app.
+Foram corrigidos sentidos ambíguos que haviam sido herdados por correspondência de palavras:
 
-Entre as correções de material de apoio:
+- `contexto` em Sociologia passou a ser **contexto histórico-social**;
+- `contexto` em Linguística passou a ser **contexto linguístico e discursivo**;
+- Direito e Estágio receberam definições próprias de contexto, sem reutilizar a definição de contexto estratigráfico;
+- `escrita` nos Seminários I e II passou a ser **escrita acadêmica**;
+- Arqueogenética foi reconstruída conforme a ementa oficial de Genética: Mendel, segregação independente, herança extranuclear, gene molecular, regulação gênica e herança relacionada ao sexo;
+- foram removidos de Arqueogenética trechos herdados de Antropologia Física, como estimativa biológica, população comparativa e diagnóstico osteológico;
+- `assortimento independente` foi substituído pelo termo em português **segregação independente**.
 
-- “hominização” não é ensinada como processo ocorrido nas Américas; em Arqueologia Americana e Latino-Americana o roteiro trabalha povoamento/ocupação das Américas;
-- em Antropologia Física, estimativa de sexo biológico é diferenciada de gênero social;
-- análise de DNA não é apresentada como equivalente simples a uma datação arqueológica direta;
-- “ecofato” é explicado no sentido arqueológico usual, sem reproduzir como definição técnica uma repetição confusa do PPP;
-- conceitos automáticos deslocados foram removidos de Teoria Antropológica, Direito Aplicado à Arqueologia e Arqueologia Americana.
+O validador contém testes de regressão para impedir que esses cruzamentos reapareçam.
 
-O conteúdo do app é material independente de apoio. O plano de ensino, as leituras, avaliações e orientações do professor continuam prevalecendo para cada turma.
+## Repetição de conteúdo
 
-## Persistência e migração
+A v7.5 elimina duplicação literal artificial entre parágrafos longos, exemplos, perguntas de revisão e itens de resposta nas 397 aulas obrigatórias. As 70 aulas sugeridas das optativas também permanecem separadas e individualizadas.
 
-A v7 usa a chave `arqueologia-study-hub-v7` e migra automaticamente dados compatíveis da v6.2 e versões anteriores. São preservados:
+Alguns conceitos aparecem legitimamente em mais de uma disciplina — por exemplo, contexto arqueológico, ética, cronologia, patrimônio, sítio e cultura material. Nesses casos a repetição conceitual é intencional porque o mesmo conceito é transversal ao curso. A estrutura visual das aulas também permanece consistente (explicação, aprofundamento, conceitos, exemplo, erros comuns e revisão), mas o conteúdo específico é separado por tópico.
 
-- semestre atual;
-- tópicos/aulas marcados;
-- favoritos;
-- domínio de flashcards;
-- resultados de quiz;
-- anotações gerais;
-- dados de “Minha turma”;
-- novos registros do caderno digital;
-- preferência do menu lateral recolhido/aberto no desktop.
+## Caderno digital
 
-## Responsividade testada
+Cada disciplina possui folhas independentes com:
 
-A v7 foi testada em 1440, 1024, 960, 834, 768, 620, 520, 430, 390, 360 e 320 px. A bateria automatizada verifica ausência de overflow horizontal tanto na página quanto no caderno dentro da matéria.
+- número permanente da folha;
+- título e data;
+- conteúdo aprendido em sala;
+- conceitos e palavras-chave;
+- dúvidas;
+- tarefas, leituras e prazos;
+- observações livres.
 
-## Arquivos do projeto
+As folhas funcionam em acordeão: ao abrir uma, as outras são recolhidas. Cada folha pode ser preparada para **Salvar como PDF** pela impressão nativa do navegador.
+
+## Progresso
+
+Nas matérias com todos os componentes:
+
+- 60% — aulas/tópicos;
+- 20% — flashcards;
+- 20% — quiz.
+
+O quiz completa sua parcela ao atingir 70%. Matérias sem algum componente têm os pesos disponíveis normalizados. Marcar e desmarcar tópicos ou flashcards recalcula a porcentagem imediatamente.
+
+## Responsividade
+
+A v7.5 foi testada em 1440, 1024, 960, 834, 768, 620, 520, 430, 390, 360 e 320 px. A página e o modal das matérias não apresentaram overflow horizontal nessas larguras.
+
+O menu sanduíche:
+
+- recolhe/abre a sidebar no desktop;
+- funciona como drawer no tablet e no celular.
+
+## Arquivos
 
 - `index.html`
 - `styles.css`
@@ -96,6 +83,7 @@ A v7 foi testada em 1440, 1024, 960, 834, 768, 620, 520, 430, 390, 360 e 320 px.
 - `data.json`
 - `study-content.js`
 - `lesson-content.js`
+- `optative-content.js`
 - `validate-data.js`
 - `README.md`
 - `AUDITORIA.md`
@@ -108,8 +96,8 @@ Execute:
 node validate-data.js
 ```
 
-O validador confere matriz curricular, cargas, campos obrigatórios, conceitos, tópicos, estrutura das 397 aulas, perguntas/respostas, arquivos e regressões conceituais já encontradas em versões anteriores.
+A validação confere matriz curricular, cargas, tópicos, conceitos, aulas, perguntas/respostas, regressões semânticas e duplicações literais já identificadas em versões anteriores.
 
-## Caderno em folhas (v7.1)
+## Limite acadêmico
 
-O caderno digital passou a usar folhas recolhíveis. Cada aula pode ter uma folha própria, numerada, com título, data, conteúdo aprendido, conceitos, dúvidas, tarefas e observações. As folhas antigas ficam fechadas por padrão; ao criar uma nova folha, somente ela abre. Ao abrir outra folha, a anterior é recolhida automaticamente.
+O app é material independente de apoio. Ele não substitui o plano de ensino, as aulas do professor, as leituras indicadas nem bibliografia acadêmica revisada. A aba do PPP é mantida separada do conteúdo didático justamente para distinguir fonte institucional de material de estudo.

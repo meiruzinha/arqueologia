@@ -1,117 +1,82 @@
-# Auditoria final — Arqueologia Study Hub · UNEB v7
+# Auditoria final — Arqueologia Study Hub v7.5
 
-## Escopo
+## Resultado curricular
 
-A auditoria da v7.1 revisou quatro camadas separadamente:
-
-1. matriz curricular e ementário do PPP;
-2. conteúdo didático e conceitos usados pelo app;
-3. lógica de progresso e persistência;
-4. layout/responsividade e novas funções de caderno/menu.
-
-## 1. Estrutura curricular
-
-Resultado validado:
-
-- 65 componentes obrigatórios;
-- 14 optativas;
+- 65/65 componentes obrigatórios;
+- 14/14 optativas;
 - 8 semestres;
-- distribuição obrigatória: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
-- 4.020 h ao somar os componentes efetivamente listados na matriz;
-- 560 h ao somar as 14 optativas listadas.
-
-O validador mantém uma referência independente de nome, semestre e carga horária dos 65 componentes. Alterações acidentais na sequência ou na carga fazem a validação falhar.
-
-As inconsistências internas conhecidas do PPP permanecem sinalizadas no app, incluindo diferenças de nomes/cargas entre matriz e ementário e a divergência entre os totais declarados no texto e os componentes efetivamente listados.
-
-## 2. Conteúdo didático
-
-Cobertura atual:
-
+- distribuição: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
+- 4.020 h obrigatórias somadas a partir da lista da matriz;
+- 560 h das optativas listadas;
 - 397/397 tópicos obrigatórios com aula aprofundada;
-- 1.588 perguntas de revisão;
-- 1.588 respostas comentadas;
-- 498 conceitos de apoio nas disciplinas obrigatórias após a limpeza conceitual;
-- média aproximada de 755 palavras por aula na camada principal validada;
-- mínimo: 540 palavras;
-- máximo: 1.046 palavras.
+- 70/70 aulas sugeridas das optativas;
+- 1.588/1.588 perguntas obrigatórias com resposta comentada;
+- 280 perguntas de revisão nas optativas.
 
-Cada aula obrigatória precisa ter explicação, aprofundamento, exemplo, pontos de retenção, roteiro de raciocínio, erros comuns e pelo menos quatro perguntas com respostas comentadas.
+`node validate-data.js` conclui sem erros.
 
-### Correções conceituais adicionadas na v7
+## Revisão de conteúdo
 
-Foram removidos cruzamentos automáticos que poderiam induzir ao erro:
+A auditoria final separou três camadas:
 
-- `hominização` não pode aparecer como conceito de Arqueologia Latino-Americana ou Arqueologia Americana;
-- `arqueologia social latino-americana` não pode aparecer como conceito automático de Arqueologia Americana;
-- `cultura arqueológica` não pode aparecer como conceito automático de Teoria Antropológica ou Direito Aplicado à Arqueologia.
+1. texto oficial do PPP;
+2. conceitos/roteiros de apoio;
+3. aulas aprofundadas.
 
-Foram inseridos em seu lugar conceitos coerentes com as ementas, como `povoamento das Américas`, `diversidade social e cultural americana`, `ordenamento jurídico` e `tradições antropológicas americana e britânica`.
+Foram corrigidos cruzamentos semânticos que surgiram por palavras iguais usadas com sentidos diferentes:
 
-Também foram adicionadas notas críticas para trechos do próprio PPP que exigem cautela:
+- Sociologia: contexto histórico-social, sem definição estratigráfica;
+- Linguística: contexto linguístico/discursivo, sem definição estratigráfica;
+- Direito: contexto jurídico/institucional;
+- Estágio II: contexto de atuação profissional;
+- Seminários: escrita acadêmica, não “sistema gráfico”;
+- Arqueogenética: reconstruída para seguir a ementa de Genética do PPP.
 
-- hominização x povoamento das Américas;
-- sexo biológico x gênero em análise de restos humanos;
-- uso de DNA x datação arqueológica;
-- ecofato x artefato/fatores culturais.
+Arqueogenética não contém mais blocos de Antropologia Física sobre estimativa biológica, diagnóstico, população comparativa ou características anatômicas. O termo `segregação independente` substitui a expressão anterior inadequada `assortimento independente`.
 
-A redação oficial continua disponível na aba de ementa. A nota crítica altera apenas o material didático, não a fonte institucional.
+## Repetição
 
-## 3. Caderno digital
+O validador impede duplicação literal de:
 
-A v7 acrescenta registros de aula por disciplina com:
+- parágrafos longos;
+- exemplos;
+- perguntas de revisão;
+- itens de resumo, erros comuns, passos de estudo e respostas comentadas.
 
-- título;
-- data;
-- conteúdo aprendido em sala;
-- conceitos/palavras-chave;
-- dúvidas;
-- tarefas, leituras e prazos;
-- observações livres.
+Isso não significa que conceitos transversais sejam removidos. Termos como sítio, ética, cronologia, patrimônio e cultura material podem reaparecer quando são pertinentes a mais de uma disciplina. A repetição da estrutura visual das aulas também é intencional para manter o caderno didático previsível.
 
-Testes realizados:
+## Testes de interface
 
-- criação de registro;
-- edição e autosave;
-- atualização ao vivo do título e contagem de palavras;
-- persistência após recarregar o app;
-- inclusão no estado/backup;
-- busca por texto escrito pelo usuário;
-- contagem de registros na visão global “Caderno”;
-- preservação da anotação geral antiga durante a migração.
+### Todas as disciplinas
 
-## 4. Porcentagem e status
+Teste automatizado em Chromium:
 
-Regra da v7:
+- 65/65 matérias obrigatórias abriram o modal;
+- todas apresentaram abas e aulas;
+- 14/14 optativas abriram em 390 px;
+- optativas exibiram `Aula sugerida aprofundada` e a fórmula `75% aulas · 25% flashcards`;
+- nenhum erro JavaScript foi registrado nessas baterias.
 
-- aulas = 60%;
-- flashcards = 20%;
-- quiz = 20%;
-- a parcela do quiz é completada ao atingir 70%;
-- componentes ausentes têm seus pesos normalizados.
+### Progresso
 
-Testes de regressão:
+Teste funcional em Introdução à Arqueologia:
 
-- marcar aula aumenta o progresso;
-- desmarcar a mesma aula restaura o valor anterior;
-- dominar flashcard aumenta o progresso;
-- marcar “Ainda não sei” novamente reduz/restaura o progresso;
-- “Concluída” mostra 100%;
-- desmarcar item depois de “Concluída” reduz a porcentagem e volta o status para “Estudando”;
-- registros antigos por índice não impedem mais desmarcação;
-- o status “Estudando” não adiciona bônus artificial.
+- tópico: 0% → 9% → 0% ao marcar e desmarcar;
+- flashcard: 0% → 2% → 0% ao marcar “Acertei” e depois “Ainda não sei”.
 
-## 5. Menu e responsividade
+O cálculo mantém 100% reservado à conclusão dos critérios ou à declaração manual de matéria concluída; ao desmarcar um componente necessário, o estado é recalculado.
 
-O botão sanduíche funciona nos três cenários:
+### Caderno
 
-- desktop: recolhe a sidebar e expande o conteúdo;
-- tablet: abre/fecha drawer lateral;
-- mobile: abre/fecha drawer lateral.
+- três folhas criadas com numeração permanente `Folha 01`, `Folha 02`, `Folha 03`;
+- somente uma folha permanece aberta por vez;
+- troca de folha preserva o comportamento de acordeão;
+- título e conteúdo entram no HTML preparado para PDF;
+- o documento de impressão contém os campos do caderno sem os controles do app.
 
-Também existe um botão de recolher dentro da própria sidebar; quando ela está fechada no desktop, o botão do topo permite reabri-la.
+### Responsividade
 
-Larguras testadas automaticamente:
+Testado em:
 
 - 1440;
 - 1024;
@@ -125,26 +90,18 @@ Larguras testadas automaticamente:
 - 360;
 - 320 px.
 
-Resultado: nenhum overflow horizontal detectado na página base nem no caderno de uma matéria, e nenhum erro JavaScript na bateria automatizada.
+Resultado: página principal e modal sem overflow horizontal nas larguras testadas.
 
-## 6. Migração
+### Menu
 
-Foi testada migração de estado da v6.2 para v7, incluindo semestre atual e anotações antigas. O novo formato mantém compatibilidade com as informações salvas pelas versões anteriores suportadas.
+No desktop, o botão sanduíche alternou corretamente a classe de sidebar recolhida. Em larguras menores, o mesmo sistema usa drawer responsivo.
 
-## Limite da auditoria
+## Estrutura do código
 
-A auditoria reduz erros estruturais, conceituais e de regressão, mas não transforma o material didático gerado pelo app em bibliografia acadêmica revisada por pares. Para trabalhos, provas e aprofundamento, devem prevalecer o professor, o plano de ensino e as referências bibliográficas da disciplina. O app separa a ementa oficial do material independente justamente para deixar esse limite claro.
+`study-content.js` e `lesson-content.js` foram consolidados após a auditoria. Isso removeu a necessidade de manter conteúdo antigo “por baixo” de patches de correção em tempo de execução. Os arquivos agora representam diretamente o estado final usado pelo app.
 
-## Resultado
+Todos os arquivos JavaScript passam em `node --check`.
 
-`node validate-data.js` conclui a auditoria curricular, estrutural e de conteúdo da v7 sem erros. A bateria de navegador também conclui sem erros nas funções e resoluções testadas.
+## Limite da conclusão
 
-## Ajuste v7.1 — Caderno em folhas
-
-- Cada anotação de aula é apresentada como uma folha numerada e recolhível.
-- Folhas existentes carregam fechadas por padrão.
-- Ao criar uma nova folha, somente a nova é aberta.
-- Ao abrir uma folha, outra folha aberta é recolhida automaticamente.
-- A capa exibe título, data, contagem de palavras e uma prévia curta.
-- A área principal de escrita ganhou aparência pautada, mantendo os campos estruturados de conceitos, dúvidas, tarefas e observações.
-- A estrutura de dados do caderno não mudou, portanto as anotações da v7 continuam compatíveis.
+Esta auditoria é estrutural, funcional e de coerência semântica. Ela não equivale a revisão por um corpo docente ou revisão por pares de cada afirmação acadêmica. O app continua identificando o PPP oficial separadamente e deve ser complementado pelo plano de ensino, professor e bibliografia da turma.

@@ -4,6 +4,7 @@
   const LESSONS = window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
+  const APP_VERSION = '7.5';
   const STORAGE_KEY = 'arqueologia-study-hub-v7';
   const V62_STORAGE_KEY = 'arqueologia-study-hub-v6-2';
   const V61_STORAGE_KEY = 'arqueologia-study-hub-v6-1';
@@ -152,10 +153,68 @@
     return targetState;
   }
 
+  function canonicalizeNotebookEntries(targetState) {
+    const allCourses = [...(DATA.courses || []), ...(DATA.optatives || [])];
+    const allowed = new Set(allCourses.map(course => course.id));
+    const source = plainObject(targetState.notebookEntries);
+    const normalized = {};
+
+    Object.entries(source).forEach(([courseId, rawEntries]) => {
+      if (!allowed.has(courseId) || !Array.isArray(rawEntries)) return;
+      const cleaned = rawEntries.filter(entry => entry && typeof entry === 'object').map((entry, index) => ({
+        id: String(entry.id || `legacy-${courseId}-${index}`),
+        pageNumber: Number.isInteger(Number(entry.pageNumber)) && Number(entry.pageNumber) > 0 ? Number(entry.pageNumber) : null,
+        date: /^\d{4}-\d{2}-\d{2}$/.test(String(entry.date || '')) ? String(entry.date) : '',
+        title: String(entry.title || ''), learned: String(entry.learned || ''), concepts: String(entry.concepts || ''),
+        questions: String(entry.questions || ''), tasks: String(entry.tasks || ''), free: String(entry.free || '')
+      }));
+
+      const used = new Set(cleaned.map(entry => entry.pageNumber).filter(Boolean));
+      let nextNumber = used.size ? Math.max(...used) : 0;
+      // Entradas legadas são armazenadas da mais nova para a mais antiga. Numere as antigas cronologicamente.
+      for (let i = cleaned.length - 1; i >= 0; i--) {
+        if (!cleaned[i].pageNumber) {
+          do { nextNumber += 1; } while (used.has(nextNumber));
+          cleaned[i].pageNumber = nextNumber;
+          used.add(nextNumber);
+        }
+      }
+      if (cleaned.length) normalized[courseId] = cleaned;
+    });
+
+    targetState.notebookEntries = normalized;
+    return targetState;
+  }
+
   canonicalizeTopicChecks(state);
+  canonicalizeNotebookEntries(state);
+
+  let storageWarningShown = false;
+  function showToast(message, tone = 'info') {
+    let toast = document.querySelector('.app-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.className = 'app-toast';
+      toast.setAttribute('role', 'status');
+      document.body.appendChild(toast);
+    }
+    toast.className = `app-toast ${tone}`;
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove('show'), 4200);
+  }
 
   function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.warn('Não foi possível salvar o estado local do app.', error);
+      if (!storageWarningShown) {
+        storageWarningShown = true;
+        showToast('Não foi possível salvar neste navegador. Exporte um backup antes de fechar a página.', 'warn');
+      }
+    }
     updateGlobalProgress();
   }
 
@@ -215,7 +274,12 @@
   }
 
   function suggestedOptativeAnswer(topic, course) {
-    return `Como preparação para ${course.title}, estude “${topic}” relacionando contexto histórico, evidências materiais, métodos de documentação/análise e limites de interpretação. O conteúdo exato deve ser confirmado no plano de ensino quando a optativa for ofertada.`;
+    const lesson = LESSONS.deep?.[course.id]?.[topic];
+    if (lesson?.remember?.length) return lesson.remember.slice(0, 2).join(' ');
+    const guide = (packFor(course).topicGuides || []).find(g => normalizeText(g.topic) === normalizeText(topic));
+    const points = (guide?.points || []).slice(0, 2);
+    if (points.length) return points.map(p => `${p.term}: ${p.definition}`).join(' ');
+    return `Este é um roteiro sugerido para a optativa ${course.title}. Relacione o tema “${topic}” às fontes, evidências e métodos adequados à disciplina e ajuste o estudo ao plano de ensino quando a matéria for ofertada.`;
   }
 
   function flashcardsForCourse(course) {
@@ -273,7 +337,24 @@
       earned += Math.min(score / 70, 1) * 20;
     }
 
-    return available ? Math.max(0, Math.min(100, Math.round((earned / available) * 100))) : 0;
+    if (!available) return 0;
+    const allTopicsMet = !course.topics.length || completedTopicCount(course) === course.topics.length;
+    const allFlashMet = !cards.length || masteredCardCount(course) === cards.length;
+    const quizMet = !quiz.length || Number(state.quizScores[course.id] || 0) >= 70;
+    if (allTopicsMet && allFlashMet && quizMet) return 100;
+    return Math.max(0, Math.min(99, Math.round((earned / available) * 100)));
+  }
+
+  function progressFormula(course) {
+    const components = [];
+    if (course.topics.length) components.push(['aulas', 60]);
+    const cards = flashcardsForCourse(course);
+    if (cards.length) components.push(['flashcards', 20]);
+    const quiz = quizForCourse(course);
+    if (quiz.length) components.push(['quiz', 20]);
+    const total = components.reduce((sum, [, weight]) => sum + weight, 0) || 1;
+    const labels = components.map(([label, weight]) => `${Math.round((weight / total) * 100)}% ${label}`);
+    return `Progresso de estudo: ${labels.join(' · ')}${quiz.length ? ' (quiz completa a parcela a partir de 70%)' : ''}`;
   }
 
   function globalProgress() {
@@ -393,14 +474,21 @@
     return null;
   }
 
+  function reviewState(course) {
+    const cards = flashcardsForCourse(course);
+    const mastered = masteredCardCount(course);
+    const score = state.quizScores[course.id];
+    const attempts = Number(state.quizAttempts[course.id] || 0);
+    const unchecked = Math.max(0, (course.topics || []).length - completedTopicCount(course));
+    const started = (state.statuses[course.id] || 'todo') === 'studying' || completedTopicCount(course) > 0 || mastered > 0 || attempts > 0 || score !== undefined;
+    const topicsPending = unchecked > 0;
+    const flashPending = cards.length > 0 && mastered < cards.length;
+    const quizPending = quizForCourse(course).length > 0 && Number(score || 0) < 70;
+    return { cards, mastered, score, unchecked, started, topicsPending, flashPending, quizPending, need: started && (topicsPending || flashPending || quizPending) };
+  }
+
   function reviewCount() {
-    return DATA.courses.reduce((n, c) => {
-      const started = state.statuses[c.id] === 'studying' || completedTopicCount(c) > 0 || state.quizScores[c.id] !== undefined;
-      if (!started) return n;
-      const lowQuiz = state.quizScores[c.id] !== undefined && state.quizScores[c.id] < 70;
-      const unmastered = masteredCardCount(c) < flashcardsForCourse(c).length;
-      return n + (lowQuiz || unmastered ? 1 : 0);
-    }, 0);
+    return DATA.courses.reduce((n, course) => n + (state.statuses[course.id] !== 'done' && reviewState(course).need ? 1 : 0), 0);
   }
 
   function dashboard() {
@@ -435,7 +523,7 @@
   function semesterView(sem) {
     const courses = DATA.courses.filter(c => c.semester === sem), stats = statsForSemester(sem);
     return `<div class="section-head top-section"><div><span class="eyebrow">Matriz curricular</span><h1>${semesterLabel(sem)}</h1><p>${stats.count} componentes · ${stats.hours}h pela matriz · ${stats.avg}% estudado</p></div>${semesterChips(sem)}</div>
-      <div class="notice info"><div>✦</div><div><strong>Como usar este semestre</strong><p>Abra uma matéria e siga Guia → Conteúdo → Flashcards → Quiz. A ementa e bibliografia oficiais ficam em abas próprias.</p></div></div>
+      <div class="notice info"><div>✦</div><div><strong>Como usar este semestre</strong><p>Abra uma matéria e siga Guia → Aulas → Flashcards → Quiz. A ementa e bibliografia oficiais ficam em abas próprias.</p></div></div>
       <div class="card-grid">${courses.map(courseCard).join('')}</div>`;
   }
 
@@ -494,18 +582,13 @@
   function reviewView() {
     const sem = Number(state.currentSemester || 1);
     const current = DATA.courses.filter(c => c.semester === sem);
-    const rows = current.map(c => {
-      const cards = flashcardsForCourse(c), mastered = masteredCardCount(c), score = state.quizScores[c.id];
-      const unchecked = c.topics.length - completedTopicCount(c);
-      return { c, cards, mastered, score, unchecked, need: unchecked > 0 || mastered < cards.length || (score !== undefined && score < 70) };
-    });
-    const needs = rows.filter(r => r.need && (state.statuses[r.c.id] !== 'done'));
-    return `<div class="section-head top-section"><div><span class="eyebrow">Memória ativa</span><h1>Revisão</h1><p>Veja o que ainda falta consolidar no ${sem}º semestre.</p></div><button class="btn btn-outline" data-go-sem="${sem}">Voltar às matérias</button></div>
-      <div class="review-explainer"><strong>Regra simples:</strong> tente explicar sem olhar, confira a resposta e marque “Acertei” só quando conseguir responder com suas próprias palavras. No quiz, use 70% como mínimo para considerar o conteúdo razoavelmente consolidado.</div>
+    const needs = current.map(c => ({ c, ...reviewState(c) })).filter(r => r.need && state.statuses[r.c.id] !== 'done');
+    return `<div class="section-head top-section"><div><span class="eyebrow">Memória ativa</span><h1>Revisão</h1><p>Veja o que ainda falta consolidar no ${sem}º semestre entre as matérias que você já iniciou.</p></div><button class="btn btn-outline" data-go-sem="${sem}">Voltar às matérias</button></div>
+      <div class="review-explainer"><strong>Regra simples:</strong> tente explicar sem olhar, confira a resposta e marque “Acertei” só quando conseguir responder com suas próprias palavras. No quiz, use 70% como mínimo para consolidar a parcela de revisão.</div>
       ${needs.length ? `<div class="review-list">${needs.map(r => `<article class="review-row">
-        <div><span class="eyebrow">${r.c.semester}º semestre</span><h3>${esc(r.c.title)}</h3><p>${r.unchecked} tópico(s) pendente(s) · ${r.mastered}/${r.cards.length} flashcards dominados · quiz ${r.score === undefined ? 'não feito' : `${r.score}%`}</p></div>
-        <div class="review-actions"><button class="btn btn-soft btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="flash">Flashcards</button><button class="btn btn-outline btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="quiz">Quiz</button></div>
-      </article>`).join('')}</div>` : `<div class="empty"><h3>Nada pendente neste semestre 🎉</h3><p>Quando você iniciar novas matérias ou errar quizzes, elas aparecerão aqui.</p></div>`}`;
+        <div><span class="eyebrow">${r.c.semester}º semestre</span><h3>${esc(r.c.title)}</h3><p>${r.unchecked} aula(s) pendente(s) · ${r.mastered}/${r.cards.length} flashcards dominados · quiz ${r.score === undefined ? 'não feito' : `${r.score}%`}</p></div>
+        <div class="review-actions">${r.topicsPending ? `<button class="btn btn-soft btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="content">Aulas</button>` : ''}${r.flashPending ? `<button class="btn btn-soft btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="flash">Flashcards</button>` : ''}${r.quizPending ? `<button class="btn btn-outline btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="quiz">Quiz</button>` : ''}</div>
+      </article>`).join('')}</div>` : `<div class="empty"><h3>Nada pendente entre as matérias iniciadas 🎉</h3><p>Quando você começar uma matéria, as aulas, flashcards ou quiz que ainda faltarem aparecerão aqui.</p></div>`}`;
   }
 
   function aboutView() {
@@ -534,15 +617,25 @@
       <div class="section-head"><div><h2>Backup</h2><p>Salve seu progresso antes de trocar de celular, navegador ou domínio.</p></div></div><section class="panel"><div class="hero-actions"><button class="btn" data-export>Exportar backup</button><button class="btn btn-outline" data-import>Importar backup</button><button class="btn btn-danger" data-reset>Apagar meu progresso</button></div></section>`;
   }
 
+  const courseSearchCache = new Map();
+  function courseStaticSearchText(course) {
+    if (courseSearchCache.has(course.id)) return courseSearchCache.get(course.id);
+    const p = packFor(course);
+    const lessonParts = Object.values(LESSONS.deep?.[course.id] || {}).flatMap(lesson => [
+      lesson?.explanation, lesson?.deepDive, lesson?.example, ...(lesson?.remember || []), ...(lesson?.review || []), ...(lesson?.reviewAnswers || []), ...(lesson?.commonMistakes || []), ...(lesson?.studySteps || [])
+    ]);
+    const hay = normalizeText([course.title, course.matrixNameOriginal, course.syllabus, course.ementaryName, ...(course.topics || []), course.bibliographyBasic, course.bibliographyComplementary, p.overview, ...(p.studyTips || []), ...conceptsForCourse(course).flatMap(x => [x.term, x.definition]), ...lessonParts].join(' '));
+    courseSearchCache.set(course.id, hay);
+    return hay;
+  }
+
   function searchView(query) {
     const q = normalizeText(query);
     const items = [...DATA.courses, ...DATA.optatives].filter(c => {
-      const p = packFor(c);
       const personal = [state.notes[c.id] || '', ...Object.values(state.coursePlans[c.id] || {}), ...notebookEntriesFor(c).flatMap(n => [n.title, n.learned, n.concepts, n.questions, n.tasks, n.free])];
-      const hay = normalizeText([c.title, c.matrixNameOriginal, c.syllabus, c.ementaryName, ...(c.topics || []), c.bibliographyBasic, c.bibliographyComplementary, p.overview, ...conceptsForCourse(c).flatMap(x => [x.term, x.definition]), ...personal].join(' '));
-      return hay.includes(q);
+      return `${courseStaticSearchText(c)} ${normalizeText(personal.join(' '))}`.includes(q);
     });
-    return `<div class="section-head top-section"><div><span class="eyebrow">Busca</span><h1>“${esc(query)}”</h1><p>${items.length} resultado(s) em matérias, ementas, tópicos, conceitos e no seu caderno.</p></div></div>${items.length ? `<div class="card-grid">${items.map(courseCard).join('')}</div>` : `<div class="empty"><h3>Nada encontrado</h3><p>Tente termos como “ossos”, “cerâmica”, “estratigrafia”, “patrimônio”, “DNA”, “estatística” ou “campo”.</p></div>`}`;
+    return `<div class="section-head top-section"><div><span class="eyebrow">Busca</span><h1>“${esc(query)}”</h1><p>${items.length} resultado(s) em matérias, ementas, aulas, conceitos e no seu caderno.</p></div></div>${items.length ? `<div class="card-grid">${items.map(courseCard).join('')}</div>` : `<div class="empty"><h3>Nada encontrado</h3><p>Tente termos como “ossos”, “cerâmica”, “estratigrafia”, “patrimônio”, “DNA”, “estatística” ou “campo”.</p></div>`}`;
   }
 
   function render() {
@@ -628,7 +721,12 @@
 
   function guidePoints(course, topic) {
     const guide = (packFor(course).topicGuides || []).find(g => g.topic === topic);
-    const direct = (guide?.points || []).filter(c => conceptIsRelevant(course, c));
+    const direct = (guide?.points || []).filter(c => {
+      const term = normalizeText(c?.term || '');
+      const definition = normalizeText(c?.definition || '');
+      const helper = term === 'como dominar este topico' || definition.includes('conecte sua resposta ao foco geral da materia');
+      return !helper && conceptIsRelevant(course, c);
+    });
     if (direct.length) return direct;
     const topicNorm = normalizeText(topic);
     const matched = conceptsForCourse(course).filter(c => topicNorm.includes(normalizeText(c.term)) || normalizeText(c.term).split(' ').some(w => w.length > 5 && topicNorm.includes(w)));
@@ -662,34 +760,21 @@
   function lessonSupport(course) {
     const category = packFor(course).category || 'theory';
     const support = {
-      archaeology: {
-        steps: ['Defina o conceito e diga que tipo de evidência está envolvida.', 'Localize a evidência em seu contexto espacial, estratigráfico e cronológico.', 'Explique qual método permite produzir o dado.', 'Separe observação, inferência e hipótese alternativa.'],
-        mistakes: ['Interpretar um vestígio isolado sem contexto.', 'Confundir descrição com explicação.', 'Tratar uma hipótese como certeza sem discutir limites.']
-      },
-      theory: {
-        steps: ['Defina o conceito com suas próprias palavras.', 'Identifique qual problema o conceito ajuda a explicar.', 'Crie um exemplo concreto.', 'Compare a interpretação com pelo menos uma alternativa.'],
-        mistakes: ['Decorar palavras sem entender relações entre elas.', 'Usar um conceito como rótulo automático.', 'Ignorar o contexto histórico em que a teoria foi formulada.']
-      },
-      methods: {
-        steps: ['Comece pela pergunta de pesquisa.', 'Defina os dados necessários.', 'Escolha método e amostragem compatíveis.', 'Explique análise, limites e forma de documentação.'],
-        mistakes: ['Escolher técnica antes da pergunta.', 'Achar que quantidade de dados corrige coleta enviesada.', 'Apresentar resultado sem discutir incerteza.']
-      },
-      heritage: {
-        steps: ['Identifique os atores e os valores envolvidos.', 'Defina o bem, território ou impacto em análise.', 'Relacione responsabilidades técnicas e sociais.', 'Compare alternativas de preservação, gestão e comunicação.'],
-        mistakes: ['Tratar patrimônio apenas como objeto físico.', 'Ignorar comunidades afetadas.', 'Supor que escavar é sempre sinônimo de preservar.']
-      },
-      bio: {
-        steps: ['Defina a unidade biológica analisada.', 'Explique como ela é observada ou medida.', 'Relacione o dado ao contexto arqueológico.', 'Registre incerteza, preservação e hipóteses alternativas.'],
-        mistakes: ['Transformar estimativa em certeza absoluta.', 'Ignorar preservação e contaminação.', 'Interpretar um marcador isolado sem contexto.']
-      },
-      lab: {
-        steps: ['Descreva o material antes de interpretá-lo.', 'Registre atributos e procedimentos de análise.', 'Compare padrões dentro de um conjunto.', 'Relacione o resultado ao contexto de proveniência.'],
-        mistakes: ['Classificar sem critério explícito.', 'Perder informação de proveniência.', 'Confundir semelhança visual com mesma função ou cronologia.']
-      },
-      field: {
-        steps: ['Defina o objetivo da intervenção.', 'Planeje unidades, amostragem e registro.', 'Documente cada alteração do contexto.', 'Integre campo, laboratório e interpretação.'],
-        mistakes: ['Escavar sem pergunta de pesquisa.', 'Registrar depois em vez de durante a intervenção.', 'Tratar profundidade como sinônimo automático de antiguidade.']
-      }
+      theory: { steps: ['Defina o conceito com suas próprias palavras.', 'Identifique qual problema ele ajuda a explicar.', 'Aplique-o a uma evidência ou caso.', 'Compare com uma interpretação alternativa.'], mistakes: ['Decorar termos sem entender relações.', 'Usar teoria como rótulo automático.', 'Ignorar contexto histórico e críticas da abordagem.'] },
+      heritage: { steps: ['Identifique bem, território e atores envolvidos.', 'Separe valores científicos, sociais, legais e éticos.', 'Mapeie responsabilidades e conflitos.', 'Compare alternativas de preservação, gestão e comunicação.'], mistakes: ['Tratar patrimônio apenas como objeto físico.', 'Ignorar comunidades afetadas.', 'Confundir proteção legal com consenso social.'] },
+      material: { steps: ['Descreva matéria-prima e atributos observáveis.', 'Reconstrua produção, uso, manutenção e descarte.', 'Relacione alterações pós-deposicionais.', 'Interprete sempre em conjunto com proveniência e contexto.'], mistakes: ['Classificar só pela aparência.', 'Inferir função diretamente da forma.', 'Ignorar cadeia operatória e contexto.'] },
+      quant: { steps: ['Defina unidade de análise e variáveis.', 'Verifique amostra, escala e qualidade dos dados.', 'Escolha medida, gráfico ou teste adequado.', 'Interprete resultado com dispersão e incerteza.'], mistakes: ['Calcular antes de definir a pergunta.', 'Confundir correlação com causalidade.', 'Apresentar média ou porcentagem sem contexto.'] },
+      science: { steps: ['Defina a amostra e o fenômeno observado.', 'Explique formação, preservação e possíveis alterações.', 'Descreva o método de identificação ou medição.', 'Relacione o resultado à hipótese arqueológica com incerteza explícita.'], mistakes: ['Tratar identificação como interpretação final.', 'Ignorar tafonomia, contaminação ou preservação.', 'Generalizar a partir de um indicador isolado.'] },
+      law: { steps: ['Identifique a situação e o bem protegido.', 'Separe norma, competência e procedimento.', 'Verifique obrigações e documentação aplicável.', 'Registre limites e confirme a vigência normativa.'], mistakes: ['Memorizar número de norma sem entender aplicação.', 'Confundir decisão técnica com decisão administrativa.', 'Usar regra desatualizada sem conferir fonte oficial.'] },
+      regional: { steps: ['Monte cronologia e localização espacial.', 'Compare ambientes, sítios e cultura material.', 'Diferencie dado, modelo e debate historiográfico.', 'Procure diversidade e mudança dentro da própria região.'], mistakes: ['Tratar região como cultura homogênea.', 'Transformar cultura arqueológica em povo fixo.', 'Usar cronologia sem discutir base de datação.'] },
+      method: { steps: ['Comece pela pergunta de pesquisa.', 'Defina dados e amostragem necessários.', 'Descreva o procedimento passo a passo.', 'Explique controle de qualidade, produto e limites.'], mistakes: ['Escolher técnica antes da pergunta.', 'Confundir ferramenta com método.', 'Omitir critérios de registro e incerteza.'] },
+      methods: { steps: ['Comece pela pergunta e objetivos.', 'Mostre como método e amostra produzem os dados.', 'Organize resultados de modo rastreável.', 'Faça a conclusão responder apenas ao que os dados sustentam.'], mistakes: ['Relatório sem ligação entre objetivo, método e resultado.', 'Esconder limitações.', 'Conclusão mais forte que a evidência.'] },
+      historical: { steps: ['Identifique cada tipo de fonte e sua proveniência.', 'Faça crítica de fonte antes de cruzá-las.', 'Compare cronologia, materialidade e contexto social.', 'Explique concordâncias e contradições sem hierarquia automática.'], mistakes: ['Tratar documento escrito como verdade absoluta.', 'Usar cultura material apenas para ilustrar texto.', 'Ignorar silêncios e vieses de cada fonte.'] },
+      earth: { steps: ['Identifique processo geológico/geomorfológico.', 'Defina escala espacial e temporal.', 'Avalie transporte, deposição e retrabalhamento.', 'Explique como o processo afeta preservação e contexto arqueológico.'], mistakes: ['Confundir posição atual com posição original.', 'Ignorar retrabalhamento sedimentar.', 'Atribuir idade só pela profundidade.'] },
+      bio: { steps: ['Defina a unidade biológica analisada.', 'Explique observação, método e referência comparativa.', 'Avalie preservação e contaminação.', 'Apresente inferência com incerteza e contexto.'], mistakes: ['Transformar estimativa em certeza.', 'Confundir marcador biológico com identidade social.', 'Ignorar preservação, amostra ou população comparativa.'] },
+      field: { steps: ['Defina objetivo e estratégia de intervenção.', 'Planeje segurança, unidades, amostragem e logística.', 'Documente proveniência e cada alteração do contexto durante o trabalho.', 'Integre registro de campo, acondicionamento e análise posterior.'], mistakes: ['Escavar sem pergunta e plano de registro.', 'Registrar informações só depois.', 'Perder proveniência ou cadeia de custódia.'] },
+      lab: { steps: ['Confirme identificação e proveniência antes de intervir.', 'Documente limpeza, catalogação e atributos.', 'Aplique protocolo analítico adequado.', 'Preserve rastreabilidade, acondicionamento e reprodutibilidade.'], mistakes: ['Misturar lotes ou etiquetas.', 'Limpar/analisar sem protocolo.', 'Confundir classificação tipológica com interpretação final.'] },
+      professional: { steps: ['Defina objetivo e público da comunicação.', 'Separe evidência, argumento e conclusão.', 'Use referências e linguagem técnica verificável.', 'Revise limites éticos, autoria e responsabilidade profissional.'], mistakes: ['Escrever sem deixar rastreável a evidência.', 'Confundir opinião com conclusão técnica.', 'Omitir limites, autoria ou conflito ético.'] }
     };
     return support[category] || support.theory;
   }
@@ -774,7 +859,10 @@
       ? `<div class="lesson-concepts"><h4>Conceitos essenciais</h4><div class="concept-grid">${data.points.map(c => `<div class="concept-inline"><strong>${esc(c.term)}</strong><p>${esc(c.definition)}</p></div>`).join('')}</div></div>`
       : '';
     const reviewHtml = data.review.map((q, i) => `<li><div class="review-question">${esc(q)}</div><details class="review-answer"><summary>Ver resposta comentada</summary><p>${esc(reviewAnswer(q, data, i))}</p><small>Use esta resposta como referência. O ideal é conseguir explicar a mesma ideia com suas próprias palavras.</small></details></li>`).join('');
-    return `<div class="lesson-depth ${data.expanded ? 'expanded' : ''}"><span>${data.expanded ? 'Aula aprofundada' : 'Aula guiada'}</span><small>${data.expanded ? `leitura desenvolvida · cerca de ${lessonReadingMinutes(data)} min` : `material guiado · cerca de ${lessonReadingMinutes(data)} min`}</small></div>
+    const lessonLabel = course.officialSyllabusAvailable === false
+      ? (data.expanded ? 'Aula sugerida aprofundada' : 'Aula sugerida')
+      : (data.expanded ? 'Aula aprofundada' : 'Aula guiada');
+    return `<div class="lesson-depth ${data.expanded ? 'expanded' : ''}"><span>${lessonLabel}</span><small>${data.expanded ? `leitura desenvolvida · cerca de ${lessonReadingMinutes(data)} min` : `material guiado · cerca de ${lessonReadingMinutes(data)} min`}</small></div>
       <div class="lesson-section"><h4>1. Entenda o assunto</h4>${paragraphsHtml(data.explanation)}</div>
       <div class="lesson-section lesson-deep-dive"><h4>2. Aprofundamento</h4>${paragraphsHtml(data.deepDive)}</div>
       ${conceptHtml}
@@ -840,10 +928,92 @@
     return source.length > 115 ? `${source.slice(0, 112).trim()}…` : source;
   }
 
+  function notebookPdfText(value = '') {
+    const text = String(value || '').trim();
+    if (!text) return '<p class=\"empty-field\">—</p>';
+    return `<p>${esc(text).replace(/\n/g, '<br>')}</p>`;
+  }
+
+  function notebookPdfDocument(course, entry, pageLabel) {
+    const title = String(entry?.title || 'Anotação de aula').trim() || 'Anotação de aula';
+    const date = entry?.date ? formatDateBR(entry.date) : 'Sem data';
+    const filenameTitle = `${course.title} - ${pageLabel} - ${title}`;
+    const section = (label, value, cls = '') => `<section class=\"note-section ${cls}\"><h2>${esc(label)}</h2>${notebookPdfText(value)}</section>`;
+    return `<!doctype html>
+<html lang=\"pt-BR\">
+<head>
+<meta charset=\"utf-8\">
+<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
+<title>${esc(filenameTitle)}</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm 17mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; color: #2f2925; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.55; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 100%; }
+  header { border-bottom: 2px solid #8b6d59; padding: 0 0 10px; margin-bottom: 15px; }
+  .brand { margin: 0 0 4px; color: #7a5c49; font-size: 8.5pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  h1 { margin: 0; font-size: 20pt; line-height: 1.2; color: #2f2925; }
+  .meta { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 8px; color: #6d625a; font-size: 9pt; }
+  .meta b { color: #433a34; }
+  .note-section { break-inside: auto; margin: 0 0 13px; padding: 0 0 11px; border-bottom: 1px solid #e5ddd6; }
+  .note-section:last-of-type { border-bottom: 0; }
+  .note-section h2 { break-after: avoid; margin: 0 0 5px; font-size: 10.5pt; color: #6d5140; text-transform: uppercase; letter-spacing: .035em; }
+  .note-section p { margin: 0; orphans: 3; widows: 3; white-space: normal; overflow-wrap: anywhere; }
+  .main-note { padding: 10px 12px 12px 20px; border: 1px solid #ded3ca; border-radius: 8px; background: repeating-linear-gradient(to bottom, #fffdf9 0 26px, #e9e1d8 26px 27px); }
+  .main-note h2 { background: rgba(255,253,249,.94); display: inline-block; padding-right: 6px; }
+  .main-note p { line-height: 27px; }
+  .empty-field { color: #9b918a; }
+  footer { margin-top: 18px; padding-top: 8px; border-top: 1px solid #ddd4cc; color: #81766e; font-size: 8pt; }
+  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; background: #f5f1ec; } .page { background:#fff; padding:15mm 16mm; box-shadow:0 8px 28px rgba(0,0,0,.08); } }
+  @media print { body { background:#fff; } .page { padding:0; box-shadow:none; } }
+</style>
+</head>
+<body>
+<article class=\"page\">
+  <header>
+    <p class=\"brand\">Arqueologia Study Hub · Caderno digital</p>
+    <h1>${esc(title)}</h1>
+    <div class=\"meta\"><span><b>Matéria:</b> ${esc(course.title)}</span><span><b>${esc(pageLabel)}</b></span><span><b>Data:</b> ${esc(date)}</span></div>
+  </header>
+  ${section('O que aprendi na sala', entry?.learned, 'main-note')}
+  ${section('Conceitos e palavras-chave', entry?.concepts)}
+  ${section('Dúvidas para perguntar/revisar', entry?.questions)}
+  ${section('Tarefas, leituras e prazos', entry?.tasks)}
+  ${section('Observações livres', entry?.free)}
+  <footer>Material pessoal de estudo exportado do Arqueologia Study Hub. Desenvolvido por Mei.</footer>
+</article>
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { window.focus(); window.print(); }, 180);
+    window.addEventListener('afterprint', () => setTimeout(() => window.close(), 120));
+  });
+<\/script>
+</body>
+</html>`;
+  }
+
+  function saveNotebookPageAsPdf(course, entryId) {
+    const entries = notebookEntriesFor(course);
+    const index = entries.findIndex(item => item.id === entryId);
+    if (index < 0) return;
+    const entry = entries[index];
+    const pageLabel = `Folha ${String(entry.pageNumber || index + 1).padStart(2, '0')}`;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Não foi possível abrir a janela de PDF. Permita pop-ups para este site e tente novamente.');
+      return;
+    }
+    try { printWindow.opener = null; } catch (_) {}
+    printWindow.document.open();
+    printWindow.document.write(notebookPdfDocument(course, entry, pageLabel));
+    printWindow.document.close();
+  }
+
   function notebookEntryHtml(entry, index, openEntryId = null) {
     const words = noteWordCount(entry);
     const isOpen = entry.id === openEntryId;
-    const pageLabel = `Folha ${String(index + 1).padStart(2, '0')}`;
+    const pageLabel = `Folha ${String(entry.pageNumber || index + 1).padStart(2, '0')}`;
     return `<details class="notebook-page" data-note-entry="${esc(entry.id)}" ${isOpen ? 'open' : ''}>
       <summary class="notebook-page-cover">
         <span class="notebook-page-number">${pageLabel}</span>
@@ -857,7 +1027,10 @@
       <div class="notebook-sheet">
         <div class="notebook-sheet-toolbar">
           <span><b>${pageLabel}</b> · escreva o que aconteceu nesta aula</span>
-          <button type="button" class="btn btn-outline btn-sm notebook-delete" data-delete-note="${esc(entry.id)}">Excluir folha</button>
+          <div class="notebook-sheet-actions">
+            <button type="button" class="btn btn-soft btn-sm notebook-pdf" data-save-note-pdf="${esc(entry.id)}" title="Abrir esta folha pronta para salvar como PDF">Salvar PDF</button>
+            <button type="button" class="btn btn-outline btn-sm notebook-delete" data-delete-note="${esc(entry.id)}">Excluir folha</button>
+          </div>
         </div>
         <div class="notebook-fields">
           <label><span>Título da aula</span><input class="plan-input" data-note-field="title" value="${esc(entry.title || '')}" placeholder="Ex.: Cultura material e contexto"></label>
@@ -888,8 +1061,9 @@
   function bindNotebookFields(course) {
     $$('[data-note-entry]', dialogContent).forEach(card => {
       const id = card.dataset.noteEntry;
-      card.addEventListener('toggle', () => {
-        if (!card.open) return;
+      const summary = $('summary', card);
+      summary?.addEventListener('click', () => {
+        if (card.open) return;
         $$('[data-note-entry]', dialogContent).forEach(other => {
           if (other !== card) other.open = false;
         });
@@ -914,6 +1088,11 @@
         saveState();
       }));
     });
+    $$('[data-save-note-pdf]', dialogContent).forEach(btn => btn.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      saveNotebookPageAsPdf(course, btn.dataset.saveNotePdf);
+    }));
     $$('[data-delete-note]', dialogContent).forEach(btn => btn.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
@@ -936,7 +1115,7 @@
     dialogContent.innerHTML = `<header class="course-hero"><div class="badges">
       ${course.semester ? `<span class="badge">${course.semester}º semestre</span>` : `<span class="badge">Optativa</span>`}<span class="badge">${course.matrixHours}h na matriz</span>${course.credits ? `<span class="badge">${esc(course.credits)} no ementário</span>` : ''}${course.officialSyllabusAvailable === false ? `<span class="badge warn">PPP: sem ementa</span>` : course.note ? `<span class="badge warn">PPP ⚠</span>` : ''}
       </div><h2>${esc(course.title)}</h2><p>${course.matrixNameOriginal && course.matrixNameOriginal !== course.title ? `Como aparece na matriz: ${esc(course.matrixNameOriginal)}. ` : ''}${course.ementaryName && course.ementaryName !== course.title ? `Nome no ementário: ${esc(course.ementaryName)}.` : 'Guia organizado a partir do PPP do curso.'}</p>
-      <div class="course-progress-line" title="Progresso de estudo: 60% aulas + 20% flashcards + 20% melhor quiz"><div class="progress-track"><div class="progress-fill" data-dialog-progress-bar style="width:${studyPct}%"></div></div><strong data-dialog-progress-text>${studyPct}%</strong></div><small class="progress-formula">Progresso de estudo: 60% aulas · 20% flashcards · 20% quiz (quiz completa a parcela a partir de 70%)</small>
+      <div class="course-progress-line" title="${esc(progressFormula(course))}"><div class="progress-track"><div class="progress-fill" data-dialog-progress-bar style="width:${studyPct}%"></div></div><strong data-dialog-progress-text>${studyPct}%</strong></div><small class="progress-formula">${esc(progressFormula(course))}</small>
       <div class="status-row">${[['todo', 'Não iniciada'], ['studying', 'Estudando'], ['done', 'Concluída']].map(([v, l]) => `<button type="button" class="status-btn ${status === v ? 'active' : ''}" data-status="${v}">${l}</button>`).join('')}</div></header>
 
       <div class="course-content">${course.note ? `<div class="notice"><div>${course.officialSyllabusAvailable === false ? 'ℹ' : '⚠'}</div><div><strong>${course.officialSyllabusAvailable === false ? 'Limite da fonte' : 'Divergência no PPP'}</strong><p>${esc(course.note)}</p></div></div>` : ''}
@@ -949,7 +1128,7 @@
         <aside class="study-tips"><h3>Como estudar</h3><ol>${(pack.studyTips || []).map(t => `<li>${esc(t)}</li>`).join('')}</ol><div class="mini-rule"><strong>Teste de domínio</strong><p>Marque um tópico somente quando conseguir explicá-lo sem copiar a definição e dar pelo menos um exemplo ou aplicação.</p></div></aside></div>
       </section>
 
-      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material didático</span><h3>Aulas da matéria</h3><p>As 397 aulas dos 8 semestres trazem explicação desenvolvida, aprofundamento, conceitos, método de raciocínio, exemplo aplicado, erros comuns, síntese e perguntas com respostas comentadas. O conteúdo é material didático de apoio construído a partir da ementa e dos tópicos auditados do PPP; o plano de ensino do professor continua sendo a referência da turma.</p></div></div>
+      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material didático</span><h3>Aulas da matéria</h3><p>${course.officialSyllabusAvailable === false ? 'Estas aulas são material de apoio sugerido a partir do título da optativa e de referências gerais da área. O PPP consultado lista nome e carga horária, mas não fornece ementa para as optativas; por isso, ajuste o conteúdo ao plano de ensino quando a disciplina for ofertada.' : 'As 397 aulas dos 8 semestres trazem explicação desenvolvida, aprofundamento, conceitos, método de raciocínio, exemplo aplicado, erros comuns, síntese e perguntas com respostas comentadas. O conteúdo é material didático de apoio construído a partir da ementa e dos tópicos auditados do PPP; o plano de ensino do professor continua sendo a referência da turma.'}</p></div></div>
         <div class="lesson-list">${course.topics.map((topic, i) => `<details class="lesson-card" ${i === 0 ? 'open' : ''}><summary><span class="lesson-number">${String(i + 1).padStart(2, '0')}</span><span>${esc(topic)}</span><span class="lesson-state">${topicChecked(course, i) ? '✓ estudado' : 'abrir'}</span></summary><div class="lesson-body">${lessonText(topic, course)}<div class="recall-box"><strong>Fechamento da aula</strong><p>Se você consegue responder às perguntas de revisão sem olhar e dar um exemplo próprio, já pode marcar esta aula como estudada.</p></div><button type="button" class="btn btn-soft btn-sm" data-mark-topic="${i}">${topicChecked(course, i) ? 'Marcar como não estudado' : 'Marcar tópico como estudado'}</button></div></details>`).join('')}</div>
       </section>
 
@@ -978,7 +1157,7 @@
 
       <section class="tab-panel ${initialTab === 'notes' ? 'active' : ''}" data-panel="notes">
         <div class="tab-heading notebook-heading"><div><span class="eyebrow">Caderno digital</span><h3>Meu caderno de ${esc(course.title)}</h3><p>Registre o que realmente foi ensinado em sala. Cada aula vira uma folha independente, fechada quando não estiver em uso.</p></div><button type="button" class="btn" data-add-note>+ Nova folha</button></div>
-        <div class="notebook-tip"><strong>Como usar as folhas</strong><p>Crie uma folha por aula. A folha nova abre automaticamente; as anteriores ficam recolhidas. Clique na capa de qualquer folha para abrir ou fechar e consultar suas anotações.</p></div>
+        <div class="notebook-tip"><strong>Como usar as folhas</strong><p>Crie uma folha por aula. A folha nova abre automaticamente; as anteriores ficam recolhidas. Clique na capa para abrir ou fechar. Em cada folha, use “Salvar PDF” para gerar uma versão limpa pronta para salvar ou imprimir.</p></div>
         <div class="notebook-list" data-notebook-list>${notebookListHtml(course)}</div>
         <details class="legacy-notes"><summary>Anotação geral da matéria</summary><div><p class="muted">Este campo preserva as anotações das versões anteriores e pode ser usado para um resumo geral da disciplina.</p><textarea class="notes-area" data-notes-id="${course.id}" placeholder="Resumo geral da matéria, páginas do livro, conceitos para revisar...">${esc(state.notes[course.id] || '')}</textarea></div></details>
       </section>
@@ -1072,8 +1251,9 @@
     if (addNote) addNote.addEventListener('click', () => {
       state.notebookEntries[course.id] ||= [];
       const newId = `note-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const nextPageNumber = state.notebookEntries[course.id].reduce((max, entry) => Math.max(max, Number(entry.pageNumber || 0)), 0) + 1;
       state.notebookEntries[course.id].unshift({
-        id: newId,
+        id: newId, pageNumber: nextPageNumber,
         date: localDateISO(), title: '', learned: '', concepts: '', questions: '', tasks: '', free: ''
       });
       saveState();
@@ -1101,7 +1281,14 @@
       const stateEl = $('.lesson-state', lesson);
       if (stateEl) stateEl.textContent = value ? '✓ estudado' : 'abrir';
     });
-    $$('.flashcard', dialogContent).forEach(card => card.classList.remove('mastered', 'missed'));
+    const cards = flashcardsForCourse(course);
+    $$('.flashcard', dialogContent).forEach((card, index) => {
+      const value = flashState(course, cards[index], index);
+      card.classList.toggle('mastered', value === true);
+      card.classList.toggle('missed', value === false);
+    });
+    const flashChip = $('[data-panel="flash"] .score-chip', dialogContent);
+    if (flashChip) flashChip.textContent = `${masteredCardCount(course)}/${cards.length} dominados`;
     const quizResult = $('[data-quiz-result]', dialogContent);
     if (quizResult && state.statuses[course.id] === 'todo') quizResult.innerHTML = '';
   }
@@ -1167,7 +1354,7 @@
   }
 
   function exportBackup() {
-    const payload = { app: 'Arqueologia Study Hub UNEB', version: '7.1', exportedAt: new Date().toISOString(), state };
+    const payload = { app: 'Arqueologia Study Hub UNEB', version: APP_VERSION, exportedAt: new Date().toISOString(), state };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `arqueologia-study-hub-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
@@ -1179,7 +1366,17 @@
 
   $('#importInput').addEventListener('change', async e => {
     const file = e.target.files?.[0]; if (!file) return;
-    try { const parsed = JSON.parse(await file.text()); if (!parsed.state) throw new Error(); state = mergeState(parsed.state); saveState(); $('#currentSemester').value = state.currentSemester; render(); alert('Backup importado com sucesso.'); }
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!parsed.state || typeof parsed.state !== 'object') throw new Error();
+      state = mergeState(parsed.state);
+      canonicalizeTopicChecks(state);
+      canonicalizeNotebookEntries(state);
+      saveState();
+      $('#currentSemester').value = state.currentSemester;
+      render();
+      alert('Backup importado com sucesso.');
+    }
     catch (_) { alert('Não consegui importar esse arquivo de backup.'); } finally { e.target.value = ''; }
   });
 

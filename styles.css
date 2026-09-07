@@ -801,7 +801,6 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
 }
 .notebook-tip strong { display: block; margin-bottom: 4px; color: #584438; }
 .notebook-tip p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
-.notebook-list { display: grid; gap: 14px; }
 .notebook-empty {
   padding: 28px 20px;
   border: 1px dashed #cdbfb3;
@@ -811,25 +810,6 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
 }
 .notebook-empty strong { display: block; margin-bottom: 6px; }
 .notebook-empty p { margin: 0 auto; max-width: 560px; color: var(--muted); line-height: 1.55; font-size: 13px; }
-.notebook-entry {
-  border: 1px solid var(--line);
-  border-radius: 17px;
-  background: #fffdf9;
-  overflow: hidden;
-  box-shadow: 0 6px 18px rgba(55,41,32,.035);
-}
-.notebook-entry-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 15px 16px;
-  background: #f5efe8;
-  border-bottom: 1px solid var(--line);
-}
-.notebook-entry-head > div { min-width: 0; }
-.notebook-entry-head strong { display: block; margin-top: 3px; font-size: 15px; overflow-wrap: anywhere; }
-.notebook-entry-head small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
 .notebook-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -859,8 +839,6 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
 }
 
 @media (max-width: 520px) {
-  .notebook-entry-head { padding: 13px; gap: 10px; }
-  .notebook-entry-head { flex-direction: column; }
   .notebook-delete { align-self: flex-start; }
   .notebook-fields { padding: 13px; gap: 11px; }
   .notes-area.notebook-area { min-height: 135px; }
@@ -881,7 +859,7 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
   .notebook-course-row .btn { width: 100%; }
 }
 
-/* ===== v7.1 · caderno em folhas recolhíveis ===== */
+/* ===== v7.3 · caderno em folhas + revisão integral ===== */
 .notebook-list {
   display: grid;
   gap: 12px;
@@ -981,6 +959,14 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
   font-size: 11px;
 }
 .notebook-sheet-toolbar b { color: #655247; }
+.notebook-sheet-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.notebook-pdf { white-space: nowrap; }
 .notebook-page .notebook-fields {
   padding: 18px 18px 20px 62px;
   background: rgba(255,253,249,.76);
@@ -1019,6 +1005,32 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
   .notebook-page-number { min-width: 42px; height: 30px; font-size: 9px; }
   .notebook-page-preview { font-size: 10px; }
   .notebook-sheet-toolbar { flex-direction: column; padding: 11px 13px; }
-  .notebook-delete { width: 100%; }
+  .notebook-sheet-actions { width: 100%; }
+  .notebook-sheet-actions .btn { flex: 1; }
   .notebook-page .notebook-fields { padding: 14px 12px 16px 34px; }
 }
+
+
+/* Feedback não bloqueante para falhas de armazenamento local. */
+.app-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 5000;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid #d8c9bd;
+  border-radius: 12px;
+  background: #fffdf9;
+  color: var(--ink);
+  box-shadow: 0 12px 34px rgba(55,41,32,.18);
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.app-toast.show { opacity: 1; transform: translateY(0); }
+.app-toast.warn { border-color: #d6b49e; background: #fff7f0; }
+@media (max-width: 520px) { .app-toast { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); } }

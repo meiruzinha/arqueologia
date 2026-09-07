@@ -1,11 +1,12 @@
+// v7.5 — conteúdo de apoio consolidado após auditoria semântica.
 window.ARCHAEOLOGY_STUDY_CONTENT = {
   "s1-1-introducao-a-arqueologia": {
     "overview": "Apresenta o que a Arqueologia estuda, como o registro arqueológico é formado e quais métodos permitem transformar vestígios materiais em interpretações sobre sociedades humanas. É a base para entender campo, laboratório, teoria, patrimônio e ética ao longo de todo o curso.",
-    "category": "heritage",
+    "category": "method",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Transforme cada método em fluxo: pergunta → dado → procedimento → produto → limite.",
+      "Explique por que a técnica escolhida responde à pergunta de pesquisa.",
+      "Registre amostragem, critérios e fontes de erro para tornar o procedimento rastreável."
     ],
     "concepts": [
       {
@@ -167,9 +168,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Introduz conceitos usados para compreender diversidade humana e cultural, como cultura, alteridade, relativismo e etnografia. Ajuda a evitar interpretações etnocêntricas e fornece ferramentas para pensar a cultura material dentro de relações sociais e sistemas simbólicos.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -225,8 +226,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Produção de conhecimento baseada em trabalho de campo, observação, participação, descrição e interpretação de práticas e significados sociais."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "contexto cultural",
+        "definition": "Conjunto de relações sociais, valores, práticas, categorias e condições históricas em que uma ação ou significado é produzido. Na Antropologia, interpretar algo exige situá-lo no sistema cultural e nas relações concretas dos grupos estudados."
       },
       {
         "term": "arqueologia e sociedade",
@@ -312,11 +313,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s1-3-pre-historia-geral": {
     "overview": "Percorre a trajetória humana anterior às tradições historiográficas escritas, articulando evolução humana, ambiente, tecnologia, mobilidade, subsistência, domesticação e formação de sociedades complexas em escala global.",
-    "category": "material",
+    "category": "regional",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -462,9 +463,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Apresenta autores e conceitos fundamentais para analisar relações sociais, instituições, desigualdades, poder, trabalho e mudança social. Essas ideias ajudam a interpretar tanto sociedades contemporâneas quanto processos sociais inferidos arqueologicamente.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -480,8 +481,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Em Durkheim, modos de agir, pensar e sentir exteriores ao indivíduo e dotados de poder coercitivo, úteis para analisar instituições e normas coletivas."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "contexto histórico-social",
+        "definition": "Conjunto de condições históricas, econômicas, políticas e sociais que ajudam a compreender o surgimento de instituições, conflitos, ideias e formas de organização social."
       },
       {
         "term": "classe social",
@@ -501,8 +502,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "topic": "Contexto histórico do surgimento da Sociologia",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "contexto histórico-social",
+            "definition": "Conjunto de condições históricas, econômicas, políticas e sociais que ajudam a compreender o surgimento de instituições, conflitos, ideias e formas de organização social."
           }
         ]
       },
@@ -556,12 +557,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Como conceitos sociológicos ajudam a interpretar sociedades do passado e do presente",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Como conceitos sociológicos ajudam a interpretar sociedades do passado e do presente. Conecte sua resposta ao foco geral da matéria: Apresenta autores e conceitos fundamentais para analisar relações sociais, instituições, desigualdades, poder, trabalho e mudança social. Essas ideias ajudam a interpretar tanto sociedades contemporâneas quanto processos sociais inferidos arqueologicamente."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -569,9 +565,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda linguagem e língua como sistemas estruturados e práticas sociais. A disciplina fornece noções sobre signo, variação, identidade, contato e mudança linguística úteis para dialogar com fontes históricas, etnográficas e arqueológicas.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -587,8 +583,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Estudo das relações entre linguagem e sociedade, incluindo variação por grupo, situação, região, identidade e mudança histórica."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "contexto linguístico e discursivo",
+        "definition": "Conjunto de elementos linguísticos, situacionais e sociais que condicionam a interpretação de uma expressão. Inclui o enunciado ao redor, participantes, finalidade comunicativa, gênero e situação de uso."
       },
       {
         "term": "signo",
@@ -646,19 +642,14 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Língua, identidade, contato cultural e mudança histórica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Língua, identidade, contato cultural e mudança histórica. Conecte sua resposta ao foco geral da matéria: Estuda linguagem e língua como sistemas estruturados e práticas sociais. A disciplina fornece noções sobre signo, variação, identidade, contato e mudança linguística úteis para dialogar com fontes históricas, etnográficas e arqueológicas."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Usos da linguagem como fonte para contextos históricos e arqueológicos",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "contexto linguístico e discursivo",
+            "definition": "Conjunto de elementos linguísticos, situacionais e sociais que condicionam a interpretação de uma expressão. Inclui o enunciado ao redor, participantes, finalidade comunicativa, gênero e situação de uso."
           }
         ]
       }
@@ -668,9 +659,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Ensina a transformar curiosidades em problemas de pesquisa, escolher técnicas, organizar dados e justificar inferências. O PPP apresenta uma divergência entre o nome quantitativo da matriz e uma ementa de caráter qualitativo; por isso o estudo deve contemplar os dois enfoques.",
     "category": "quant",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Defina variável, unidade e amostra antes de calcular.",
+      "Faça exercícios à mão e em planilha para entender o raciocínio, não apenas o resultado.",
+      "Interprete média, dispersão, gráfico e incerteza em relação à pergunta arqueológica."
     ],
     "concepts": [
       {
@@ -748,12 +739,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Observação, entrevistas, registros de campo e organização de dados qualitativos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Observação, entrevistas, registros de campo e organização de dados qualitativos. Conecte sua resposta ao foco geral da matéria: Ensina a transformar curiosidades em problemas de pesquisa, escolher técnicas, organizar dados e justificar inferências. O PPP apresenta uma divergência entre o nome quantitativo da matriz e uma ementa de caráter qualitativo; por isso o estudo deve contemplar os dois enfoques."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Amostragem, variáveis e noções básicas de dados quantitativos",
@@ -766,12 +752,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Interpretação, análise e apresentação de resultados",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Interpretação, análise e apresentação de resultados. Conecte sua resposta ao foco geral da matéria: Ensina a transformar curiosidades em problemas de pesquisa, escolher técnicas, organizar dados e justificar inferências. O PPP apresenta uma divergência entre o nome quantitativo da matriz e uma ementa de caráter qualitativo; por isso o estudo deve contemplar os dois enfoques."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Ética, transparência e documentação da pesquisa",
@@ -788,9 +769,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Analisa território e paisagem como espaços sociais, históricos e políticos. Conecta patrimônio arqueológico, planejamento, impactos de empreendimentos, comunidades tradicionais, conflitos territoriais e responsabilidade pública da Arqueologia.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [
       {
@@ -846,12 +827,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Arqueologia inserida em conflitos e transformações territoriais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Arqueologia inserida em conflitos e transformações territoriais. Conecte sua resposta ao foco geral da matéria: Analisa território e paisagem como espaços sociais, históricos e políticos. Conecta patrimônio arqueológico, planejamento, impactos de empreendimentos, comunidades tradicionais, conflitos territoriais e responsabilidade pública da Arqueologia."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Questões ambientais e uso do território",
@@ -895,12 +871,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Função social e pública da Arqueologia",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Função social e pública da Arqueologia” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -908,9 +879,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda os primeiros grandes modelos explicativos da Arqueologia, especialmente evolucionismo e histórico-culturalismo. O foco é compreender como conceitos como cultura arqueológica, tipologia, difusão e migração moldaram a interpretação do passado.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -937,12 +908,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Arqueologia evolucionista e seus pressupostos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Arqueologia evolucionista e seus pressupostos. Conecte sua resposta ao foco geral da matéria: Estuda os primeiros grandes modelos explicativos da Arqueologia, especialmente evolucionismo e histórico-culturalismo. O foco é compreender como conceitos como cultura arqueológica, tipologia, difusão e migração moldaram a interpretação do passado."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Histórico-culturalismo e conceitos de cultura arqueológica",
@@ -972,21 +938,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Críticas e limites dos primeiros modelos explicativos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Críticas e limites dos primeiros modelos explicativos. Conecte sua resposta ao foco geral da matéria: Estuda os primeiros grandes modelos explicativos da Arqueologia, especialmente evolucionismo e histórico-culturalismo. O foco é compreender como conceitos como cultura arqueológica, tipologia, difusão e migração moldaram a interpretação do passado."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Comparação entre diferentes formas de explicar mudança cultural",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Comparação entre diferentes formas de explicar mudança cultural. Conecte sua resposta ao foco geral da matéria: Estuda os primeiros grandes modelos explicativos da Arqueologia, especialmente evolucionismo e histórico-culturalismo. O foco é compreender como conceitos como cultura arqueológica, tipologia, difusão e migração moldaram a interpretação do passado."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -994,9 +950,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Aprofunda escolas britânicas e americanas da Antropologia e sua relação entre teoria, método e etnografia. É importante para reconhecer como diferentes concepções de cultura e sociedade influenciam interpretações arqueológicas.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -1012,19 +968,14 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Perspectiva que analisa instituições e práticas por suas relações e funções dentro de sistemas sociais."
       },
       {
-        "term": "cultura arqueológica",
-        "definition": "Categoria histórico-cultural que agrupa conjuntos materiais recorrentes em tempo e espaço. Não deve ser automaticamente equiparada a um povo ou identidade biológica."
+        "term": "tradições antropológicas americana e britânica",
+        "definition": "Conjunto de debates e escolas desenvolvidos especialmente na antropologia dos Estados Unidos e da Grã-Bretanha, com diferentes maneiras de relacionar cultura, sociedade, função, história, estrutura, método e trabalho de campo."
       }
     ],
     "topicGuides": [
       {
         "topic": "Escolas antropológicas britânicas e americanas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Escolas antropológicas britânicas e americanas. Conecte sua resposta ao foco geral da matéria: Aprofunda escolas britânicas e americanas da Antropologia e sua relação entre teoria, método e etnografia. É importante para reconhecer como diferentes concepções de cultura e sociedade influenciam interpretações arqueológicas."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Funcionalismo e estrutural-funcionalismo",
@@ -1055,31 +1006,21 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relação entre teoria, método e produção etnográfica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Relação entre teoria, método e produção etnográfica. Conecte sua resposta ao foco geral da matéria: Aprofunda escolas britânicas e americanas da Antropologia e sua relação entre teoria, método e etnografia. É importante para reconhecer como diferentes concepções de cultura e sociedade influenciam interpretações arqueológicas."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Impactos dessas teorias na interpretação arqueológica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Impactos dessas teorias na interpretação arqueológica. Conecte sua resposta ao foco geral da matéria: Aprofunda escolas britânicas e americanas da Antropologia e sua relação entre teoria, método e etnografia. É importante para reconhecer como diferentes concepções de cultura e sociedade influenciam interpretações arqueológicas."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "s2-3-pre-historia-do-brasil": {
     "overview": "Apresenta ocupações humanas pré-coloniais no território brasileiro, seus debates cronológicos, diversidade regional, modos de vida e principais conjuntos arqueológicos. Exige comparar evidências, sítios e modelos de povoamento sem tratar o Brasil pré-colonial como homogêneo.",
-    "category": "heritage",
+    "category": "regional",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -1178,11 +1119,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s2-4-historia-da-arte-e-registro-rupestre": {
     "overview": "Relaciona teorias da arte a pinturas, gravuras e outros registros rupestres. Trabalha documentação, classificação, contexto, interpretação e conservação, destacando os limites de atribuir significados sem evidências suficientes.",
-    "category": "theory",
+    "category": "material",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [
       {
@@ -1209,12 +1150,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Arte como linguagem, representação e prática social",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Arte como linguagem, representação e prática social” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "História e teorias da arte aplicadas à cultura material",
@@ -1271,9 +1207,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Introduz fósseis, fossilização, tafonomia, tempo geológico e reconstrução paleoambiental. A disciplina ajuda a diferenciar vestígios paleontológicos de arqueológicos e a compreender contextos naturais associados à presença humana.",
     "category": "science",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Use esquemas e tabelas de identificação, mas registre preservação e incerteza.",
+      "Relacione cada observação bioambiental ao processo de formação do sítio.",
+      "Evite concluir a partir de um único indicador sem contexto e comparação."
     ],
     "concepts": [
       {
@@ -1369,12 +1305,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Diferenças e interfaces entre Paleontologia e Arqueologia",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina o processo ou indicador, reconheça como ele é observado ou medido e explique de que modo pode informar o contexto arqueológico sem ultrapassar os limites da evidência. Tópico: Diferenças e interfaces entre Paleontologia e Arqueologia. Conecte sua resposta ao foco geral da matéria: Introduz fósseis, fossilização, tafonomia, tempo geológico e reconstrução paleoambiental. A disciplina ajuda a diferenciar vestígios paleontológicos de arqueológicos e a compreender contextos naturais associados à presença humana."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -1382,9 +1313,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Apresenta fundamentos jurídicos e normas que protegem patrimônio arqueológico e regulam pesquisa, salvaguarda e responsabilidades profissionais. É essencial para compreender autorizações, competências institucionais e consequências legais da atuação arqueológica.",
     "category": "law",
     "studyTips": [
-      "Crie um caderno de normas com: o que protege, quem é competente, qual procedimento e qual consequência.",
-      "Treine casos hipotéticos para aprender a aplicar a norma, não apenas citá-la.",
-      "Confirme legislação vigente quando a disciplina estiver em curso, pois normas podem ser atualizadas."
+      "Organize norma, competência, procedimento, documento e responsabilidade em uma tabela.",
+      "Estude casos hipotéticos e identifique em que etapa cada obrigação se aplica.",
+      "Confira vigência e fonte oficial antes de usar regras específicas."
     ],
     "concepts": [
       {
@@ -1404,20 +1335,20 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Espaço apropriado, vivido e disputado por grupos sociais, envolvendo relações de poder, pertencimento, uso e controle."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "contexto jurídico e institucional",
+        "definition": "Conjunto de normas, competências, procedimentos, fatos e instituições relevantes para interpretar uma situação jurídica. A mesma regra pode exigir análise diferente conforme o caso, a competência e o procedimento aplicável."
       },
       {
         "term": "IPHAN",
         "definition": "Instituto do Patrimônio Histórico e Artístico Nacional, órgão federal central na proteção e gestão do patrimônio arqueológico brasileiro."
       },
       {
-        "term": "cultura arqueológica",
-        "definition": "Categoria histórico-cultural que agrupa conjuntos materiais recorrentes em tempo e espaço. Não deve ser automaticamente equiparada a um povo ou identidade biológica."
-      },
-      {
         "term": "responsabilidade profissional",
         "definition": "Dever de atuar conforme normas técnicas, legais e éticas, documentando decisões e respondendo por consequências previsíveis de sua atuação."
+      },
+      {
+        "term": "ordenamento jurídico",
+        "definition": "Conjunto organizado de normas, princípios e instituições que estruturam a aplicação do Direito. Em Arqueologia, ajuda a compreender como a proteção do patrimônio se relaciona a competências, procedimentos e responsabilidades."
       }
     ],
     "topicGuides": [
@@ -1479,11 +1410,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s2-7-administracao-e-gestao-de-projetos-arqueologicos": {
     "overview": "Ensina a planejar e executar projetos considerando escopo, tempo, custos, equipe, riscos, documentação e entregas. Conecta gestão administrativa à realidade de campo, laboratório, patrimônio e arqueologia preventiva.",
-    "category": "heritage",
+    "category": "professional",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Treine leitura crítica, síntese e escrita com evidência claramente citada.",
+      "Separe fato, interpretação, recomendação e responsabilidade profissional.",
+      "Revise ética, autoria, comunicação e limites antes de apresentar uma conclusão."
     ],
     "concepts": [
       {
@@ -1554,21 +1485,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Gestão de projetos de campo, laboratório e patrimônio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Gestão de projetos de campo, laboratório e patrimônio. Conecte sua resposta ao foco geral da matéria: Ensina a planejar e executar projetos considerando escopo, tempo, custos, equipe, riscos, documentação e entregas. Conecta gestão administrativa à realidade de campo, laboratório, patrimônio e arqueologia preventiva."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Entrega de produtos, relatórios e encerramento do projeto",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Entrega de produtos, relatórios e encerramento do projeto. Conecte sua resposta ao foco geral da matéria: Ensina a planejar e executar projetos considerando escopo, tempo, custos, equipe, riscos, documentação e entregas. Conecta gestão administrativa à realidade de campo, laboratório, patrimônio e arqueologia preventiva."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -1576,9 +1497,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Desenvolve leitura e organização de dados, medidas descritivas, gráficos, amostragem e probabilidade básica. O objetivo não é apenas calcular, mas interpretar padrões e limitações de conjuntos arqueológicos quantitativos.",
     "category": "quant",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Defina variável, unidade e amostra antes de calcular.",
+      "Faça exercícios à mão e em planilha para entender o raciocínio, não apenas o resultado.",
+      "Interprete média, dispersão, gráfico e incerteza em relação à pergunta arqueológica."
     ],
     "concepts": [
       {
@@ -1617,12 +1538,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Tipos de dados, variáveis e escalas de medida",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Tipos de dados, variáveis e escalas de medida. Conecte sua resposta ao foco geral da matéria: Desenvolve leitura e organização de dados, medidas descritivas, gráficos, amostragem e probabilidade básica. O objetivo não é apenas calcular, mas interpretar padrões e limitações de conjuntos arqueológicos quantitativos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Organização de tabelas e séries estatísticas",
@@ -1666,21 +1582,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Aplicações de estatística descritiva em conjuntos arqueológicos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Aplicações de estatística descritiva em conjuntos arqueológicos. Conecte sua resposta ao foco geral da matéria: Desenvolve leitura e organização de dados, medidas descritivas, gráficos, amostragem e probabilidade básica. O objetivo não é apenas calcular, mas interpretar padrões e limitações de conjuntos arqueológicos quantitativos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Interpretação crítica de resultados quantitativos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Interpretação crítica de resultados quantitativos. Conecte sua resposta ao foco geral da matéria: Desenvolve leitura e organização de dados, medidas descritivas, gráficos, amostragem e probabilidade básica. O objetivo não é apenas calcular, mas interpretar padrões e limitações de conjuntos arqueológicos quantitativos."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -1688,9 +1594,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Aprofunda arqueologia processual e pós-processual, discutindo explicação científica, sistemas, formação do registro, simbolismo, agência, identidade, poder e reflexividade. O principal exercício é comparar pressupostos e consequências interpretativas de cada corrente.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -1803,9 +1709,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Foca a ocupação humana e a diversidade arqueológica do Nordeste brasileiro, incluindo arte rupestre, adaptações ambientais, tradições regionais e debates sobre povoamento. Valoriza a relação entre sítios, paisagens e biomas nordestinos.",
     "category": "regional",
     "studyTips": [
-      "Construa linhas do tempo e mapas, mas evite tratar culturas arqueológicas como povos fixos.",
-      "Associe sítios e materiais a perguntas, contextos e debates, não só a nomes.",
-      "Compare regiões observando cronologia, ambiente, tecnologia e organização social."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -1876,12 +1782,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Debates clássicos e pesquisas recentes sobre povoamento regional",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: Debates clássicos e pesquisas recentes sobre povoamento regional. Conecte sua resposta ao foco geral da matéria: Foca a ocupação humana e a diversidade arqueológica do Nordeste brasileiro, incluindo arte rupestre, adaptações ambientais, tradições regionais e debates sobre povoamento. Valoriza a relação entre sítios, paisagens e biomas nordestinos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relação entre arqueologia, paisagem e biomas do Nordeste",
@@ -1898,9 +1799,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Ensina a representar, medir e analisar espacialmente paisagens e sítios. Inclui escala, coordenadas, projeções, topografia, GPS/GNSS e SIG, ferramentas fundamentais para registrar proveniência e padrões espaciais.",
     "category": "method",
     "studyTips": [
-      "Transforme cada método em um fluxo: quando usar → como aplicar → que dado produz → limite.",
-      "Pratique com situações fictícias de pesquisa, não apenas definições.",
-      "Separe sempre dado observado de inferência e interpretação."
+      "Transforme cada método em fluxo: pergunta → dado → procedimento → produto → limite.",
+      "Explique por que a técnica escolhida responde à pergunta de pesquisa.",
+      "Registre amostragem, critérios e fontes de erro para tornar o procedimento rastreável."
     ],
     "concepts": [
       {
@@ -1944,21 +1845,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Leitura e interpretação de cartas e plantas topográficas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Entenda a finalidade do procedimento, a sequência de aplicação, o tipo de dado produzido, as condições de uso e as principais fontes de viés ou erro. Tópico: Leitura e interpretação de cartas e plantas topográficas. Conecte sua resposta ao foco geral da matéria: Ensina a representar, medir e analisar espacialmente paisagens e sítios. Inclui escala, coordenadas, projeções, topografia, GPS/GNSS e SIG, ferramentas fundamentais para registrar proveniência e padrões espaciais."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Simbologia e representação cartográfica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Entenda a finalidade do procedimento, a sequência de aplicação, o tipo de dado produzido, as condições de uso e as principais fontes de viés ou erro. Tópico: Simbologia e representação cartográfica. Conecte sua resposta ao foco geral da matéria: Ensina a representar, medir e analisar espacialmente paisagens e sítios. Inclui escala, coordenadas, projeções, topografia, GPS/GNSS e SIG, ferramentas fundamentais para registrar proveniência e padrões espaciais."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Noções de levantamento topográfico",
@@ -2000,11 +1891,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s3-4-mitologia-e-ritual": {
     "overview": "Examina mito e ritual como formas de produzir memória, identidade, ordem social e cosmologias. Em Arqueologia, o desafio é reconhecer indicadores materiais sem transformar interpretações simbólicas em certezas não demonstráveis.",
-    "category": "heritage",
+    "category": "theory",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -2108,9 +1999,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda evidências materiais associadas a simbolismo, como arte, adornos, pigmentos, sepultamentos e monumentos. O foco é avaliar critérios, contexto e alternativas explicativas para inferir comportamentos simbólicos.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -2203,9 +2094,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Introduz a Arqueologia Histórica como campo, articula fontes materiais, escritas, orais e visuais e trabalha identificação, classificação, tipologia e cronologia de materiais recorrentes em contextos históricos. A ementa destaca comparações entre literatura brasileira, hispano-americana e norte-americana.",
     "category": "historical",
     "studyTips": [
-      "Monte uma tabela por classe de material: composição, fabricação, atributos diagnósticos, cronologia e contexto.",
-      "Ao combinar fontes, registre onde elas concordam, divergem ou permanecem silenciosas.",
-      "Evite datar um contexto por um único fragmento; considere associação, deposição e processos de formação."
+      "Cruze cultura material, documentos, arquitetura, imagens e oralidade com crítica de fonte.",
+      "Monte cronologias e compare silêncios ou contradições entre fontes.",
+      "Evite tratar texto escrito como verdade automática ou objeto como simples ilustração."
     ],
     "concepts": [
       {
@@ -2329,11 +2220,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s3-7-palinologia-sedimentologia-e-estratigrafia": {
     "overview": "Integra leitura de camadas, sedimentos e microvestígios vegetais para reconstruir processos de formação e ambientes passados. É uma disciplina-chave para entender contexto, sequência temporal e alterações naturais de sítios.",
-    "category": "quant",
+    "category": "earth",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Relacione processo geológico, escala, deposição e efeito sobre o registro arqueológico.",
+      "Desenhe perfis estratigráficos e marque cortes, transporte e retrabalhamento.",
+      "Pergunte sempre se o material está em posição original ou secundária."
     ],
     "concepts": [
       {
@@ -2438,9 +2329,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Analisa interações entre populações humanas e ambientes, considerando adaptação, subsistência, mobilidade, demografia e transformação da paisagem. Evita explicações deterministas ao tratar ambiente e cultura como relações dinâmicas.",
     "category": "science",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Use esquemas e tabelas de identificação, mas registre preservação e incerteza.",
+      "Relacione cada observação bioambiental ao processo de formação do sítio.",
+      "Evite concluir a partir de um único indicador sem contexto e comparação."
     ],
     "concepts": [
       {
@@ -2522,11 +2413,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s3-9-estagio-i": {
     "overview": "Primeiro contato supervisionado com rotinas profissionais. O objetivo é observar procedimentos, registrar atividades, reconhecer responsabilidades éticas e aprender a transformar experiência prática em reflexão e relatório.",
-    "category": "heritage",
+    "category": "field",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -2549,12 +2440,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Observação da prática profissional",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Observação da prática profissional. Conecte sua resposta ao foco geral da matéria: Primeiro contato supervisionado com rotinas profissionais. O objetivo é observar procedimentos, registrar atividades, reconhecer responsabilidades éticas e aprender a transformar experiência prática em reflexão e relatório."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Rotinas de campo, laboratório ou patrimônio conforme o local de estágio",
@@ -2567,12 +2453,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Registro sistemático das atividades",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Registro sistemático das atividades. Conecte sua resposta ao foco geral da matéria: Primeiro contato supervisionado com rotinas profissionais. O objetivo é observar procedimentos, registrar atividades, reconhecer responsabilidades éticas e aprender a transformar experiência prática em reflexão e relatório."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Ética, segurança e responsabilidade profissional",
@@ -2593,12 +2474,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relatório reflexivo sobre a experiência",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Relatório reflexivo sobre a experiência. Conecte sua resposta ao foco geral da matéria: Primeiro contato supervisionado com rotinas profissionais. O objetivo é observar procedimentos, registrar atividades, reconhecer responsabilidades éticas e aprender a transformar experiência prática em reflexão e relatório."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -2606,9 +2482,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda seleção de matérias-primas, fratura, lascamento, produção, uso, manutenção e descarte de artefatos de pedra. A análise tecnológica busca reconstruir decisões e cadeias operatórias, e não apenas nomear tipos.",
     "category": "material",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [
       {
@@ -2688,12 +2564,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Experimentação e interpretação tecnológica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Experimentação e interpretação tecnológica. Conecte sua resposta ao foco geral da matéria: Estuda seleção de matérias-primas, fratura, lascamento, produção, uso, manutenção e descarte de artefatos de pedra. A análise tecnológica busca reconstruir decisões e cadeias operatórias, e não apenas nomear tipos."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -2701,9 +2572,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda tecnologia cerâmica e, conforme a própria ementa, também menciona fabricação de artefatos em osso, madeira e louça. O foco de apoio é entender matérias-primas, sequência de produção, atributos, uso, descarte e como decisões técnicas se relacionam ao ambiente e às práticas sociais.",
     "category": "material",
     "studyTips": [
-      "Desenhe a cadeia operatória do preparo da matéria-prima ao descarte.",
-      "Separe atributo observado de interpretação: primeiro descreva, depois explique.",
-      "Para materiais citados lateralmente na ementa, aprenda princípios de identificação sem extrapolar além do plano da turma."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [
       {
@@ -2833,9 +2704,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Aprofunda proveniência, associação espacial, formação de sítios e tafonomia. Ensina por que um objeto sem contexto perde grande parte de seu valor interpretativo e como relações entre vestígios sustentam inferências.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -2921,21 +2792,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Registro de campo e preservação de associações",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Registro de campo e preservação de associações. Conecte sua resposta ao foco geral da matéria: Aprofunda proveniência, associação espacial, formação de sítios e tafonomia. Ensina por que um objeto sem contexto perde grande parte de seu valor interpretativo e como relações entre vestígios sustentam inferências."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Inferências sobre uso do espaço e organização social",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Inferências sobre uso do espaço e organização social” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Tafonomia e fatores de alteração do registro",
@@ -2950,11 +2811,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s4-4-metodologia-da-pesquisa-arqueologica": {
     "overview": "Organiza o caminho entre pergunta de pesquisa, amostragem, classificação, coleta, análise e interpretação. Dá atenção a vieses, representatividade e coerência entre problema, método e evidência.",
-    "category": "quant",
+    "category": "method",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Transforme cada método em fluxo: pergunta → dado → procedimento → produto → limite.",
+      "Explique por que a técnica escolhida responde à pergunta de pesquisa.",
+      "Registre amostragem, critérios e fontes de erro para tornar o procedimento rastreável."
     ],
     "concepts": [
       {
@@ -3016,12 +2877,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Desenhos de pesquisa e seleção de métodos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Desenhos de pesquisa e seleção de métodos. Conecte sua resposta ao foco geral da matéria: Organiza o caminho entre pergunta de pesquisa, amostragem, classificação, coleta, análise e interpretação. Dá atenção a vieses, representatividade e coerência entre problema, método e evidência."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Da coleta de dados à construção de modelos interpretativos",
@@ -3047,9 +2903,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Aprofunda a Arqueologia Histórica a partir dos fundamentos da Etnoarqueologia, do uso de fontes históricas e do trabalho de campo antropológico, com foco explícito da ementa em Arqueologia da Escravidão.",
     "category": "historical",
     "studyTips": [
-      "Leia documentos e cultura material como fontes com histórias próprias, não como espelhos perfeitos.",
-      "Ao usar analogias etnográficas, declare por que a comparação é válida e onde pode falhar.",
-      "Em estudos de escravidão, considere poder, resistência, cotidiano, paisagem e desigualdade sem reduzir pessoas a categorias documentais."
+      "Cruze cultura material, documentos, arquitetura, imagens e oralidade com crítica de fonte.",
+      "Monte cronologias e compare silêncios ou contradições entre fontes.",
+      "Evite tratar texto escrito como verdade automática ou objeto como simples ilustração."
     ],
     "concepts": [
       {
@@ -3146,9 +3002,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Fornece base para ler a Terra e a paisagem como contexto dos sítios: estrutura terrestre, tectônica, minerais e rochas, processos geomorfológicos, tempo geológico, água, ciclos biogeoquímicos, impactos ambientais e legislação. É uma ponte central para geoarqueologia e formação de sítios.",
     "category": "earth",
     "studyTips": [
-      "Relacione cada processo geológico ao tipo de evidência que ele pode criar, mover, enterrar ou destruir.",
-      "Treine leitura de perfis, mapas e paisagens, não apenas definições.",
-      "Diferencie escala geológica, geomorfológica e arqueológica ao construir cronologias."
+      "Relacione processo geológico, escala, deposição e efeito sobre o registro arqueológico.",
+      "Desenhe perfis estratigráficos e marque cortes, transporte e retrabalhamento.",
+      "Pergunte sempre se o material está em posição original ou secundária."
     ],
     "concepts": [
       {
@@ -3282,9 +3138,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda evolução humana, anatomia e restos humanos, incluindo osteologia, estimativas biológicas, patologias e técnicas genéticas mencionadas na ementa. O roteiro acrescenta cautela científica: sexo, idade, doença, trauma e causa de morte são inferências com graus distintos de incerteza.",
     "category": "bio",
     "studyTips": [
-      "Aprenda anatomia com localização e função, não só nomes de ossos.",
-      "Separe observação, diagnóstico diferencial e grau de confiança.",
-      "Trate restos humanos como pessoas e patrimônio sensível, considerando ética, legislação e comunidades relacionadas."
+      "Aprenda estruturas e marcadores junto do método usado para observá-los.",
+      "Registre preservação, contaminação, população comparativa e incerteza.",
+      "Diferencie estimativa biológica de identidade social e hipótese de diagnóstico."
     ],
     "concepts": [
       {
@@ -3402,9 +3258,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Integra ambiente, sociedade, território, sustentabilidade e planejamento. A disciplina ajuda a avaliar impactos, conflitos e estratégias de gestão em projetos que envolvem patrimônio e comunidades.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [
       {
@@ -3431,30 +3287,15 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Relações entre sociedade, natureza e desenvolvimento",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Relações entre sociedade, natureza e desenvolvimento. Conecte sua resposta ao foco geral da matéria: Integra ambiente, sociedade, território, sustentabilidade e planejamento. A disciplina ajuda a avaliar impactos, conflitos e estratégias de gestão em projetos que envolvem patrimônio e comunidades."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Conflitos socioambientais e uso de recursos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Conflitos socioambientais e uso de recursos. Conecte sua resposta ao foco geral da matéria: Integra ambiente, sociedade, território, sustentabilidade e planejamento. A disciplina ajuda a avaliar impactos, conflitos e estratégias de gestão em projetos que envolvem patrimônio e comunidades."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Planejamento e gestão ambiental",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Planejamento e gestão ambiental. Conecte sua resposta ao foco geral da matéria: Integra ambiente, sociedade, território, sustentabilidade e planejamento. A disciplina ajuda a avaliar impactos, conflitos e estratégias de gestão em projetos que envolvem patrimônio e comunidades."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Comunidades tradicionais e justiça socioambiental",
@@ -3489,9 +3330,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Amplia a prática supervisionada com participação mais ativa em procedimentos técnicos. O foco é desenvolver organização, documentação, responsabilidade, comunicação e reflexão crítica sobre o trabalho realizado.",
     "category": "field",
     "studyTips": [
-      "Priorize sequência operacional, registro e segurança; em campo, perder contexto é perder informação.",
-      "Treine fichas, croquis, escalas, fotos e coordenadas com exemplos.",
-      "Após cada procedimento, pergunte que informação precisa ficar rastreável para outra pessoa reproduzir o trabalho."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -3503,8 +3344,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Coordenação de responsabilidades, comunicação e decisões entre pessoas. Em projetos arqueológicos requer clareza de funções, registro e respeito a protocolos."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "contexto de atuação profissional",
+        "definition": "Situação concreta em que a atividade supervisionada ocorre, incluindo objetivos, instituição, equipe, procedimentos, responsabilidades, documentação e condições de trabalho."
       },
       {
         "term": "documentação das atividades",
@@ -3525,8 +3366,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "topic": "Aplicação de métodos arqueológicos em contexto real",
         "points": [
           {
-            "term": "contexto",
-            "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+            "term": "contexto de atuação profissional",
+            "definition": "Situação concreta em que a atividade supervisionada ocorre, incluindo objetivos, instituição, equipe, procedimentos, responsabilidades, documentação e condições de trabalho."
           }
         ]
       },
@@ -3550,12 +3391,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Produção de relatório de estágio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Produção de relatório de estágio. Conecte sua resposta ao foco geral da matéria: Amplia a prática supervisionada com participação mais ativa em procedimentos técnicos. O foco é desenvolver organização, documentação, responsabilidade, comunicação e reflexão crítica sobre o trabalho realizado."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -3563,9 +3399,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda processos de neolitização, aldeamento, urbanização, formação estatal, escrita e religião no Oriente Próximo antigo. Usa sítios e cultura material para discutir transformações sociais de longa duração.",
     "category": "regional",
     "studyTips": [
-      "Construa linhas do tempo e mapas, mas evite tratar culturas arqueológicas como povos fixos.",
-      "Associe sítios e materiais a perguntas, contextos e debates, não só a nomes.",
-      "Compare regiões observando cronologia, ambiente, tecnologia e organização social."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -3682,9 +3518,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Segue a ementa oficial, que combina introdução à História Africana com forte ênfase em afrodescendentes na América Latina, pós-abolição, cidadania, quilombos, territórios negros, religiões de matriz africana, ancestralidade, identidade e intolerância religiosa.",
     "category": "regional",
     "studyTips": [
-      "Monte uma linha do tempo que conecte África, diáspora, escravidão/pós-abolição e formações comunitárias sem tratar experiências afrodescendentes como homogêneas.",
-      "Diferencie categorias jurídicas, identidades sociais e conceitos analíticos como quilombo e etnogênese.",
-      "Leia religião e performance em seus contextos, evitando explicar práticas por “sobrevivências” fixas ou estereótipos."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -3731,12 +3567,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Introdução à História Africana e à diversidade de experiências africanas",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Localize atores, conceitos, contexto histórico, relações de poder e evidências usadas na literatura; diferencie descrição, categoria jurídica e interpretação."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Afrodescendentes, Estado-nação, pós-abolição e cidadania na América Latina",
@@ -3753,12 +3584,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Diversidade étnico-racial e paradigmas de interpretação",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Localize atores, conceitos, contexto histórico, relações de poder e evidências usadas na literatura; diferencie descrição, categoria jurídica e interpretação."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Acamponesamento, aquilombamento, parentesco, direitos costumeiros e territórios negros",
@@ -3818,9 +3644,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "O ementário apresenta uma introdução à História Asiática e, em seguida, temas sobre asiodescendentes, Estado-nação, cidadania, parentesco, territórios, mitologia, ancestralidade, religião, política, globalização e intolerância religiosa. Como há formulações possivelmente editoriais no PPP, o roteiro evita inventar uma arqueologia continental que não está escrita na ementa.",
     "category": "regional",
     "studyTips": [
-      "Estude primeiro o que o documento efetivamente diz e marque pontos estranhos para confirmar com o professor.",
-      "Evite tratar “Ásia” como uma unidade cultural; sempre localize país/região, período e comunidade.",
-      "Diferencie identidade, ancestralidade, nacionalidade, religião e território em vez de usá-los como sinônimos."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -3946,9 +3772,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda sociedades do Mediterrâneo antigo, especialmente Egeu, Grécia, Etrúria e Roma, articulando arquitetura, urbanismo, arte, cultura material e textos. Também discute a história e os limites da tradição clássica na Arqueologia.",
     "category": "regional",
     "studyTips": [
-      "Construa linhas do tempo e mapas, mas evite tratar culturas arqueológicas como povos fixos.",
-      "Associe sítios e materiais a perguntas, contextos e debates, não só a nomes.",
-      "Compare regiões observando cronologia, ambiente, tecnologia e organização social."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -3975,12 +3801,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Sociedades do Mediterrâneo antigo",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Sociedades do Mediterrâneo antigo” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Egeu, etruscos, gregos e romanos",
@@ -4002,40 +3823,25 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relação entre textos clássicos e evidência arqueológica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: Relação entre textos clássicos e evidência arqueológica. Conecte sua resposta ao foco geral da matéria: Estuda sociedades do Mediterrâneo antigo, especialmente Egeu, Grécia, Etrúria e Roma, articulando arquitetura, urbanismo, arte, cultura material e textos. Também discute a história e os limites da tradição clássica na Arqueologia."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "História da Arqueologia Clássica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: História da Arqueologia Clássica. Conecte sua resposta ao foco geral da matéria: Estuda sociedades do Mediterrâneo antigo, especialmente Egeu, Grécia, Etrúria e Roma, articulando arquitetura, urbanismo, arte, cultura material e textos. Também discute a história e os limites da tradição clássica na Arqueologia."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Críticas contemporâneas e novas abordagens",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: Críticas contemporâneas e novas abordagens. Conecte sua resposta ao foco geral da matéria: Estuda sociedades do Mediterrâneo antigo, especialmente Egeu, Grécia, Etrúria e Roma, articulando arquitetura, urbanismo, arte, cultura material e textos. Também discute a história e os limites da tradição clássica na Arqueologia."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "s5-5-arqueologia-latino-americana": {
     "overview": "Compara trajetórias pré-coloniais e históricas da América Latina, incluindo Andes, Mesoamérica, Amazônia e outras regiões. Aborda colonialismo, arqueologia social, identidade, patrimônio e participação comunitária.",
-    "category": "heritage",
+    "category": "regional",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -4059,10 +3865,6 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Área cultural que inclui partes do México e América Central, com longa história de agricultura, urbanização, sistemas políticos e tradições escritas e iconográficas."
       },
       {
-        "term": "hominização",
-        "definition": "Processo evolutivo envolvendo mudanças biológicas e comportamentais na linhagem humana, incluindo bipedalismo, encefalização, tecnologia e transformações sociais."
-      },
-      {
         "term": "Amazônia",
         "definition": "Região com longa ocupação humana, manejo de paisagens, cerâmicas, terras pretas e diferentes formas de assentamento, contrariando ideias antigas de ambiente intocado."
       },
@@ -4073,17 +3875,16 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       {
         "term": "arqueologia e sociedade",
         "definition": "Relação entre produção de conhecimento arqueológico, interesses públicos, memórias, identidades e efeitos sociais da pesquisa. O passado é interpretado no presente e pode gerar disputas."
+      },
+      {
+        "term": "povoamento das Américas",
+        "definition": "Processo de entrada, dispersão e ocupação de populações humanas no continente americano, investigado por evidências arqueológicas, cronológicas, paleoambientais, bioantropológicas e genéticas. Não é sinônimo de hominização."
       }
     ],
     "topicGuides": [
       {
         "topic": "Povoamento e diversidade cultural da América Latina",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Povoamento e diversidade cultural da América Latina. Conecte sua resposta ao foco geral da matéria: Compara trajetórias pré-coloniais e históricas da América Latina, incluindo Andes, Mesoamérica, Amazônia e outras regiões. Aborda colonialismo, arqueologia social, identidade, patrimônio e participação comunitária."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Caçadores-coletores, agricultores e sociedades complexas",
@@ -4135,12 +3936,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Patrimônio, identidade e comunidades contemporâneas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Patrimônio, identidade e comunidades contemporâneas. Conecte sua resposta ao foco geral da matéria: Compara trajetórias pré-coloniais e históricas da América Latina, incluindo Andes, Mesoamérica, Amazônia e outras regiões. Aborda colonialismo, arqueologia social, identidade, patrimônio e participação comunitária."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -4148,9 +3944,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Relaciona anatomia e classificação vegetal ao conhecimento e uso social das plantas. Inclui domesticação, alimentação, medicina, conhecimento tradicional e aplicações arqueobotânicas para reconhecer vestígios vegetais do passado.",
     "category": "science",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Use esquemas e tabelas de identificação, mas registre preservação e incerteza.",
+      "Relacione cada observação bioambiental ao processo de formação do sítio.",
+      "Evite concluir a partir de um único indicador sem contexto e comparação."
     ],
     "concepts": [
       {
@@ -4190,12 +3986,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relações entre plantas e sociedades humanas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina o processo ou indicador, reconheça como ele é observado ou medido e explique de que modo pode informar o contexto arqueológico sem ultrapassar os limites da evidência. Tópico: Relações entre plantas e sociedades humanas. Conecte sua resposta ao foco geral da matéria: Relaciona anatomia e classificação vegetal ao conhecimento e uso social das plantas. Inclui domesticação, alimentação, medicina, conhecimento tradicional e aplicações arqueobotânicas para reconhecer vestígios vegetais do passado."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Métodos etnobotânicos e registro de conhecimento tradicional",
@@ -4239,9 +4030,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Trabalha inventário, curadoria, documentação, conservação, acervos, sítios e políticas de salvaguarda. O foco é garantir rastreabilidade, preservação, acesso e responsabilidade institucional ao longo da vida dos bens arqueológicos.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [
       {
@@ -4316,12 +4107,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Políticas institucionais e responsabilidades profissionais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Políticas institucionais e responsabilidades profissionais. Conecte sua resposta ao foco geral da matéria: Trabalha inventário, curadoria, documentação, conservação, acervos, sítios e políticas de salvaguarda. O foco é garantir rastreabilidade, preservação, acesso e responsabilidade institucional ao longo da vida dos bens arqueológicos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Acesso público, pesquisa e salvaguarda",
@@ -4338,9 +4124,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Discute proteção jurídica do ambiente e do patrimônio, direitos coletivos, bens difusos, responsabilidade por danos e instrumentos legais de proteção. Conecta Arqueologia a gestão pública e sustentabilidade.",
     "category": "law",
     "studyTips": [
-      "Crie um caderno de normas com: o que protege, quem é competente, qual procedimento e qual consequência.",
-      "Treine casos hipotéticos para aprender a aplicar a norma, não apenas citá-la.",
-      "Confirme legislação vigente quando a disciplina estiver em curso, pois normas podem ser atualizadas."
+      "Organize norma, competência, procedimento, documento e responsabilidade em uma tabela.",
+      "Estude casos hipotéticos e identifique em que etapa cada obrigação se aplica.",
+      "Confira vigência e fonte oficial antes de usar regras específicas."
     ],
     "concepts": [
       {
@@ -4352,8 +4138,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Direitos de natureza indivisível pertencentes a coletividades indeterminadas, como certos interesses ambientais e patrimoniais."
       },
       {
-        "term": "contexto",
-        "definition": "Relação espacial, estratigráfica e associativa de um vestígio com outros elementos do sítio. Contexto é essencial para interpretar função, cronologia e significado."
+        "term": "contexto jurídico-socioambiental",
+        "definition": "Conjunto de condições jurídicas, sociais e ambientais relevantes para analisar proteção do patrimônio, bens coletivos, conflitos, responsabilidades e instrumentos de tutela."
       },
       {
         "term": "dano patrimonial",
@@ -4379,21 +4165,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Proteção jurídica do meio ambiente e do patrimônio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Proteção jurídica do meio ambiente e do patrimônio. Conecte sua resposta ao foco geral da matéria: Discute proteção jurídica do ambiente e do patrimônio, direitos coletivos, bens difusos, responsabilidade por danos e instrumentos legais de proteção. Conecta Arqueologia a gestão pública e sustentabilidade."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Biodiversidade, desenvolvimento sustentável e direitos coletivos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Biodiversidade, desenvolvimento sustentável e direitos coletivos. Conecte sua resposta ao foco geral da matéria: Discute proteção jurídica do ambiente e do patrimônio, direitos coletivos, bens difusos, responsabilidade por danos e instrumentos legais de proteção. Conecta Arqueologia a gestão pública e sustentabilidade."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Legislação patrimonial e ambiental",
@@ -4424,12 +4200,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Interfaces entre direito, arqueologia e gestão pública",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Interfaces entre direito, arqueologia e gestão pública. Conecte sua resposta ao foco geral da matéria: Discute proteção jurídica do ambiente e do patrimônio, direitos coletivos, bens difusos, responsabilidade por danos e instrumentos legais de proteção. Conecta Arqueologia a gestão pública e sustentabilidade."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -4437,9 +4208,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Consolida competências práticas com maior autonomia supervisionada. Espera-se planejar e executar tarefas, comunicar procedimentos e resultados, documentar decisões e avaliar criticamente a própria atuação.",
     "category": "field",
     "studyTips": [
-      "Priorize sequência operacional, registro e segurança; em campo, perder contexto é perder informação.",
-      "Treine fichas, croquis, escalas, fotos e coordenadas com exemplos.",
-      "Após cada procedimento, pergunte que informação precisa ficar rastreável para outra pessoa reproduzir o trabalho."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -4466,58 +4237,33 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Atuação supervisionada com maior autonomia",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Atuação supervisionada com maior autonomia. Conecte sua resposta ao foco geral da matéria: Consolida competências práticas com maior autonomia supervisionada. Espera-se planejar e executar tarefas, comunicar procedimentos e resultados, documentar decisões e avaliar criticamente a própria atuação."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Aplicação de procedimentos técnicos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Aplicação de procedimentos técnicos. Conecte sua resposta ao foco geral da matéria: Consolida competências práticas com maior autonomia supervisionada. Espera-se planejar e executar tarefas, comunicar procedimentos e resultados, documentar decisões e avaliar criticamente a própria atuação."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Planejamento e execução de tarefas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Planejamento e execução de tarefas. Conecte sua resposta ao foco geral da matéria: Consolida competências práticas com maior autonomia supervisionada. Espera-se planejar e executar tarefas, comunicar procedimentos e resultados, documentar decisões e avaliar criticamente a própria atuação."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Comunicação profissional e documentação",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Comunicação profissional e documentação. Conecte sua resposta ao foco geral da matéria: Consolida competências práticas com maior autonomia supervisionada. Espera-se planejar e executar tarefas, comunicar procedimentos e resultados, documentar decisões e avaliar criticamente a própria atuação."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relatório e avaliação da experiência",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Relatório e avaliação da experiência. Conecte sua resposta ao foco geral da matéria: Consolida competências práticas com maior autonomia supervisionada. Espera-se planejar e executar tarefas, comunicar procedimentos e resultados, documentar decisões e avaliar criticamente a própria atuação."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "s6-1-pratica-de-campo-i": {
     "overview": "Introduz planejamento, prospecção, levantamento, amostragem, registro espacial, fotografia e acondicionamento inicial de materiais. A prioridade é aprender a produzir dados de campo rastreáveis e contextualizados.",
-    "category": "quant",
+    "category": "field",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -4626,9 +4372,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Ensina fluxo inicial de materiais no laboratório: recepção, triagem, higienização, numeração, catalogação, conservação e armazenamento. A cadeia de custódia e a documentação são tão importantes quanto o manuseio físico.",
     "category": "lab",
     "studyTips": [
-      "Estude o fluxo completo do material e a cadeia de custódia.",
-      "Treine classificação com critérios explícitos e registre dúvidas em vez de forçar identificações.",
-      "Relacione cada técnica laboratorial à pergunta arqueológica que ela consegue responder."
+      "Estude o fluxo do material desde recebimento, conferência e catalogação até análise e guarda.",
+      "Use tabelas de atributos e protocolos explícitos para tornar a análise repetível.",
+      "Nunca separe a peça de sua proveniência, etiqueta e documentação."
     ],
     "concepts": [
       {
@@ -4706,12 +4452,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Separação por classes de material",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Separação por classes de material. Conecte sua resposta ao foco geral da matéria: Ensina fluxo inicial de materiais no laboratório: recepção, triagem, higienização, numeração, catalogação, conservação e armazenamento. A cadeia de custódia e a documentação são tão importantes quanto o manuseio físico."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Conservação preventiva e armazenamento",
@@ -4724,12 +4465,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Rotinas, segurança e documentação laboratorial",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Rotinas, segurança e documentação laboratorial. Conecte sua resposta ao foco geral da matéria: Ensina fluxo inicial de materiais no laboratório: recepção, triagem, higienização, numeração, catalogação, conservação e armazenamento. A cadeia de custódia e a documentação são tão importantes quanto o manuseio físico."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -4737,9 +4473,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Usa observação de práticas contemporâneas como apoio para formular e testar interpretações sobre cultura material. Exige cuidado com analogias, ética, colaboração e diferenças históricas entre comunidades presentes e contextos passados.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -4809,12 +4545,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Tecnologia, descarte, uso do espaço e formação do registro",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Tecnologia, descarte, uso do espaço e formação do registro. Conecte sua resposta ao foco geral da matéria: Usa observação de práticas contemporâneas como apoio para formular e testar interpretações sobre cultura material. Exige cuidado com analogias, ética, colaboração e diferenças históricas entre comunidades presentes e contextos passados."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relações com comunidades e ética da pesquisa",
@@ -4840,9 +4571,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Discute patrimônio como construção social relacionada a memória, identidade, valores e poder. Analisa disputas sobre preservação, políticas públicas, participação comunitária e usos sociais do passado.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [
       {
@@ -4873,12 +4604,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Conceitos de patrimônio material e imaterial",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Conceitos de patrimônio material e imaterial. Conecte sua resposta ao foco geral da matéria: Discute patrimônio como construção social relacionada a memória, identidade, valores e poder. Analisa disputas sobre preservação, políticas públicas, participação comunitária e usos sociais do passado."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Patrimonialização, memória, identidade e poder",
@@ -4899,21 +4625,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Valores sociais e disputas sobre o que deve ser preservado",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Valores sociais e disputas sobre o que deve ser preservado. Conecte sua resposta ao foco geral da matéria: Discute patrimônio como construção social relacionada a memória, identidade, valores e poder. Analisa disputas sobre preservação, políticas públicas, participação comunitária e usos sociais do passado."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Instituições e políticas de patrimônio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Instituições e políticas de patrimônio. Conecte sua resposta ao foco geral da matéria: Discute patrimônio como construção social relacionada a memória, identidade, valores e poder. Analisa disputas sobre preservação, políticas públicas, participação comunitária e usos sociais do passado."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relação entre patrimônio arqueológico e comunidades",
@@ -4926,12 +4642,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Preservação, participação e uso público",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Preservação, participação e uso público. Conecte sua resposta ao foco geral da matéria: Discute patrimônio como construção social relacionada a memória, identidade, valores e poder. Analisa disputas sobre preservação, políticas públicas, participação comunitária e usos sociais do passado."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -4939,9 +4650,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Acompanha o percurso do acervo arqueológico da curadoria à comunicação pública. Inclui documentação, conservação, reserva técnica, exposição, narrativas, ética e participação de comunidades.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [
       {
@@ -5003,12 +4714,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Exposição, interpretação e comunicação pública",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Exposição, interpretação e comunicação pública. Conecte sua resposta ao foco geral da matéria: Acompanha o percurso do acervo arqueológico da curadoria à comunicação pública. Inclui documentação, conservação, reserva técnica, exposição, narrativas, ética e participação de comunidades."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Ética, representatividade e participação de comunidades",
@@ -5038,9 +4744,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda povoamento, adaptações, agricultura, interação e sociedades complexas nas Américas. O foco é comparar regiões, cronologias e modelos sem tratar o continente como uma sequência única.",
     "category": "regional",
     "studyTips": [
-      "Construa linhas do tempo e mapas, mas evite tratar culturas arqueológicas como povos fixos.",
-      "Associe sítios e materiais a perguntas, contextos e debates, não só a nomes.",
-      "Compare regiões observando cronologia, ambiente, tecnologia e organização social."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [
       {
@@ -5052,16 +4758,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Expressão usada para contextos com diferenciação social, especialização, redes amplas, instituições políticas ou centralização. Não deve ser entendida como sinônimo de superioridade cultural."
       },
       {
-        "term": "hominização",
-        "definition": "Processo evolutivo envolvendo mudanças biológicas e comportamentais na linhagem humana, incluindo bipedalismo, encefalização, tecnologia e transformações sociais."
-      },
-      {
         "term": "migração",
         "definition": "Movimento de pessoas ou populações. Em Arqueologia, exige distinguir mobilidade de objetos, ideias e pessoas mediante múltiplas linhas de evidência."
-      },
-      {
-        "term": "arqueologia social latino-americana",
-        "definition": "Tradição teórica latino-americana que enfatiza relações sociais, produção, desigualdade, história e compromisso com problemas regionais."
       },
       {
         "term": "ambiente, biologia e cultura",
@@ -5074,6 +4772,10 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       {
         "term": "povoamento das Américas",
         "definition": "Debate sobre quando, por quais rotas e em quantos movimentos populações humanas chegaram e se dispersaram pelas Américas, analisado por cronologia, sítios, genética e paleoambiente."
+      },
+      {
+        "term": "diversidade social e cultural americana",
+        "definition": "Variedade histórica de formas de organização social, tecnologias, economias, cosmologias e relações com a paisagem desenvolvidas por diferentes sociedades das Américas."
       }
     ],
     "topicGuides": [
@@ -5097,12 +4799,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Diversidade de adaptações e culturas pré-coloniais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: Diversidade de adaptações e culturas pré-coloniais. Conecte sua resposta ao foco geral da matéria: Estuda povoamento, adaptações, agricultura, interação e sociedades complexas nas Américas. O foco é comparar regiões, cronologias e modelos sem tratar o continente como uma sequência única."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Desenvolvimento de agricultura e sociedades complexas",
@@ -5115,12 +4812,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Comparação entre diferentes regiões americanas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Localize o tema no tempo e no espaço, relacione sítios e materiais aos processos históricos e compare interpretações sem transformar categorias arqueológicas em povos fixos. Tópico: Comparação entre diferentes regiões americanas. Conecte sua resposta ao foco geral da matéria: Estuda povoamento, adaptações, agricultura, interação e sociedades complexas nas Américas. O foco é comparar regiões, cronologias e modelos sem tratar o continente como uma sequência única."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Questões teóricas sobre migração, ambiente e interação",
@@ -5137,9 +4829,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Apesar do título “Arqueogenética”, a ementa oficial é essencialmente uma introdução à Genética: história da hereditariedade, Mendel, desvios das proporções mendelianas, herança extranuclear, gene molecular, regulação gênica e herança relacionada ao sexo. O material de apoio segue esse texto sem transformar DNA antigo em conteúdo oficial.",
     "category": "bio",
     "studyTips": [
-      "Resolva cruzamentos simples antes de decorar proporções.",
-      "Diferencie gene, alelo, genótipo e fenótipo em exemplos concretos.",
-      "Conecte genética clássica e molecular: uma proporção observada é resultado de mecanismos celulares e moleculares."
+      "Diferencie gene, alelo, genótipo e fenótipo antes de resolver cruzamentos; confundir esses níveis gera a maior parte dos erros iniciais.",
+      "Resolva cruzamentos passo a passo: defina os genótipos parentais, determine gametas possíveis, monte as combinações e só então calcule proporções.",
+      "Compare herança mendeliana, herança extranuclear, ligação ao sexo e regulação gênica sem tratar todas como variações da mesma regra."
     ],
     "concepts": [
       {
@@ -5167,8 +4859,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Separação de alelos durante a formação de gametas, fundamento da primeira lei de Mendel em modelos simples."
       },
       {
-        "term": "assortimento independente",
-        "definition": "Distribuição independente de alelos de loci distintos quando não há ligação relevante, fundamento da segunda lei de Mendel em condições específicas."
+        "term": "segregação independente",
+        "definition": "Princípio mendeliano segundo o qual pares de alelos de genes diferentes podem se distribuir independentemente na formação dos gametas quando não estão ligados de modo relevante. A proporção esperada depende do cruzamento e das condições genéticas envolvidas."
       },
       {
         "term": "herança extranuclear",
@@ -5222,8 +4914,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
             "definition": "Use como modelo-base para reconhecer desvios."
           },
           {
-            "term": "assortimento independente",
-            "definition": "Saiba as condições em que a proporção clássica é esperada."
+            "term": "segregação independente",
+            "definition": "Princípio mendeliano segundo o qual pares de alelos de genes diferentes podem se distribuir independentemente na formação dos gametas quando não estão ligados de modo relevante. A proporção esperada depende do cruzamento e das condições genéticas envolvidas."
           }
         ]
       },
@@ -5269,9 +4961,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Desenvolve leitura crítica, síntese, debate e apresentação acadêmica a partir de temas de Arqueologia Pré-Histórica. O objetivo é aprender a construir argumentos apoiados em bibliografia especializada.",
     "category": "professional",
     "studyTips": [
-      "Treine escrita técnica com estrutura, evidência e conclusão claramente separadas.",
-      "Guarde modelos de fichas, relatórios e checklists produzidos nas disciplinas práticas.",
-      "Revise ética, rastreabilidade e comunicação profissional em cada atividade."
+      "Treine leitura crítica, síntese e escrita com evidência claramente citada.",
+      "Separe fato, interpretação, recomendação e responsabilidade profissional.",
+      "Revise ética, autoria, comunicação e limites antes de apresentar uma conclusão."
     ],
     "concepts": [
       {
@@ -5283,8 +4975,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Leitura que identifica pergunta, tese, evidências, método, pressupostos, limites e relação com outros trabalhos, em vez de apenas resumir conteúdo."
       },
       {
-        "term": "escrita",
-        "definition": "Sistema gráfico convencional de registro de linguagem ou informação. Seu aparecimento muda possibilidades documentais, mas não torna a cultura material secundária."
+        "term": "escrita acadêmica",
+        "definition": "Produção textual orientada por problema, argumento, evidências, referências e normas de comunicação científica. Exige clareza sobre fontes, distinção entre dado e interpretação e revisão crítica do próprio texto."
       },
       {
         "term": "Arqueologia Pré-Histórica",
@@ -5294,12 +4986,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Aprofundamento de tema de Arqueologia Pré-Histórica",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Aprofundamento de tema de Arqueologia Pré-Histórica” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Leitura crítica de bibliografia especializada",
@@ -5312,19 +4999,14 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Debate de pesquisas recentes",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Transforme o tema em prática profissional: objetivo, procedimento, evidência/documentação produzida, responsabilidade ética e forma de comunicar o resultado. Tópico: Debate de pesquisas recentes. Conecte sua resposta ao foco geral da matéria: Desenvolve leitura crítica, síntese, debate e apresentação acadêmica a partir de temas de Arqueologia Pré-Histórica. O objetivo é aprender a construir argumentos apoiados em bibliografia especializada."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Apresentação oral e escrita de sínteses",
         "points": [
           {
-            "term": "escrita",
-            "definition": "Sistema gráfico convencional de registro de linguagem ou informação. Seu aparecimento muda possibilidades documentais, mas não torna a cultura material secundária."
+            "term": "escrita acadêmica",
+            "definition": "Produção textual orientada por problema, argumento, evidências, referências e normas de comunicação científica. Exige clareza sobre fontes, distinção entre dado e interpretação e revisão crítica do próprio texto."
           }
         ]
       },
@@ -5343,9 +5025,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Integra prática profissional, documentação, responsabilidade técnica e reflexão crítica. A experiência pode articular campo, laboratório ou patrimônio conforme a instituição de estágio.",
     "category": "field",
     "studyTips": [
-      "Priorize sequência operacional, registro e segurança; em campo, perder contexto é perder informação.",
-      "Treine fichas, croquis, escalas, fotos e coordenadas com exemplos.",
-      "Após cada procedimento, pergunte que informação precisa ficar rastreável para outra pessoa reproduzir o trabalho."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -5377,12 +5059,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Integração de campo, laboratório e documentação conforme a instituição",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Integração de campo, laboratório e documentação conforme a instituição. Conecte sua resposta ao foco geral da matéria: Integra prática profissional, documentação, responsabilidade técnica e reflexão crítica. A experiência pode articular campo, laboratório ou patrimônio conforme a instituição de estágio."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Responsabilidade técnica e ética",
@@ -5395,21 +5072,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Registro das atividades e reflexão crítica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Registro das atividades e reflexão crítica. Conecte sua resposta ao foco geral da matéria: Integra prática profissional, documentação, responsabilidade técnica e reflexão crítica. A experiência pode articular campo, laboratório ou patrimônio conforme a instituição de estágio."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relatório de estágio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Relatório de estágio. Conecte sua resposta ao foco geral da matéria: Integra prática profissional, documentação, responsabilidade técnica e reflexão crítica. A experiência pode articular campo, laboratório ou patrimônio conforme a instituição de estágio."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -5417,9 +5084,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Aprofunda intervenções arqueológicas, incluindo escavação, salvamento, monitoramento, controle estratigráfico e registros detalhados. Também trabalha logística, segurança e administração de equipes e equipamentos.",
     "category": "field",
     "studyTips": [
-      "Priorize sequência operacional, registro e segurança; em campo, perder contexto é perder informação.",
-      "Treine fichas, croquis, escalas, fotos e coordenadas com exemplos.",
-      "Após cada procedimento, pergunte que informação precisa ficar rastreável para outra pessoa reproduzir o trabalho."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -5458,12 +5125,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Planejamento de intervenções arqueológicas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Planejamento de intervenções arqueológicas. Conecte sua resposta ao foco geral da matéria: Aprofunda intervenções arqueológicas, incluindo escavação, salvamento, monitoramento, controle estratigráfico e registros detalhados. Também trabalha logística, segurança e administração de equipes e equipamentos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Escavação, salvamento e acompanhamento/monitoramento",
@@ -5484,12 +5146,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Implantação de unidades, níveis, perfis e controle estratigráfico",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Implantação de unidades, níveis, perfis e controle estratigráfico. Conecte sua resposta ao foco geral da matéria: Aprofunda intervenções arqueológicas, incluindo escavação, salvamento, monitoramento, controle estratigráfico e registros detalhados. Também trabalha logística, segurança e administração de equipes e equipamentos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Manuseio de ferramentas e equipamentos",
@@ -5502,12 +5159,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Registro fotográfico, gráfico e espacial detalhado",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Registro fotográfico, gráfico e espacial detalhado. Conecte sua resposta ao foco geral da matéria: Aprofunda intervenções arqueológicas, incluindo escavação, salvamento, monitoramento, controle estratigráfico e registros detalhados. Também trabalha logística, segurança e administração de equipes e equipamentos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Logística, segurança e administração de campo",
@@ -5522,11 +5174,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s7-2-pratica-de-laboratorio-ii": {
     "overview": "Aprofunda análises técnico-tipológicas, microscópicas, físico-químicas, quantitativas e espaciais, além de desenho e datação. O foco é integrar resultados laboratoriais à interpretação arqueológica.",
-    "category": "quant",
+    "category": "lab",
     "studyTips": [
-      "Faça exercícios à mão e em planilha para entender o raciocínio antes de automatizar.",
-      "Sempre interprete o número em linguagem comum e verifique se a medida é adequada ao tipo de dado.",
-      "Procure vieses de amostragem e valores extremos antes de concluir que um padrão é real."
+      "Estude o fluxo do material desde recebimento, conferência e catalogação até análise e guarda.",
+      "Use tabelas de atributos e protocolos explícitos para tornar a análise repetível.",
+      "Nunca separe a peça de sua proveniência, etiqueta e documentação."
     ],
     "concepts": [
       {
@@ -5578,12 +5230,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Análises físico-químicas e microscópicas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique o tipo de dado, a medida adequada, como calcular ou representar o resultado e como interpretar o número considerando amostra, dispersão, viés e incerteza. Tópico: Análises físico-químicas e microscópicas. Conecte sua resposta ao foco geral da matéria: Aprofunda análises técnico-tipológicas, microscópicas, físico-químicas, quantitativas e espaciais, além de desenho e datação. O foco é integrar resultados laboratoriais à interpretação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Desenho arqueológico manual e digital",
@@ -5644,9 +5291,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Ensina a identificar, quantificar e interpretar restos animais. Analisa anatomia, taxonomia, tafonomia, dieta, caça, pesca, domesticação, economia e paleoambiente a partir de conjuntos faunísticos.",
     "category": "science",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Use esquemas e tabelas de identificação, mas registre preservação e incerteza.",
+      "Relacione cada observação bioambiental ao processo de formação do sítio.",
+      "Evite concluir a partir de um único indicador sem contexto e comparação."
     ],
     "concepts": [
       {
@@ -5698,12 +5345,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Identificação de restos faunísticos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina o processo ou indicador, reconheça como ele é observado ou medido e explique de que modo pode informar o contexto arqueológico sem ultrapassar os limites da evidência. Tópico: Identificação de restos faunísticos. Conecte sua resposta ao foco geral da matéria: Ensina a identificar, quantificar e interpretar restos animais. Analisa anatomia, taxonomia, tafonomia, dieta, caça, pesca, domesticação, economia e paleoambiente a partir de conjuntos faunísticos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Tafonomia e agentes de modificação",
@@ -5747,9 +5389,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Estuda o Quaternário como contexto temporal e ambiental das sociedades humanas, com ênfase em mudanças de processos naturais, desafios metodológicos, transformações no Brasil e Nordeste, mapeamento geomorfológico e aplicação ao planejamento ambiental.",
     "category": "earth",
     "studyTips": [
-      "Construa uma linha do tempo Pleistoceno–Holoceno e associe eventos a evidências, não a datas isoladas.",
-      "Para cada proxy paleoambiental, pergunte que processo ele registra e qual a resolução temporal/espacial.",
-      "Relacione mapeamento geomorfológico a formação de sítios e planejamento ambiental."
+      "Relacione processo geológico, escala, deposição e efeito sobre o registro arqueológico.",
+      "Desenhe perfis estratigráficos e marque cortes, transporte e retrabalhamento.",
+      "Pergunte sempre se o material está em posição original ou secundária."
     ],
     "concepts": [
       {
@@ -5867,9 +5509,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Trabalha a lógica de projetos e relatórios de pesquisa: preparação, execução, acompanhamento, avaliação e comunicação técnica. A frase final da ementa sobre “fabricação de artefatos em osso, madeira e chifre” é tratada como provável ruído editorial e não orienta o roteiro.",
     "category": "methods",
     "studyTips": [
-      "Escreva um mini-projeto de uma página e depois transforme-o em estrutura de relatório.",
-      "Em cada seção do relatório, pergunte qual evidência sustenta a afirmação.",
-      "Use tabelas, figuras e anexos apenas quando acrescentarem rastreabilidade ou clareza."
+      "Ligue objetivos, método, resultados e conclusão em uma mesma estrutura.",
+      "Escreva mini-relatórios e revise se cada afirmação é sustentada pelos dados.",
+      "Separe descrição de resultado, interpretação e recomendação."
     ],
     "concepts": [
       {
@@ -5985,11 +5627,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
   },
   "s7-6-etica-na-profissao": {
     "overview": "Analisa dilemas e responsabilidades na pesquisa e na prática profissional, incluindo comunidades, restos humanos, autoria, dados, conflitos de interesse e transparência. O objetivo é justificar decisões responsáveis, não apenas decorar regras.",
-    "category": "heritage",
+    "category": "professional",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Treine leitura crítica, síntese e escrita com evidência claramente citada.",
+      "Separe fato, interpretação, recomendação e responsabilidade profissional.",
+      "Revise ética, autoria, comunicação e limites antes de apresentar uma conclusão."
     ],
     "concepts": [
       {
@@ -6025,12 +5667,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Dilemas éticos na pesquisa científica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Dilemas éticos na pesquisa científica. Conecte sua resposta ao foco geral da matéria: Analisa dilemas e responsabilidades na pesquisa e na prática profissional, incluindo comunidades, restos humanos, autoria, dados, conflitos de interesse e transparência. O objetivo é justificar decisões responsáveis, não apenas decorar regras."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Código de ética e responsabilidades profissionais",
@@ -6043,12 +5680,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relação com comunidades, patrimônio e restos humanos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Relação com comunidades, patrimônio e restos humanos. Conecte sua resposta ao foco geral da matéria: Analisa dilemas e responsabilidades na pesquisa e na prática profissional, incluindo comunidades, restos humanos, autoria, dados, conflitos de interesse e transparência. O objetivo é justificar decisões responsáveis, não apenas decorar regras."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Autoria, dados, transparência e conflitos de interesse",
@@ -6061,22 +5693,17 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Tomada de decisão diante de situações profissionais complexas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Tomada de decisão diante de situações profissionais complexas. Conecte sua resposta ao foco geral da matéria: Analisa dilemas e responsabilidades na pesquisa e na prática profissional, incluindo comunidades, restos humanos, autoria, dados, conflitos de interesse e transparência. O objetivo é justificar decisões responsáveis, não apenas decorar regras."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "s7-7-seminario-de-arqueologia-ii": {
     "overview": "Aprofunda leitura, debate e escrita sobre Arqueologia Histórica e Pública. Trabalha estudos de caso relacionados a memória, patrimônio, sociedade e formas contemporâneas de atuação arqueológica.",
-    "category": "heritage",
+    "category": "professional",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Treine leitura crítica, síntese e escrita com evidência claramente citada.",
+      "Separe fato, interpretação, recomendação e responsabilidade profissional.",
+      "Revise ética, autoria, comunicação e limites antes de apresentar uma conclusão."
     ],
     "concepts": [
       {
@@ -6084,8 +5711,8 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "definition": "Campo que investiga contextos historicamente documentados combinando evidências materiais com fontes escritas, orais, iconográficas e outras."
       },
       {
-        "term": "escrita",
-        "definition": "Sistema gráfico convencional de registro de linguagem ou informação. Seu aparecimento muda possibilidades documentais, mas não torna a cultura material secundária."
+        "term": "escrita acadêmica",
+        "definition": "Produção textual orientada por problema, argumento, evidências, referências e normas de comunicação científica. Em seminários, serve para sintetizar debates, comparar pesquisas e sustentar conclusões de forma rastreável."
       },
       {
         "term": "memória",
@@ -6112,12 +5739,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Leitura de pesquisas especializadas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Leitura de pesquisas especializadas. Conecte sua resposta ao foco geral da matéria: Aprofunda leitura, debate e escrita sobre Arqueologia Histórica e Pública. Trabalha estudos de caso relacionados a memória, patrimônio, sociedade e formas contemporâneas de atuação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Debates contemporâneos sobre memória, patrimônio e sociedade",
@@ -6132,19 +5754,14 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
         "topic": "Apresentações e produção escrita",
         "points": [
           {
-            "term": "escrita",
-            "definition": "Sistema gráfico convencional de registro de linguagem ou informação. Seu aparecimento muda possibilidades documentais, mas não torna a cultura material secundária."
+            "term": "escrita acadêmica",
+            "definition": "Produção textual orientada por problema, argumento, evidências, referências e normas de comunicação científica. Em seminários, serve para sintetizar debates, comparar pesquisas e sustentar conclusões de forma rastreável."
           }
         ]
       },
       {
         "topic": "Análise crítica de estudos de caso",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Análise crítica de estudos de caso. Conecte sua resposta ao foco geral da matéria: Aprofunda leitura, debate e escrita sobre Arqueologia Histórica e Pública. Trabalha estudos de caso relacionados a memória, patrimônio, sociedade e formas contemporâneas de atuação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -6152,9 +5769,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Consolida competências profissionais em tarefas mais complexas e com autonomia crescente. Planejamento, execução, avaliação, ética, comunicação e documentação devem aparecer de forma integrada.",
     "category": "field",
     "studyTips": [
-      "Priorize sequência operacional, registro e segurança; em campo, perder contexto é perder informação.",
-      "Treine fichas, croquis, escalas, fotos e coordenadas com exemplos.",
-      "Após cada procedimento, pergunte que informação precisa ficar rastreável para outra pessoa reproduzir o trabalho."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -6190,21 +5807,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Atuação supervisionada em tarefas complexas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Atuação supervisionada em tarefas complexas. Conecte sua resposta ao foco geral da matéria: Consolida competências profissionais em tarefas mais complexas e com autonomia crescente. Planejamento, execução, avaliação, ética, comunicação e documentação devem aparecer de forma integrada."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Planejamento, execução e avaliação de atividades",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Planejamento, execução e avaliação de atividades. Conecte sua resposta ao foco geral da matéria: Consolida competências profissionais em tarefas mais complexas e com autonomia crescente. Planejamento, execução, avaliação, ética, comunicação e documentação devem aparecer de forma integrada."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Ética, comunicação e documentação",
@@ -6217,12 +5824,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relatório de estágio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Relatório de estágio. Conecte sua resposta ao foco geral da matéria: Consolida competências profissionais em tarefas mais complexas e com autonomia crescente. Planejamento, execução, avaliação, ética, comunicação e documentação devem aparecer de forma integrada."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -6230,9 +5832,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Treina leitura de etnografias clássicas e contemporâneas, observando descrição, argumento, posicionamento do pesquisador e reflexividade. Ajuda a usar comparações etnográficas de maneira crítica em problemas arqueológicos.",
     "category": "theory",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Compare autores, conceitos, pressupostos e críticas em vez de decorar nomes.",
+      "Aplique duas abordagens diferentes ao mesmo exemplo para perceber como a interpretação muda.",
+      "Ao resumir um texto, separe problema, argumento, evidência e limite."
     ],
     "concepts": [
       {
@@ -6264,21 +5866,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Leitura de pesquisas etnográficas contemporâneas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Leitura de pesquisas etnográficas contemporâneas. Conecte sua resposta ao foco geral da matéria: Treina leitura de etnografias clássicas e contemporâneas, observando descrição, argumento, posicionamento do pesquisador e reflexividade. Ajuda a usar comparações etnográficas de maneira crítica em problemas arqueológicos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Estrutura, descrição e argumento em textos etnográficos",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Estrutura, descrição e argumento em textos etnográficos” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Posicionamento do pesquisador e reflexividade",
@@ -6291,12 +5883,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Como dados etnográficos podem dialogar com problemas arqueológicos",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Como dados etnográficos podem dialogar com problemas arqueológicos” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -6304,9 +5891,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Ensina a planejar ações educativas participativas sobre patrimônio com escolas, comunidades e outros públicos. Relaciona memória, pertencimento, mediação cultural, produção de materiais e avaliação de projetos.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [
       {
@@ -6358,12 +5945,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Metodologias participativas e mediação cultural",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Metodologias participativas e mediação cultural. Conecte sua resposta ao foco geral da matéria: Ensina a planejar ações educativas participativas sobre patrimônio com escolas, comunidades e outros públicos. Relaciona memória, pertencimento, mediação cultural, produção de materiais e avaliação de projetos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Patrimônio, memória, identidade e pertencimento",
@@ -6376,12 +5958,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Planejamento de ações com escolas e comunidades",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Planejamento de ações com escolas e comunidades. Conecte sua resposta ao foco geral da matéria: Ensina a planejar ações educativas participativas sobre patrimônio com escolas, comunidades e outros públicos. Relaciona memória, pertencimento, mediação cultural, produção de materiais e avaliação de projetos."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Produção de materiais e atividades educativas",
@@ -6411,9 +5988,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Apresenta o fluxo profissional da arqueologia vinculada ao licenciamento e a empreendimentos, incluindo diagnóstico, prospecção, resgate, monitoramento, relatórios, acervos e relação com órgãos públicos e comunidades.",
     "category": "law",
     "studyTips": [
-      "Crie um caderno de normas com: o que protege, quem é competente, qual procedimento e qual consequência.",
-      "Treine casos hipotéticos para aprender a aplicar a norma, não apenas citá-la.",
-      "Confirme legislação vigente quando a disciplina estiver em curso, pois normas podem ser atualizadas."
+      "Organize norma, competência, procedimento, documento e responsabilidade em uma tabela.",
+      "Estude casos hipotéticos e identifique em que etapa cada obrigação se aplica.",
+      "Confira vigência e fonte oficial antes de usar regras específicas."
     ],
     "concepts": [
       {
@@ -6513,21 +6090,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Relatórios, prazos, responsabilidade técnica e acervos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Relatórios, prazos, responsabilidade técnica e acervos. Conecte sua resposta ao foco geral da matéria: Apresenta o fluxo profissional da arqueologia vinculada ao licenciamento e a empreendimentos, incluindo diagnóstico, prospecção, resgate, monitoramento, relatórios, acervos e relação com órgãos públicos e comunidades."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relação entre empresa, órgão público, comunidade e equipe",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Relação entre empresa, órgão público, comunidade e equipe. Conecte sua resposta ao foco geral da matéria: Apresenta o fluxo profissional da arqueologia vinculada ao licenciamento e a empreendimentos, incluindo diagnóstico, prospecção, resgate, monitoramento, relatórios, acervos e relação com órgãos públicos e comunidades."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -6535,9 +6102,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Diferencia produtos técnicos e desenvolve argumentação fundamentada para processos administrativos, patrimoniais e territoriais. Exige articular legislação, evidências, documentos, metodologia e responsabilidade profissional.",
     "category": "law",
     "studyTips": [
-      "Crie um caderno de normas com: o que protege, quem é competente, qual procedimento e qual consequência.",
-      "Treine casos hipotéticos para aprender a aplicar a norma, não apenas citá-la.",
-      "Confirme legislação vigente quando a disciplina estiver em curso, pois normas podem ser atualizadas."
+      "Organize norma, competência, procedimento, documento e responsabilidade em uma tabela.",
+      "Estude casos hipotéticos e identifique em que etapa cada obrigação se aplica.",
+      "Confira vigência e fonte oficial antes de usar regras específicas."
     ],
     "concepts": [
       {
@@ -6616,12 +6183,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Análise crítica de documentos técnicos e jurídicos",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Análise crítica de documentos técnicos e jurídicos” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Fundamentação de conclusões e responsabilidade profissional",
@@ -6647,9 +6209,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Integra toda a formação em um problema de pesquisa delimitado, com revisão bibliográfica, metodologia, análise, escrita acadêmica e defesa. O TCC exige coerência entre pergunta, evidência, método, argumento e conclusão.",
     "category": "method",
     "studyTips": [
-      "Transforme cada método em um fluxo: quando usar → como aplicar → que dado produz → limite.",
-      "Pratique com situações fictícias de pesquisa, não apenas definições.",
-      "Separe sempre dado observado de inferência e interpretação."
+      "Transforme cada método em fluxo: pergunta → dado → procedimento → produto → limite.",
+      "Explique por que a técnica escolhida responde à pergunta de pesquisa.",
+      "Registre amostragem, critérios e fontes de erro para tornar o procedimento rastreável."
     ],
     "concepts": [
       {
@@ -6723,12 +6285,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Coleta, organização e análise de dados",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Entenda a finalidade do procedimento, a sequência de aplicação, o tipo de dado produzido, as condições de uso e as principais fontes de viés ou erro. Tópico: Coleta, organização e análise de dados. Conecte sua resposta ao foco geral da matéria: Integra toda a formação em um problema de pesquisa delimitado, com revisão bibliográfica, metodologia, análise, escrita acadêmica e defesa. O TCC exige coerência entre pergunta, evidência, método, argumento e conclusão."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Redação acadêmica, citações e referências",
@@ -6767,9 +6324,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Síntese final da formação prática, com autonomia supervisionada e integração de métodos, ética, gestão e documentação. O relatório final deve demonstrar capacidade de avaliar criticamente a experiência profissional.",
     "category": "field",
     "studyTips": [
-      "Priorize sequência operacional, registro e segurança; em campo, perder contexto é perder informação.",
-      "Treine fichas, croquis, escalas, fotos e coordenadas com exemplos.",
-      "Após cada procedimento, pergunte que informação precisa ficar rastreável para outra pessoa reproduzir o trabalho."
+      "Monte checklists de antes, durante e depois do campo.",
+      "Priorize proveniência, registro em tempo real, segurança e cadeia de custódia.",
+      "Treine croquis, fichas, fotografias e decisões de amostragem com exemplos."
     ],
     "concepts": [
       {
@@ -6796,21 +6353,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "topicGuides": [
       {
         "topic": "Síntese da formação prática",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Síntese da formação prática. Conecte sua resposta ao foco geral da matéria: Síntese final da formação prática, com autonomia supervisionada e integração de métodos, ética, gestão e documentação. O relatório final deve demonstrar capacidade de avaliar criticamente a experiência profissional."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Atuação profissional supervisionada com autonomia crescente",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Atuação profissional supervisionada com autonomia crescente. Conecte sua resposta ao foco geral da matéria: Síntese final da formação prática, com autonomia supervisionada e integração de métodos, ética, gestão e documentação. O relatório final deve demonstrar capacidade de avaliar criticamente a experiência profissional."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Integração de métodos, ética e gestão",
@@ -6823,21 +6370,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Documentação e avaliação crítica da experiência",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Documentação e avaliação crítica da experiência. Conecte sua resposta ao foco geral da matéria: Síntese final da formação prática, com autonomia supervisionada e integração de métodos, ética, gestão e documentação. O relatório final deve demonstrar capacidade de avaliar criticamente a experiência profissional."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Relatório final de estágio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Estude a sequência operacional, o registro que precisa ser produzido, os cuidados de segurança e como preservar contexto e rastreabilidade durante a atividade. Tópico: Relatório final de estágio. Conecte sua resposta ao foco geral da matéria: Síntese final da formação prática, com autonomia supervisionada e integração de métodos, ética, gestão e documentação. O relatório final deve demonstrar capacidade de avaliar criticamente a experiência profissional."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -6845,38 +6382,23 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
     "category": "material",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Periodização do Egito antigo",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Periodização do Egito antigo” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Arquitetura, escultura, pintura e iconografia",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Arquitetura, escultura, pintura e iconografia. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Função religiosa e política da arte",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Função religiosa e política da arte. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Contexto arqueológico dos objetos",
@@ -6889,51 +6411,31 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Métodos de análise visual e material",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Métodos de análise visual e material. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-2-a-cidade-e-o-estado-grego": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "theory",
+    "category": "regional",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Formação da pólis",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Formação da pólis. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Urbanismo e espaços públicos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Urbanismo e espaços públicos. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Instituições e cidadania",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Instituições e cidadania. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Cultura material da vida urbana",
@@ -6946,22 +6448,17 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Variação regional e cronológica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Variação regional e cronológica. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-3-desenho-de-pecas-arqueologicas": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "material",
+    "category": "method",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Transforme cada método em fluxo: pergunta → dado → procedimento → produto → limite.",
+      "Explique por que a técnica escolhida responde à pergunta de pesquisa.",
+      "Registre amostragem, critérios e fontes de erro para tornar o procedimento rastreável."
     ],
     "concepts": [],
     "topicGuides": [
@@ -6976,49 +6473,29 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Escala, orientação e vistas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Escala, orientação e vistas. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Cerâmica, lítico e outros materiais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Cerâmica, lítico e outros materiais. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Instrumentos de medição",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Instrumentos de medição. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Digitalização e finalização gráfica",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Digitalização e finalização gráfica. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-4-roma-e-sua-historicidade": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "theory",
+    "category": "regional",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [],
     "topicGuides": [
@@ -7033,21 +6510,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "República e Império",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: República e Império. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Urbanismo e infraestrutura",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Urbanismo e infraestrutura. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Vida cotidiana e cultura material",
@@ -7060,90 +6527,55 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Províncias, fronteiras e diversidade",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Províncias, fronteiras e diversidade. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-5-arqueologia-industrial": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "heritage",
+    "category": "historical",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Cruze cultura material, documentos, arquitetura, imagens e oralidade com crítica de fonte.",
+      "Monte cronologias e compare silêncios ou contradições entre fontes.",
+      "Evite tratar texto escrito como verdade automática ou objeto como simples ilustração."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Industrialização e paisagens produtivas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Industrialização e paisagens produtivas. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Fábricas, maquinário e infraestrutura",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Fábricas, maquinário e infraestrutura. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Trabalho e comunidades operárias",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Trabalho e comunidades operárias. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Documentação e levantamento de patrimônio industrial",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Documentação e levantamento de patrimônio industrial. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Conservação e reuso",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Conservação e reuso. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-6-arqueologia-e-arquitetura": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "theory",
+    "category": "historical",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Cruze cultura material, documentos, arquitetura, imagens e oralidade com crítica de fonte.",
+      "Monte cronologias e compare silêncios ou contradições entre fontes.",
+      "Evite tratar texto escrito como verdade automática ou objeto como simples ilustração."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Leitura arqueológica de edifícios",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Leitura arqueológica de edifícios. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Estratigrafia de paredes",
@@ -7156,30 +6588,15 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Técnicas construtivas e materiais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Técnicas construtivas e materiais. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Levantamento arquitetônico",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Levantamento arquitetônico. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Transformações, usos e fases de ocupação",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Transformações, usos e fases de ocupação. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -7187,9 +6604,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
     "category": "heritage",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Mapeie atores, valores e conflitos: comunidade, pesquisadores, instituições e poder público.",
+      "Separe proteção legal, valor social, preservação física e decisão ética.",
+      "Use estudos de caso para comparar gestão, participação e comunicação do patrimônio."
     ],
     "concepts": [],
     "topicGuides": [
@@ -7204,30 +6621,15 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Comunicação pública",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Comunicação pública. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Participação comunitária",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Participação comunitária. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Patrimônio, identidade e conflito",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Patrimônio, identidade e conflito. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Ética e colaboração",
@@ -7248,66 +6650,41 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
     "category": "material",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Diagnóstico do estado de conservação",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Diagnóstico do estado de conservação” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Limpeza e estabilização",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Limpeza e estabilização. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Remontagem e adesivos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Remontagem e adesivos. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Preenchimentos e reintegração",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Preenchimentos e reintegração. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Documentação e princípios éticos de conservação",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Documentação e princípios éticos de conservação. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-9-registro-grafico-nordestino": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "theory",
+    "category": "material",
     "studyTips": [
-      "Faça um quadro comparando autores, conceitos, pressupostos e críticas.",
-      "Treine explicar como a mesma evidência poderia receber interpretações diferentes.",
-      "Use fichamentos curtos: tese do autor, conceitos, exemplo, crítica e relação com Arqueologia."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [],
     "topicGuides": [
@@ -7322,21 +6699,11 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Técnicas de documentação",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Técnicas de documentação. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Levantamento fotográfico e desenho",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Levantamento fotográfico e desenho. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Análise de contexto e conservação",
@@ -7349,12 +6716,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Debates interpretativos regionais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina os conceitos centrais, identifique os pressupostos da abordagem e compare como diferentes autores poderiam interpretar o mesmo problema. Separe descrição, argumento e crítica. Tópico: Debates interpretativos regionais. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -7362,9 +6724,9 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
     "category": "science",
     "studyTips": [
-      "Use esquemas visuais, tabelas anatômicas/geológicas e exercícios de identificação.",
-      "Decore menos e relacione processos, evidências e condições de preservação.",
-      "Sempre conecte o dado natural ao contexto arqueológico antes de interpretar comportamento humano."
+      "Use esquemas e tabelas de identificação, mas registre preservação e incerteza.",
+      "Relacione cada observação bioambiental ao processo de formação do sítio.",
+      "Evite concluir a partir de um único indicador sem contexto e comparação."
     ],
     "concepts": [],
     "topicGuides": [
@@ -7388,12 +6750,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Práticas funerárias",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Defina o processo ou indicador, reconheça como ele é observado ou medido e explique de que modo pode informar o contexto arqueológico sem ultrapassar os limites da evidência. Tópico: Práticas funerárias. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Zooarqueologia e cronologia",
@@ -7406,33 +6763,23 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Debates sobre complexidade social",
-        "points": [
-          {
-            "term": "Como estudar este tópico",
-            "definition": "Explique “Debates sobre complexidade social” com suas próprias palavras, localize o tema no contexto da disciplina, identifique que evidências/fontes e métodos permitem estudá-lo e registre pelo menos um limite de interpretação. Compare depois com a ementa e o plano da sua turma."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-11-indios-e-sua-trajetoria-de-500-anos": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "material",
+    "category": "regional",
     "studyTips": [
-      "Aprenda atributos observáveis antes de decorar nomes de tipos.",
-      "Reconstrua a cadeia operatória e marque quais evidências sustentam cada etapa.",
-      "Compare produção, uso, manutenção, descarte e alterações pós-deposicionais."
+      "Construa linha do tempo e mapa, relacionando sítios, ambientes e cultura material.",
+      "Compare diversidade interna; não transforme regiões ou culturas arqueológicas em povos fixos.",
+      "Diferencie dado arqueológico, modelo interpretativo e debate historiográfico."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "História indígena no período colonial e contemporâneo",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: História indígena no período colonial e contemporâneo. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Territorialidade e resistência",
@@ -7458,42 +6805,27 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Políticas indigenistas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Políticas indigenistas. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Arqueologia colaborativa e decolonial",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Observe atributos materiais, reconstrua etapas da cadeia operatória e diferencie evidências de produção, uso, manutenção, descarte e alterações posteriores. Tópico: Arqueologia colaborativa e decolonial. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-12-quilombos-e-suas-trajetorias": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "heritage",
+    "category": "historical",
     "studyTips": [
-      "Monte mapas de atores: comunidade, pesquisador, instituição, órgão público e empreendedor.",
-      "Estude casos em que preservação, uso público e interesses sociais entram em conflito.",
-      "Diferencie obrigação legal, boa prática técnica e decisão ética."
+      "Cruze cultura material, documentos, arquitetura, imagens e oralidade com crítica de fonte.",
+      "Monte cronologias e compare silêncios ou contradições entre fontes.",
+      "Evite tratar texto escrito como verdade automática ou objeto como simples ilustração."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Escravidão, fuga e formação de quilombos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Escravidão, fuga e formação de quilombos. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Território e paisagem",
@@ -7528,22 +6860,17 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Reconhecimento territorial e patrimônio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique os bens, atores, valores e conflitos envolvidos; diferencie preservação, gestão, participação social e responsabilidades institucionais. Tópico: Reconhecimento territorial e patrimônio. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
   "opt-13-arte-plumagem-e-cestarias-indigenas": {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
-    "category": "law",
+    "category": "material",
     "studyTips": [
-      "Crie um caderno de normas com: o que protege, quem é competente, qual procedimento e qual consequência.",
-      "Treine casos hipotéticos para aprender a aplicar a norma, não apenas citá-la.",
-      "Confirme legislação vigente quando a disciplina estiver em curso, pois normas podem ser atualizadas."
+      "Descreva atributos observáveis antes de interpretar função ou significado.",
+      "Reconstrua cadeia operatória: matéria-prima, produção, uso, manutenção, descarte e pós-deposição.",
+      "Compare conjuntos sempre junto de proveniência, cronologia e contexto."
     ],
     "concepts": [],
     "topicGuides": [
@@ -7558,12 +6885,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Grafismos e sistemas estéticos",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Grafismos e sistemas estéticos. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Plumária e cestaria como cultura material",
@@ -7585,12 +6907,7 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
       },
       {
         "topic": "Museus, coleções e direitos culturais",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Identifique qual norma ou princípio se aplica, quem possui competência, qual procedimento deve ser seguido e quais responsabilidades ou consequências podem surgir. Confira sempre a versão vigente das normas. Tópico: Museus, coleções e direitos culturais. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   },
@@ -7598,93 +6915,32 @@ window.ARCHAEOLOGY_STUDY_CONTENT = {
     "overview": "Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica.",
     "category": "lab",
     "studyTips": [
-      "Estude o fluxo completo do material e a cadeia de custódia.",
-      "Treine classificação com critérios explícitos e registre dúvidas em vez de forçar identificações.",
-      "Relacione cada técnica laboratorial à pergunta arqueológica que ela consegue responder."
+      "Estude o fluxo do material desde recebimento, conferência e catalogação até análise e guarda.",
+      "Use tabelas de atributos e protocolos explícitos para tornar a análise repetível.",
+      "Nunca separe a peça de sua proveniência, etiqueta e documentação."
     ],
     "concepts": [],
     "topicGuides": [
       {
         "topic": "Exposição, foco e composição",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Exposição, foco e composição. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Documentação de campo e laboratório",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Documentação de campo e laboratório. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Escala e padronização de fotografias técnicas",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Escala e padronização de fotografias técnicas. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Captação de vídeo e áudio",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Captação de vídeo e áudio. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       },
       {
         "topic": "Organização, metadados e preservação digital",
-        "points": [
-          {
-            "term": "Como dominar este tópico",
-            "definition": "Relacione o procedimento ao fluxo do material, à documentação, aos critérios de classificação e à pergunta arqueológica que o resultado poderá responder. Tópico: Organização, metadados e preservação digital. Conecte sua resposta ao foco geral da matéria: Disciplina optativa listada no PPP. O conteúdo detalhado precisa ser confirmado no plano de ensino quando for ofertada; este guia organiza uma preparação inicial coerente com o título e com a formação arqueológica."
-          }
-        ]
+        "points": []
       }
     ]
   }
 };
-
-
-/* v7 — correções conceituais de auditoria */
-(() => {
-  const packs = window.ARCHAEOLOGY_STUDY_CONTENT || {};
-  const normalize = (v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-  const replaceConcepts = (courseId, removeTerms, additions) => {
-    const pack = packs[courseId];
-    if (!pack) return;
-    const banned = new Set(removeTerms.map(normalize));
-    pack.concepts = (pack.concepts || []).filter((c) => !banned.has(normalize(c.term)));
-    const existing = new Set(pack.concepts.map((c) => normalize(c.term)));
-    additions.forEach((concept) => {
-      if (!existing.has(normalize(concept.term))) {
-        pack.concepts.push(concept);
-        existing.add(normalize(concept.term));
-      }
-    });
-  };
-
-  replaceConcepts('s2-2-teoria-antropologica', ['cultura arqueológica'], [
-    { term: 'tradições antropológicas americana e britânica', definition: 'Conjunto de debates e escolas desenvolvidos especialmente na antropologia dos Estados Unidos e da Grã-Bretanha, com diferentes maneiras de relacionar cultura, sociedade, função, história, estrutura, método e trabalho de campo.' }
-  ]);
-
-  replaceConcepts('s2-6-direito-aplicado-a-arqueologia', ['cultura arqueológica'], [
-    { term: 'ordenamento jurídico', definition: 'Conjunto organizado de normas, princípios e instituições que estruturam a aplicação do Direito. Em Arqueologia, ajuda a compreender como a proteção do patrimônio se relaciona a competências, procedimentos e responsabilidades.' }
-  ]);
-
-  replaceConcepts('s5-5-arqueologia-latino-americana', ['hominização'], [
-    { term: 'povoamento das Américas', definition: 'Processo de entrada, dispersão e ocupação de populações humanas no continente americano, investigado por evidências arqueológicas, cronológicas, paleoambientais, bioantropológicas e genéticas. Não é sinônimo de hominização.' }
-  ]);
-
-  replaceConcepts('s6-6-arqueologia-americana', ['hominização', 'arqueologia social latino-americana'], [
-    { term: 'diversidade social e cultural americana', definition: 'Variedade histórica de formas de organização social, tecnologias, economias, cosmologias e relações com a paisagem desenvolvidas por diferentes sociedades das Américas.' }
-  ]);
-})();
