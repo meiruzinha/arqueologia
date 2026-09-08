@@ -4,7 +4,7 @@
   const DATA = window.ARCHAEOLOGY_DATA;
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const APP_VERSION = '8.0';
+  const APP_VERSION = '8.2';
   const STORAGE_KEY = 'arqueologia-study-hub-v8';
   const LEGACY_KEYS = [
     'arqueologia-study-hub-v7', 'arqueologia-study-hub-v6-2', 'arqueologia-study-hub-v6-1',
