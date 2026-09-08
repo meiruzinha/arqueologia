@@ -1,10 +1,18 @@
-# Arqueologia Study Hub · UNEB — v8
+# Arqueologia Study Hub · UNEB — v8.1
 
 Aplicativo independente de organização acadêmica para o Bacharelado em Arqueologia da UNEB — Campus VIII, estruturado a partir da matriz curricular e do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
-## Mudança central da v8
 
-A v8 deixa de tentar prever o conteúdo que cada professor vai ministrar. O app passa a funcionar como um **caderno acadêmico digital baseado na grade oficial**.
+## Refinamento visual da v8.1
+
+- O controle do menu foi simplificado: existe apenas o botão sanduíche branco da barra superior.
+- No desktop, o mesmo botão recolhe e reabre a sidebar; no tablet/mobile, abre e fecha o drawer lateral.
+- O Início foi redesenhado como painel acadêmico compacto, com resumo do semestre, atalhos, matérias em cartões leves e próximos compromissos.
+- Os cards detalhados com ementa continuam nas páginas de grade/semestre; a home evita repetir informação e prioriza acesso rápido.
+
+## Mudança central da v8.1
+
+A v8.1 deixa de tentar prever o conteúdo que cada professor vai ministrar. O app passa a funcionar como um **caderno acadêmico digital baseado na grade oficial**.
 
 Cada disciplina possui:
 
@@ -103,7 +111,7 @@ Execute:
 node validate-data.js
 ```
 
-O validador confere a estrutura da matriz usada pela v8 e também verifica que os arquivos de conteúdo gerado removidos não fazem parte do pacote.
+O validador confere a estrutura da matriz usada pela v8.1 e também verifica que os arquivos de conteúdo gerado removidos não fazem parte do pacote.
 
 ## Armazenamento
 

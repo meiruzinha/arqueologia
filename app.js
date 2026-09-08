@@ -274,22 +274,58 @@
     </article>`;
   }
 
+  function dashboardCourseCard(course) {
+    const status = courseStatus(course), pages = notebookPages(course).length, reviews = reviewItems(course), pending = reviews.filter(item => !item.done).length;
+    return `<button type="button" class="dashboard-course-card" data-course-open="${esc(course.id)}" aria-label="Abrir ${esc(course.title)}">
+      <div class="dashboard-course-main">
+        <div class="dashboard-course-title"><span class="course-sem">${course.matrixHours || 0}h</span><h3>${esc(course.title)}</h3></div>
+        <span class="dashboard-course-arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="dashboard-course-meta"><span class="status-dot status-${esc(status)}"></span><span>${esc(statusLabel(status))}</span><span>✎ ${pages} ${pages === 1 ? 'folha' : 'folhas'}</span>${reviews.length ? `<span>↻ ${pending} pend.</span>` : '<span>↻ sem revisão</span>'}</div>
+    </button>`;
+  }
+
   function renderDashboard() {
     const courses = semesterCourses();
     const pages = courses.reduce((n,c) => n + notebookPages(c).length, 0);
     const reviews = courses.flatMap(c => reviewItems(c));
     const pending = reviews.filter(r => !r.done).length;
-    const upcoming = upcomingCalendarEntries(5);
-    view.innerHTML = `<div class="page-enter">
-      <section class="hero-panel">
-        <div><span class="eyebrow">Seu caderno acadêmico</span><h1>${state.currentSemester}º semestre</h1><p>A grade oficial organiza o caminho. O conteúdo real da sua turma nasce aqui: no caderno, nas revisões e nos quizzes que você mesma cria a partir das aulas.</p></div>
-        <div class="hero-actions"><button class="btn" data-view-go="notebook">Abrir caderno</button><button class="btn btn-outline" data-view-go="calendar">Calendário</button></div>
+    const upcoming = upcomingCalendarEntries(4);
+    const studying = courses.filter(c => courseStatus(c) === 'studying').length;
+    view.innerHTML = `<div class="page-enter dashboard-home">
+      <section class="dashboard-welcome">
+        <div class="dashboard-welcome-copy">
+          <span class="eyebrow">Arqueologia · UNEB Campus VIII</span>
+          <h1>Meu ${state.currentSemester}º semestre</h1>
+          <p>Seu espaço para acompanhar as disciplinas, registrar as aulas e organizar a rotina acadêmica.</p>
+        </div>
+        <div class="dashboard-semester-badge" aria-label="Semestre atual"><strong>${state.currentSemester}º</strong><span>semestre</span></div>
       </section>
-      <div class="stats-grid">${statCard(courses.length, 'matérias no semestre')}${statCard(pages, 'folhas no caderno')}${statCard(reviews.length, 'itens de revisão', `${pending} pendentes`)}${statCard(`${totalCurrentReviewProgress()}%`, 'das revisões concluídas')}</div>
-      ${sectionHead('Matérias do semestre', 'Abra uma disciplina para ver o PPP e registrar o que realmente foi ensinado.')}
-      <div class="course-grid">${courses.map(courseCard).join('')}</div>
-      ${sectionHead('Próximos compromissos', 'Itens que você adicionou ao calendário.', '<button class="text-btn" data-view-go="calendar">Ver calendário →</button>')}
-      <div class="upcoming-list">${upcoming.length ? upcoming.map(calendarCompactCard).join('') : emptyState('Nada próximo', 'Adicione provas, trabalhos, leituras ou lembretes no calendário.')}</div>
+
+      <section class="dashboard-summary" aria-label="Resumo do semestre">
+        <div class="dashboard-summary-item"><span>Disciplinas</span><strong>${courses.length}</strong><small>${studying ? `${studying} em andamento` : 'nenhuma marcada como cursando'}</small></div>
+        <div class="dashboard-summary-item"><span>Caderno</span><strong>${pages}</strong><small>${pages === 1 ? 'folha criada' : 'folhas criadas'}</small></div>
+        <div class="dashboard-summary-item"><span>Revisões</span><strong>${pending}</strong><small>${pending === 1 ? 'pendente' : 'pendentes'}</small></div>
+        <div class="dashboard-summary-item"><span>Calendário</span><strong>${upcoming.length}</strong><small>${upcoming.length === 1 ? 'próximo item' : 'próximos itens'}</small></div>
+      </section>
+
+      <section class="dashboard-shortcuts" aria-label="Atalhos">
+        <button class="dashboard-shortcut" data-view-go="notebook"><span class="shortcut-icon">✎</span><span><strong>Caderno</strong><small>Registrar uma aula</small></span><b>→</b></button>
+        <button class="dashboard-shortcut" data-view-go="calendar"><span class="shortcut-icon">▣</span><span><strong>Calendário</strong><small>Provas e prazos</small></span><b>→</b></button>
+        <button class="dashboard-shortcut" data-view-go="review"><span class="shortcut-icon">↻</span><span><strong>Revisões</strong><small>Rever o que você cadastrou</small></span><b>→</b></button>
+      </section>
+
+      <div class="dashboard-content-grid">
+        <section class="dashboard-section dashboard-courses-panel">
+          <div class="dashboard-section-head"><div><span class="eyebrow">Neste semestre</span><h2>Minhas matérias</h2></div><button class="text-btn" data-view-go="semester">Ver semestre →</button></div>
+          <div class="dashboard-course-list">${courses.map(dashboardCourseCard).join('')}</div>
+        </section>
+
+        <aside class="dashboard-section dashboard-upcoming-panel">
+          <div class="dashboard-section-head"><div><span class="eyebrow">Agenda</span><h2>Próximos</h2></div><button class="text-btn" data-view-go="calendar">Abrir →</button></div>
+          ${upcoming.length ? `<div class="dashboard-upcoming-list">${upcoming.map(calendarCompactCard).join('')}</div>` : `<div class="dashboard-empty-compact"><span>▣</span><strong>Agenda livre</strong><p>Adicione provas, trabalhos ou lembretes no calendário.</p><button class="btn btn-soft btn-sm" data-view-go="calendar">Adicionar item</button></div>`}
+        </aside>
+      </div>
     </div>`;
   }
 
@@ -578,7 +614,6 @@
 
   $('#searchInput').addEventListener('input', e => { searchQuery=e.target.value; renderCurrentView(); });
   $('#menuBtn').addEventListener('click', toggleSidebar);
-  $('#sidebarToggle').addEventListener('click', toggleSidebar);
   overlay.addEventListener('click', closeMobileSidebar);
   $('#dialogClose').addEventListener('click', closeDialog);
   dialog.addEventListener('click', e => { if(e.target===dialog)closeDialog(); });

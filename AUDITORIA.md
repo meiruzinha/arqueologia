@@ -1,8 +1,8 @@
-# Auditoria — Arqueologia Study Hub v8
+# Auditoria — Arqueologia Study Hub v8.1
 
 ## Escopo
 
-A v8 foi reorganizada para funcionar como caderno acadêmico digital. A auditoria desta versão verifica a matriz curricular, a remoção do material didático gerado automaticamente e a estrutura das ferramentas que passam a ser preenchidas pelo próprio estudante.
+A v8.1 foi reorganizada para funcionar como caderno acadêmico digital. A auditoria desta versão verifica a matriz curricular, a remoção do material didático gerado automaticamente e a estrutura das ferramentas que passam a ser preenchidas pelo próprio estudante.
 
 ## Matriz preservada
 
@@ -19,7 +19,7 @@ O validador confirma:
 
 ## Conteúdo gerado removido
 
-A v8 não carrega mais:
+A v8.1 não carrega mais:
 
 - `study-content.js`;
 - `lesson-content.js`;
@@ -65,7 +65,7 @@ As perguntas são criadas pelo usuário e armazenam pergunta, resposta, compleme
 
 ## Calendário
 
-O estado da v8 preserva calendário mensal com título, tipo, matéria opcional, horário, observações e estado concluído/pendente. Os próximos compromissos podem aparecer no Início.
+O estado da v8.1 preserva calendário mensal com título, tipo, matéria opcional, horário, observações e estado concluído/pendente. Os próximos compromissos podem aparecer no Início.
 
 ## Busca
 
@@ -73,7 +73,7 @@ A busca inclui dados institucionais e conteúdo criado pelo usuário: nome da di
 
 ## Backup e migração
 
-O estado da v8 é salvo em `arqueologia-study-hub-v8`. A migração procura chaves anteriores compatíveis e preserva, quando disponíveis:
+O estado da v8.1 é salvo em `arqueologia-study-hub-v8`. A migração procura chaves anteriores compatíveis e preserva, quando disponíveis:
 
 - semestre atual;
 - status;
@@ -91,8 +91,15 @@ Os conteúdos automáticos antigos não são importados como conteúdo da nova i
 
 A estrutura CSS mantém os breakpoints já usados no projeto para desktop, tablet e mobile, incluindo menu lateral recolhível/drawer, grade de cartões, diálogo da disciplina, calendário e formulários.
 
-Foram produzidas prévias da v8 em desktop, tablet e mobile durante o desenvolvimento. A validação estrutural também verifica que os arquivos locais referenciados pelo HTML existem.
+Foram produzidas prévias da v8.1 em desktop, tablet e mobile durante o desenvolvimento. A validação estrutural também verifica que os arquivos locais referenciados pelo HTML existem.
 
 ## Limites
 
-Esta auditoria não transforma o app em fonte oficial da UNEB. O objetivo da v8 é justamente evitar prever o que o professor ensinará. O PPP permanece como referência institucional e o conteúdo real passa a ser construído no caderno, nas revisões e nos quizzes do próprio usuário.
+Esta auditoria não transforma o app em fonte oficial da UNEB. O objetivo da v8.1 é justamente evitar prever o que o professor ensinará. O PPP permanece como referência institucional e o conteúdo real passa a ser construído no caderno, nas revisões e nos quizzes do próprio usuário.
+
+## Interface v8.1
+
+A sidebar não possui mais um segundo botão interno de recolhimento. O único controle é `#menuBtn`, mantido na barra superior e disponível mesmo quando o menu está fechado. A home usa componentes próprios mais compactos e não altera os cards detalhados das demais páginas.
+
+Checagens estáticas desta revisão: IDs HTML sem duplicação, um único `#menuBtn`, ausência de `#sidebarToggle`, CSS com blocos balanceados, JavaScript com sintaxe válida e matriz validada pelo `validate-data.js`.
+
