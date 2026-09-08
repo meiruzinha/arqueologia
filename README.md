@@ -1,9 +1,9 @@
-# Arqueologia Study Hub · UNEB — v8.2
+# Arqueologia Study Hub · UNEB — v8.3
 
 Aplicativo independente de organização acadêmica para o Bacharelado em Arqueologia da UNEB — Campus VIII, estruturado a partir da matriz curricular e do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
 
-## Refinamento visual da v8.2
+## Refinamento visual da v8.3
 
 - O controle do menu foi simplificado: existe apenas o botão sanduíche branco da barra superior.
 - No desktop, o mesmo botão recolhe e reabre a sidebar; no tablet/mobile, abre e fecha o drawer lateral.
@@ -11,13 +11,28 @@ Aplicativo independente de organização acadêmica para o Bacharelado em Arqueo
 - Os cards detalhados com ementa continuam nas páginas de grade/semestre; a home evita repetir informação e prioriza acesso rápido.
 
 
+
+### Meu semestre
+
+- Cabeçalho editorial com número do semestre, quantidade de disciplinas, carga horária, folhas e revisões pendentes.
+- Seletor dos 8 semestres integrado à página.
+- Disciplinas em cartões editoriais compactos, com ementa resumida, status e atalhos para caderno/revisão/quiz.
+- O cartão inteiro é clicável e abre a disciplina.
+
+### Caderno
+
+- A página passa a ter uma identidade de caderno acadêmico, com resumo do semestre e estante de cadernos por disciplina.
+- Cada caderno mostra quantidade de folhas e, quando houver, a última folha registrada.
+- Cadernos vazios têm estado visual próprio e convite para criar a primeira folha.
+- A última anotação do semestre recebe um atalho discreto para continuar escrevendo.
+
 ### Layout interno das disciplinas
 
-A v8.2 corrige a estrutura visual ao abrir uma matéria. O modal agora possui cabeçalho, status, indicadores, abas e painéis com estilos próprios, além de formulários responsivos para Minha turma, Caderno, Revisão e Meu quiz.
+A v8.3 preserva a correção estrutural do modal e redesenha as páginas **Meu semestre** e **Caderno**. O modal agora possui cabeçalho, status, indicadores, abas e painéis com estilos próprios, além de formulários responsivos para Minha turma, Caderno, Revisão e Meu quiz.
 
-## Mudança central da v8.2
+## Estrutura acadêmica da v8.3
 
-A v8.2 deixa de tentar prever o conteúdo que cada professor vai ministrar. O app passa a funcionar como um **caderno acadêmico digital baseado na grade oficial**.
+A v8.3 mantém a decisão de não tentar prever o conteúdo que cada professor vai ministrar. O app passa a funcionar como um **caderno acadêmico digital baseado na grade oficial**.
 
 Cada disciplina possui:
 
@@ -116,7 +131,7 @@ Execute:
 node validate-data.js
 ```
 
-O validador confere a estrutura da matriz usada pela v8.2 e também verifica que os arquivos de conteúdo gerado removidos não fazem parte do pacote.
+O validador confere a estrutura da matriz usada pela v8.3 e também verifica que os arquivos de conteúdo gerado removidos não fazem parte do pacote.
 
 ## Armazenamento
 

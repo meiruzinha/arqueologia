@@ -1,8 +1,8 @@
-# Auditoria — Arqueologia Study Hub v8.2
+# Auditoria — Arqueologia Study Hub v8.3
 
 ## Escopo
 
-A v8.2 foi reorganizada para funcionar como caderno acadêmico digital. A auditoria desta versão verifica a matriz curricular, a remoção do material didático gerado automaticamente e a estrutura das ferramentas que passam a ser preenchidas pelo próprio estudante.
+A v8.3 mantém a organização acadêmica da v8 e acrescenta uma revisão visual específica de **Meu semestre** e **Caderno**. A estrutura curricular e as ferramentas preenchidas pelo estudante permanecem inalteradas. para funcionar como caderno acadêmico digital. A auditoria desta versão verifica a matriz curricular, a remoção do material didático gerado automaticamente e a estrutura das ferramentas que passam a ser preenchidas pelo próprio estudante.
 
 ## Matriz preservada
 
@@ -19,7 +19,7 @@ O validador confirma:
 
 ## Conteúdo gerado removido
 
-A v8.2 não carrega mais:
+A linha v8 não carrega mais:
 
 - `study-content.js`;
 - `lesson-content.js`;
@@ -65,7 +65,7 @@ As perguntas são criadas pelo usuário e armazenam pergunta, resposta, compleme
 
 ## Calendário
 
-O estado da v8.2 preserva calendário mensal com título, tipo, matéria opcional, horário, observações e estado concluído/pendente. Os próximos compromissos podem aparecer no Início.
+O estado da v8.3 preserva calendário mensal com título, tipo, matéria opcional, horário, observações e estado concluído/pendente. Os próximos compromissos podem aparecer no Início.
 
 ## Busca
 
@@ -73,7 +73,7 @@ A busca inclui dados institucionais e conteúdo criado pelo usuário: nome da di
 
 ## Backup e migração
 
-O estado da v8.2 é salvo em `arqueologia-study-hub-v8`. A migração procura chaves anteriores compatíveis e preserva, quando disponíveis:
+O estado da v8.3 é salvo em `arqueologia-study-hub-v8`. A migração procura chaves anteriores compatíveis e preserva, quando disponíveis:
 
 - semestre atual;
 - status;
@@ -95,9 +95,9 @@ A validação estrutural verifica que os arquivos locais referenciados pelo HTML
 
 ## Limites
 
-Esta auditoria não transforma o app em fonte oficial da UNEB. O objetivo da v8.2 é justamente evitar prever o que o professor ensinará. O PPP permanece como referência institucional e o conteúdo real passa a ser construído no caderno, nas revisões e nos quizzes do próprio usuário.
+Esta auditoria não transforma o app em fonte oficial da UNEB. O objetivo da v8.3 é justamente evitar prever o que o professor ensinará. O PPP permanece como referência institucional e o conteúdo real passa a ser construído no caderno, nas revisões e nos quizzes do próprio usuário.
 
-## Interface v8.2
+## Interface v8.3
 
 A sidebar não possui mais um segundo botão interno de recolhimento. O único controle é `#menuBtn`, mantido na barra superior e disponível mesmo quando o menu está fechado. A home usa componentes próprios mais compactos e não altera os cards detalhados das demais páginas.
 
@@ -107,7 +107,7 @@ Checagens estáticas desta revisão: IDs HTML sem duplicação, um único `#menu
 
 ## Correção do modal da disciplina
 
-A v8.2 corrige um problema estrutural da v8/v8.1: a nova marcação interna das disciplinas (`course-dialog-page`, `course-dialog-header`, `course-meta` e `course-panels`) havia sido criada sem uma camada completa de estilos própria e acabava herdando parcialmente o CSS do modal antigo.
+A v8.3 preserva um problema estrutural da v8/v8.1: a nova marcação interna das disciplinas (`course-dialog-page`, `course-dialog-header`, `course-meta` e `course-panels`) havia sido criada sem uma camada completa de estilos própria e acabava herdando parcialmente o CSS do modal antigo.
 
 A correção estabelece:
 
@@ -120,3 +120,14 @@ A correção estabelece:
 - largura máxima e `box-sizing` consistente em inputs, selects e textareas;
 - Caderno, Revisão e Meu Quiz protegidos contra estouro horizontal;
 - modal quase em tela cheia no mobile sem perder margens de segurança.
+
+
+## Redesign de Meu semestre e Caderno
+
+A v8.3 substitui o layout utilitário dessas duas páginas por componentes próprios.
+
+**Meu semestre:** hero do período com métricas reais da matriz e do conteúdo criado pelo usuário, seletor de semestre e cartões editoriais por disciplina. Os cartões são elementos `button`, portanto o clique em qualquer área abre corretamente a matéria dentro do sistema de eventos existente.
+
+**Caderno:** hero acadêmico, contagem de folhas/cadernos iniciados, atalho para a anotação mais recente e cards que simulam cadernos com lombada, quantidade de folhas e última anotação. Nenhuma estrutura de dados do caderno foi alterada.
+
+A nova camada possui breakpoints próprios para 1100, 820, 620 e 390 px. A validação estática confirmou JavaScript válido, matriz preservada e ausência de mudanças em `data.js`/`data.json`. O Chromium headless disponível no ambiente permaneceu incapaz de concluir capturas confiáveis; por isso não é declarada uma inspeção dinâmica completa que não foi possível executar.

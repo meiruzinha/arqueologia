@@ -4,7 +4,7 @@
   const DATA = window.ARCHAEOLOGY_DATA;
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const APP_VERSION = '8.2';
+  const APP_VERSION = '8.3';
   const STORAGE_KEY = 'arqueologia-study-hub-v8';
   const LEGACY_KEYS = [
     'arqueologia-study-hub-v7', 'arqueologia-study-hub-v6-2', 'arqueologia-study-hub-v6-1',
@@ -285,6 +285,47 @@
     </button>`;
   }
 
+  function semesterCourseCard(course, index) {
+    const status = courseStatus(course);
+    const pages = notebookPages(course).length;
+    const reviews = reviewItems(course);
+    const pending = reviews.filter(item => !item.done).length;
+    const quizzes = quizItems(course).length;
+    const summary = String(course.syllabus || '').replace(/\s+/g, ' ').trim();
+    return `<button type="button" class="semester-subject-card" data-course-open="${esc(course.id)}" aria-label="Abrir ${esc(course.title)}">
+      <div class="semester-subject-number">${String(index + 1).padStart(2, '0')}</div>
+      <div class="semester-subject-body">
+        <div class="semester-subject-top">
+          <div class="semester-subject-title"><span>${course.matrixHours || 0} horas</span><h3>${esc(course.title)}</h3></div>
+          <span class="semester-status status-${esc(status)}">${esc(statusLabel(status))}</span>
+        </div>
+        <p>${esc(summary || 'Componente curricular da matriz oficial do curso.')}</p>
+        <div class="semester-subject-foot">
+          <div class="semester-subject-tools"><span>✎ ${pages} ${pages === 1 ? 'folha' : 'folhas'}</span><span>↻ ${reviews.length ? `${pending} pend.` : 'sem revisão'}</span><span>◇ ${quizzes} ${quizzes === 1 ? 'questão' : 'questões'}</span></div>
+          <span class="semester-open-label">Abrir matéria <b>→</b></span>
+        </div>
+      </div>
+    </button>`;
+  }
+
+  function notebookCourseCard(course, index) {
+    const pages = notebookPages(course);
+    const last = pages[0];
+    const hasPages = pages.length > 0;
+    const lastTitle = last ? (last.title || `Folha ${String(last.pageNumber).padStart(2,'0')}`) : '';
+    const lastPreview = last ? String(last.learned || last.free || last.concepts || '').replace(/\s+/g, ' ').trim() : '';
+    return `<article class="notebook-book-card ${hasPages ? 'has-pages' : 'is-empty'}">
+      <div class="notebook-book-spine"><span>${String(index + 1).padStart(2,'0')}</span></div>
+      <div class="notebook-book-cover">
+        <div class="notebook-book-top"><span class="notebook-book-kicker">${course.semester}º semestre</span><span class="notebook-book-hours">${course.matrixHours || 0}h</span></div>
+        <h3>${esc(course.title)}</h3>
+        <div class="notebook-book-count"><strong>${pages.length}</strong><span>${pages.length === 1 ? 'folha registrada' : 'folhas registradas'}</span></div>
+        ${hasPages ? `<div class="notebook-last-page"><span>Última folha</span><strong>${esc(lastTitle)}</strong>${last?.date ? `<small>${formatDate(last.date)}</small>` : ''}${lastPreview ? `<p>${esc(lastPreview)}</p>` : ''}</div>` : `<div class="notebook-empty-copy"><span>✦</span><p>Este caderno ainda está limpo. A primeira folha pode nascer na sua próxima aula.</p></div>`}
+        <button class="notebook-book-action" data-course-open="${esc(course.id)}" data-open-tab="notes">${hasPages ? 'Abrir caderno' : 'Criar primeira folha'} <b>→</b></button>
+      </div>
+    </article>`;
+  }
+
   function renderDashboard() {
     const courses = semesterCourses();
     const pages = courses.reduce((n,c) => n + notebookPages(c).length, 0);
@@ -331,10 +372,20 @@
 
   function renderSemester() {
     const s = Number(state.semesterFilter || state.currentSemester), courses = requiredCourses().filter(c => c.semester === s);
-    view.innerHTML = `<div class="page-enter">${sectionHead('Meu semestre', 'A matriz é a referência oficial; seu caderno registra a experiência real da turma.')}
-      <div class="semester-chips">${[1,2,3,4,5,6,7,8].map(n => `<button class="semester-chip ${n===s?'active':''}" data-semester-filter="${n}">${n}º</button>`).join('')}</div>
-      <div class="notice info"><div>✦</div><div><strong>Como usar</strong><p>Abra uma matéria, consulte a ementa oficial e use Caderno, Revisão e Quiz conforme o professor avançar.</p></div></div>
-      <div class="course-grid">${courses.map(courseCard).join('')}</div></div>`;
+    const hours = courses.reduce((total, course) => total + Number(course.matrixHours || 0), 0);
+    const pages = courses.reduce((total, course) => total + notebookPages(course).length, 0);
+    const reviews = courses.flatMap(course => reviewItems(course));
+    const pending = reviews.filter(item => !item.done).length;
+    const studying = courses.filter(course => courseStatus(course) === 'studying').length;
+    view.innerHTML = `<div class="page-enter semester-page">
+      <section class="semester-hero-card">
+        <div class="semester-hero-copy"><span class="eyebrow">Percurso acadêmico</span><div class="semester-hero-title"><span class="semester-big-number">${String(s).padStart(2,'0')}</span><div><h1>${s}º semestre</h1><p>A matriz mostra o caminho oficial. O conteúdo real deste período ganha forma conforme suas aulas, leituras e anotações.</p></div></div></div>
+        <div class="semester-hero-stats"><div><strong>${courses.length}</strong><span>disciplinas</span></div><div><strong>${hours}h</strong><span>na matriz</span></div><div><strong>${pages}</strong><span>folhas</span></div><div><strong>${pending}</strong><span>revisões pend.</span></div></div>
+      </section>
+      <div class="semester-toolbar"><div class="semester-chips semester-chips-refined">${[1,2,3,4,5,6,7,8].map(n => `<button class="semester-chip ${n===s?'active':''}" data-semester-filter="${n}" aria-label="Ver ${n}º semestre"><span>${String(n).padStart(2,'0')}</span><small>${n}º</small></button>`).join('')}</div><div class="semester-toolbar-note"><span class="status-dot status-studying"></span>${studying ? `${studying} ${studying === 1 ? 'matéria marcada' : 'matérias marcadas'} como cursando` : 'Marque como cursando quando o semestre começar'}</div></div>
+      <div class="semester-editorial-head"><div><span class="eyebrow">Disciplinas</span><h2>O que compõe este período</h2></div><p>Abra uma matéria para acessar a ementa oficial, seu caderno, revisões e quiz pessoal.</p></div>
+      <div class="semester-subject-list">${courses.map(semesterCourseCard).join('')}</div>
+    </div>`;
   }
 
   function renderAll() {
@@ -356,11 +407,18 @@
 
   function renderNotebook() {
     const courses = semesterCourses();
-    view.innerHTML = `<div class="page-enter">${sectionHead('Caderno digital', 'Cada disciplina funciona como um caderno próprio. Crie uma folha para cada aula, texto, orientação ou atividade.')}
-      <div class="notebook-dashboard-grid">${courses.map(course => {
-        const pages = notebookPages(course), last = pages[0];
-        return `<article class="notebook-course-card"><span class="course-sem">${course.semester}º semestre</span><h3>${esc(course.title)}</h3><div class="notebook-card-count"><strong>${pages.length}</strong><span>${pages.length===1?'folha':'folhas'}</span></div>${last ? `<p>Última: <strong>${esc(last.title || `Folha ${String(last.pageNumber).padStart(2,'0')}`)}</strong>${last.date ? ` · ${formatDate(last.date)}` : ''}</p>` : '<p>Seu caderno desta matéria ainda está vazio.</p>'}<button class="btn btn-soft" data-course-open="${esc(course.id)}" data-open-tab="notes">${pages.length ? 'Abrir caderno' : '+ Começar caderno'}</button></article>`;
-      }).join('')}</div></div>`;
+    const totalPages = courses.reduce((total, course) => total + notebookPages(course).length, 0);
+    const started = courses.filter(course => notebookPages(course).length).length;
+    const latest = courses.map(course => ({ course, page: notebookPages(course)[0] })).filter(item => item.page).sort((a,b) => String(b.page.date || '').localeCompare(String(a.page.date || '')))[0];
+    view.innerHTML = `<div class="page-enter notebook-library-page">
+      <section class="notebook-library-hero">
+        <div class="notebook-library-copy"><span class="eyebrow">Caderno acadêmico</span><h1>Suas aulas, do seu jeito.</h1><p>Cada disciplina tem um caderno próprio. Uma folha pode guardar uma aula, uma leitura, uma orientação de trabalho ou qualquer coisa que você queira levar consigo durante a graduação.</p><div class="notebook-library-stats"><span><strong>${totalPages}</strong> ${totalPages === 1 ? 'folha' : 'folhas'}</span><span><strong>${started}/${courses.length}</strong> cadernos iniciados</span></div></div>
+        <div class="notebook-paper-preview" aria-hidden="true"><div class="paper-ring"></div><div class="paper-lines"><span></span><span></span><span></span><span></span><span></span></div><strong>${state.currentSemester}º</strong><small>semestre</small></div>
+      </section>
+      ${latest ? `<section class="notebook-recent-strip"><div><span class="eyebrow">Mais recente</span><strong>${esc(latest.course.title)}</strong><small>${esc(latest.page.title || `Folha ${String(latest.page.pageNumber).padStart(2,'0')}`)}${latest.page.date ? ` · ${formatDate(latest.page.date)}` : ''}</small></div><button class="text-btn" data-course-open="${esc(latest.course.id)}" data-open-tab="notes">Continuar escrevendo →</button></section>` : ''}
+      <div class="notebook-library-head"><div><span class="eyebrow">Estante do semestre</span><h2>Meus cadernos</h2></div><p>${courses.length} disciplinas disponíveis para registrar o que realmente acontecer em sala.</p></div>
+      <div class="notebook-book-grid">${courses.map(notebookCourseCard).join('')}</div>
+    </div>`;
   }
 
   function renderReview() {
