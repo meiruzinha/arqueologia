@@ -4,7 +4,7 @@
   const DATA = window.ARCHAEOLOGY_DATA;
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const APP_VERSION = '8.4';
+  const APP_VERSION = '8.5';
   const STORAGE_KEY = 'arqueologia-study-hub-v8';
   const LEGACY_KEYS = [
     'arqueologia-study-hub-v7', 'arqueologia-study-hub-v6-2', 'arqueologia-study-hub-v6-1',
@@ -81,6 +81,10 @@
     const date = new Date(y, m - 1, d);
     return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
   }
+  function isISOMonth(value) {
+    const match = /^(\d{4})-(\d{2})$/.exec(String(value || ''));
+    return !!match && Number(match[2]) >= 1 && Number(match[2]) <= 12;
+  }
   function isClockTime(value) {
     const match = /^(\d{2}):(\d{2})$/.exec(String(value || ''));
     return !!match && Number(match[1]) <= 23 && Number(match[2]) <= 59;
@@ -98,13 +102,31 @@
       coursePlans: plainObject(incoming.coursePlans),
       notebookEntries: plainObject(incoming.notebookEntries),
       calendarEntries: plainObject(incoming.calendarEntries),
-      calendarMonth: /^\d{4}-\d{2}$/.test(String(incoming.calendarMonth || '')) ? incoming.calendarMonth : '',
+      calendarMonth: isISOMonth(incoming.calendarMonth) ? String(incoming.calendarMonth) : '',
       calendarSelectedDate: isISODate(incoming.calendarSelectedDate) ? String(incoming.calendarSelectedDate) : '',
       sidebarCollapsed: incoming.sidebarCollapsed === true,
       view: ['dashboard','semester','notebook','calendar','review','all','optatives','favorites','about'].includes(incoming.view) ? incoming.view : 'dashboard',
       reviewItems: plainObject(incoming.reviewItems),
       customQuizzes: plainObject(incoming.customQuizzes)
     };
+  }
+
+  function normalizeSimpleCourseMaps(target) {
+    const allowed = new Set(allCourses().map(c => c.id));
+    const statuses = {}, favorites = {}, notes = {}, plans = {};
+    Object.entries(plainObject(target.statuses)).forEach(([id, value]) => { if (allowed.has(id) && ['todo','studying','done'].includes(value)) statuses[id] = value; });
+    Object.entries(plainObject(target.favorites)).forEach(([id, value]) => { if (allowed.has(id) && value === true) favorites[id] = true; });
+    Object.entries(plainObject(target.notes)).forEach(([id, value]) => { if (allowed.has(id) && value != null) notes[id] = String(value).slice(0, 20000); });
+    Object.entries(plainObject(target.coursePlans)).forEach(([id, value]) => {
+      if (!allowed.has(id)) return;
+      const v = plainObject(value);
+      plans[id] = {
+        professor: String(v.professor || '').slice(0, 500), schedule: String(v.schedule || '').slice(0, 500),
+        room: String(v.room || '').slice(0, 500), period: String(v.period || '').slice(0, 500),
+        contact: String(v.contact || '').slice(0, 1000), plan: String(v.plan || '').slice(0, 20000)
+      };
+    });
+    target.statuses = statuses; target.favorites = favorites; target.notes = notes; target.coursePlans = plans;
   }
 
   function normalizeNotebookEntries(target) {
@@ -121,7 +143,12 @@
         createdAt: String(entry.createdAt || '')
       }));
       let max = Math.max(0, ...cleaned.map(e => e.pageNumber || 0));
-      for (let i = cleaned.length - 1; i >= 0; i--) if (!cleaned[i].pageNumber) cleaned[i].pageNumber = ++max;
+      const used = new Set();
+      for (let i = cleaned.length - 1; i >= 0; i--) {
+        const n = Number(cleaned[i].pageNumber) || 0;
+        if (!n || used.has(n)) cleaned[i].pageNumber = ++max;
+        used.add(Number(cleaned[i].pageNumber));
+      }
       cleaned.sort((a,b) => (Number(b.pageNumber)||0) - (Number(a.pageNumber)||0));
       if (cleaned.length) normalized[courseId] = cleaned;
     });
@@ -198,6 +225,7 @@
       }
     } catch (error) { console.warn('Falha ao ler dados salvos.', error); }
     result ||= clone(defaultState);
+    normalizeSimpleCourseMaps(result);
     normalizeNotebookEntries(result);
     normalizeReviewItems(result);
     normalizeQuizzes(result);
@@ -290,7 +318,7 @@
     const fav = state.favorites[course.id] === true;
     return `<article class="course-card" data-course-card="${esc(course.id)}">
       <div class="course-card-head"><div><span class="course-sem">${esc(courseTypeLabel(course))}</span><h3>${esc(course.title)}</h3></div>
-      <button class="favorite-btn ${fav ? 'active' : ''}" data-favorite="${esc(course.id)}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">${fav ? '★' : '☆'}</button></div>
+      <button class="favorite-btn ${fav ? 'active' : ''}" data-favorite="${esc(course.id)}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" aria-pressed="${fav ? 'true' : 'false'}">${fav ? '★' : '☆'}</button></div>
       <div class="course-meta"><span>${course.matrixHours || 0}h</span><span class="status-chip status-${esc(status)}">${esc(statusLabel(status))}</span></div>
       <p class="course-summary">${esc(course.syllabus || (course.type === 'optional' ? 'Disciplina optativa listada no PPP.' : 'Sem ementa cadastrada.'))}</p>
       <div class="course-card-stats"><span>✎ ${pages} ${pages === 1 ? 'folha' : 'folhas'}</span><span>↻ ${reviews.length} ${reviews.length === 1 ? 'revisão' : 'revisões'}</span></div>
@@ -530,15 +558,15 @@
       <header class="course-dialog-header"><div><span class="course-sem">${esc(courseTypeLabel(course))}</span><h2>${esc(course.title)}</h2><div class="course-meta"><span>${course.matrixHours||0}h</span>${course.credits?`<span>${esc(course.credits)}</span>`:''}${course.officialSyllabusAvailable===false?'<span class="source-pill suggested">PPP: sem ementa</span>':'<span class="source-pill official">PPP oficial</span>'}</div></div><button class="favorite-btn large ${fav?'active':''}" data-favorite="${esc(course.id)}" aria-label="${fav?'Remover dos favoritos':'Adicionar aos favoritos'}" aria-pressed="${fav?'true':'false'}">${fav?'★':'☆'}</button></header>
       <div class="status-row">${[['todo','Não iniciada'],['studying','Cursando'],['done','Concluída']].map(([v,l])=>`<button class="status-btn ${status===v?'active':''}" data-status="${v}" aria-pressed="${status===v?'true':'false'}">${l}</button>`).join('')}</div>
       <div class="course-quick-stats"><span>✎ ${pages.length} ${pages.length===1?'folha':'folhas'}</span><span>↻ ${reviews.length} revisões</span><span>? ${quizzes.length} perguntas</span>${rp===null?'<span>Sem progresso de revisão</span>':`<span>${rp}% das revisões concluídas</span>`}</div>
-      <div class="course-tabs">${tabButton('overview','Visão geral',initialTab)}${tabButton('syllabus','Ementa oficial',initialTab)}${tabButton('biblio','Bibliografia',initialTab)}${tabButton('class','Minha turma',initialTab)}${tabButton('notes','Caderno',initialTab)}${tabButton('review','Revisão',initialTab)}${tabButton('quiz','Meu quiz',initialTab)}</div>
+      <div class="course-tabs" role="tablist" aria-label="Seções da disciplina">${tabButton('overview','Visão geral',initialTab)}${tabButton('syllabus','Ementa oficial',initialTab)}${tabButton('biblio','Bibliografia',initialTab)}${tabButton('class','Minha turma',initialTab)}${tabButton('notes','Caderno',initialTab)}${tabButton('review','Revisão',initialTab)}${tabButton('quiz','Meu quiz',initialTab)}</div>
       <div class="course-panels">
-        <section class="tab-panel ${initialTab==='overview'?'active':''}" data-panel="overview">${renderCourseOverview(course)}</section>
-        <section class="tab-panel ${initialTab==='syllabus'?'active':''}" data-panel="syllabus">${renderSyllabus(course)}</section>
-        <section class="tab-panel ${initialTab==='biblio'?'active':''}" data-panel="biblio">${renderBibliography(course)}</section>
-        <section class="tab-panel ${initialTab==='class'?'active':''}" data-panel="class">${renderClassPanel(course)}</section>
-        <section class="tab-panel ${initialTab==='notes'?'active':''}" data-panel="notes"><div data-notebook-root></div></section>
-        <section class="tab-panel ${initialTab==='review'?'active':''}" data-panel="review"><div data-review-root></div></section>
-        <section class="tab-panel ${initialTab==='quiz'?'active':''}" data-panel="quiz"><div data-quiz-root></div></section>
+        <section class="tab-panel ${initialTab==='overview'?'active':''}" data-panel="overview" role="tabpanel">${renderCourseOverview(course)}</section>
+        <section class="tab-panel ${initialTab==='syllabus'?'active':''}" data-panel="syllabus" role="tabpanel">${renderSyllabus(course)}</section>
+        <section class="tab-panel ${initialTab==='biblio'?'active':''}" data-panel="biblio" role="tabpanel">${renderBibliography(course)}</section>
+        <section class="tab-panel ${initialTab==='class'?'active':''}" data-panel="class" role="tabpanel">${renderClassPanel(course)}</section>
+        <section class="tab-panel ${initialTab==='notes'?'active':''}" data-panel="notes" role="tabpanel"><div data-notebook-root></div></section>
+        <section class="tab-panel ${initialTab==='review'?'active':''}" data-panel="review" role="tabpanel"><div data-review-root></div></section>
+        <section class="tab-panel ${initialTab==='quiz'?'active':''}" data-panel="quiz" role="tabpanel"><div data-quiz-root></div></section>
       </div></article>`;
     renderNotebookList(course, openNotebookId);
     renderReviewPanel(course);
@@ -580,7 +608,7 @@
   }
   function renderNotebookPage(course,entry,isOpen=false) {
     const label=`Folha ${String(entry.pageNumber||0).padStart(2,'0')}`;
-    return `<article class="notebook-page ${isOpen?'open':''}" data-notebook-page="${esc(entry.id)}"><button class="notebook-page-cover" data-notebook-toggle="${esc(course.id)}|${esc(entry.id)}"><div><span class="page-number">${label}</span><h4>${esc(entry.title || 'Sem título')}</h4><p>${entry.date?formatDate(entry.date):'Sem data'} · ${wordCount([entry.learned,entry.concepts,entry.questions,entry.tasks,entry.free].join(' '))} palavras</p>${notebookPreview(entry)?`<small>${esc(notebookPreview(entry))}</small>`:''}</div><span class="page-chevron">⌄</span></button><div class="notebook-page-body"><div class="paper-sheet"><div class="form-grid two"><label>Data<input type="date" data-note-field="date" value="${esc(entry.date)}"></label><label>Título da aula / folha<input data-note-field="title" value="${esc(entry.title)}" placeholder="Ex.: Aula 03 — Cultura material"></label></div><label>O que aprendi na sala<textarea data-note-field="learned" rows="9" placeholder="Registre a explicação do professor com suas próprias palavras...">${esc(entry.learned)}</textarea></label><label>Conceitos e palavras-chave<textarea data-note-field="concepts" rows="4">${esc(entry.concepts)}</textarea></label><label>Dúvidas para perguntar ou revisar<textarea data-note-field="questions" rows="4">${esc(entry.questions)}</textarea></label><label>Tarefas, leituras e prazos<textarea data-note-field="tasks" rows="4">${esc(entry.tasks)}</textarea></label><label>Observações livres<textarea data-note-field="free" rows="5">${esc(entry.free)}</textarea></label></div><div class="notebook-page-actions"><button class="btn btn-soft btn-sm" data-note-pdf="${esc(course.id)}|${esc(entry.id)}">Salvar PDF</button><button class="btn btn-danger btn-sm" data-note-delete="${esc(course.id)}|${esc(entry.id)}">Excluir folha</button></div></div></article>`;
+    return `<article class="notebook-page ${isOpen?'open':''}" data-notebook-page="${esc(entry.id)}"><button class="notebook-page-cover" data-notebook-toggle="${esc(course.id)}|${esc(entry.id)}" aria-expanded="${isOpen ? 'true' : 'false'}"><div><span class="page-number">${label}</span><h4>${esc(entry.title || 'Sem título')}</h4><p>${entry.date?formatDate(entry.date):'Sem data'} · ${wordCount([entry.learned,entry.concepts,entry.questions,entry.tasks,entry.free].join(' '))} palavras</p>${notebookPreview(entry)?`<small>${esc(notebookPreview(entry))}</small>`:''}</div><span class="page-chevron">⌄</span></button><div class="notebook-page-body"><div class="paper-sheet"><div class="form-grid two"><label>Data<input type="date" data-note-field="date" value="${esc(entry.date)}"></label><label>Título da aula / folha<input data-note-field="title" value="${esc(entry.title)}" placeholder="Ex.: Aula 03 — Cultura material"></label></div><label>O que aprendi na sala<textarea data-note-field="learned" rows="9" placeholder="Registre a explicação do professor com suas próprias palavras...">${esc(entry.learned)}</textarea></label><label>Conceitos e palavras-chave<textarea data-note-field="concepts" rows="4">${esc(entry.concepts)}</textarea></label><label>Dúvidas para perguntar ou revisar<textarea data-note-field="questions" rows="4">${esc(entry.questions)}</textarea></label><label>Tarefas, leituras e prazos<textarea data-note-field="tasks" rows="4">${esc(entry.tasks)}</textarea></label><label>Observações livres<textarea data-note-field="free" rows="5">${esc(entry.free)}</textarea></label></div><div class="notebook-page-actions"><button class="btn btn-soft btn-sm" data-note-pdf="${esc(course.id)}|${esc(entry.id)}">Salvar PDF</button><button class="btn btn-danger btn-sm" data-note-delete="${esc(course.id)}|${esc(entry.id)}">Excluir folha</button></div></div></article>`;
   }
   function getNotebookEntry(courseId,entryId){return notebookPages(getCourse(courseId)).find(e=>e.id===entryId);}
   function saveNotebookField(courseId,entryId,field,value){const entry=getNotebookEntry(courseId,entryId); if(!entry||!['date','title','learned','concepts','questions','tasks','free'].includes(field))return; entry[field]=String(value); saveState();}
@@ -599,7 +627,7 @@
     root.innerHTML=`<div class="tab-heading"><div><span class="eyebrow">Criado por você</span><h3>Revisão da matéria</h3><p>Adicione somente o que realmente apareceu na sua turma ou o que você decidiu revisar.</p></div></div>
       ${items.length?`<div class="review-progress-box"><div><strong>${done}/${items.length}</strong><span>itens concluídos</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><strong>${pct}%</strong></div>`:''}
       <form class="creator-form" data-review-form="${esc(course.id)}"><label>Tópico / questão para revisar<input name="title" required placeholder="Ex.: Diferença entre contexto primário e secundário"></label><label>Notas de revisão <span>(opcional)</span><textarea name="details" rows="3" placeholder="O que você precisa lembrar, página do texto, observação do professor..."></textarea></label><button class="btn" type="submit">+ Adicionar à revisão</button></form>
-      <div class="custom-list">${items.length?items.map(item=>`<article class="custom-review-item ${item.done?'done':''}"><label class="review-check"><input type="checkbox" data-review-toggle="${esc(course.id)}|${esc(item.id)}" ${item.done?'checked':''}><span><strong>${esc(item.title||'Item sem título')}</strong>${item.details?`<small>${esc(item.details)}</small>`:''}</span></label><button class="icon-btn small danger" data-review-delete="${esc(course.id)}|${esc(item.id)}" title="Excluir">×</button></article>`).join(''):emptyState('Nenhum item de revisão','Adicione o primeiro tópico depois de uma aula ou leitura.')}</div>`;
+      <div class="custom-list">${items.length?items.map(item=>`<article class="custom-review-item ${item.done?'done':''}"><label class="review-check"><input type="checkbox" data-review-toggle="${esc(course.id)}|${esc(item.id)}" ${item.done?'checked':''}><span><strong>${esc(item.title||'Item sem título')}</strong>${item.details?`<small>${esc(item.details)}</small>`:''}</span></label><button class="icon-btn small danger" data-review-delete="${esc(course.id)}|${esc(item.id)}" title="Excluir" aria-label="Excluir item de revisão">×</button></article>`).join(''):emptyState('Nenhum item de revisão','Adicione o primeiro tópico depois de uma aula ou leitura.')}</div>`;
   }
   function addReviewItem(courseId,title,details){state.reviewItems[courseId]=[{id:uid('review'),title:String(title).trim(),details:String(details).trim(),done:false,createdAt:new Date().toISOString()},...reviewItems(getCourse(courseId))];saveState();}
   function toggleReview(courseId,itemId){const item=reviewItems(getCourse(courseId)).find(i=>i.id===itemId);if(!item)return;item.done=!item.done;saveState();}
@@ -612,7 +640,7 @@
     root.innerHTML=`<div class="tab-heading"><div><span class="eyebrow">Criado por você</span><h3>Meu quiz</h3><p>Transforme o que o professor passou em perguntas. Na revisão, tente responder antes de revelar o gabarito e faça sua própria avaliação.</p></div></div>
       ${items.length?`<div class="quiz-summary"><span><strong>${items.length}</strong> perguntas</span><span><strong>${correct}</strong> acertei</span><span><strong>${review}</strong> preciso revisar</span></div>`:''}
       <form class="creator-form" data-quiz-form="${esc(course.id)}"><label>Pergunta<textarea name="question" required rows="3" placeholder="Ex.: O que diferencia um artefato de um ecofato?"></textarea></label><label>Resposta correta<textarea name="answer" required rows="4" placeholder="Escreva a resposta que você quer usar como gabarito."></textarea></label><label>Explicação / complemento <span>(opcional)</span><textarea name="explanation" rows="3" placeholder="Observação do professor, exemplo, página do texto..."></textarea></label><button class="btn" type="submit">+ Adicionar pergunta</button></form>
-      <div class="quiz-custom-list">${items.length?items.map((item,index)=>`<article class="custom-quiz-card"><div class="quiz-question-head"><span>Questão ${items.length-index}</span><button class="icon-btn small danger" data-quiz-delete="${esc(course.id)}|${esc(item.id)}" title="Excluir">×</button></div><h4>${esc(item.question)}</h4><details><summary>Ver resposta</summary><div class="answer-box"><strong>Resposta</strong><p>${esc(item.answer)}</p>${item.explanation?`<strong>Complemento</strong><p>${esc(item.explanation)}</p>`:''}</div></details><div class="self-grade"><span>Depois de conferir:</span><button class="btn btn-soft btn-sm ${item.mastery==='correct'?'active':''}" data-quiz-mastery="${esc(course.id)}|${esc(item.id)}|correct">✓ Acertei</button><button class="btn btn-soft btn-sm ${item.mastery==='review'?'active':''}" data-quiz-mastery="${esc(course.id)}|${esc(item.id)}|review">↻ Preciso revisar</button></div></article>`).join(''):emptyState('Nenhuma pergunta criada','Crie perguntas a partir do que foi ensinado em sala.')}</div>`;
+      <div class="quiz-custom-list">${items.length?items.map((item,index)=>`<article class="custom-quiz-card"><div class="quiz-question-head"><span>Questão ${items.length-index}</span><button class="icon-btn small danger" data-quiz-delete="${esc(course.id)}|${esc(item.id)}" title="Excluir" aria-label="Excluir questão">×</button></div><h4>${esc(item.question)}</h4><details><summary>Ver resposta</summary><div class="answer-box"><strong>Resposta</strong><p>${esc(item.answer)}</p>${item.explanation?`<strong>Complemento</strong><p>${esc(item.explanation)}</p>`:''}</div></details><div class="self-grade"><span>Depois de conferir:</span><button class="btn btn-soft btn-sm ${item.mastery==='correct'?'active':''}" data-quiz-mastery="${esc(course.id)}|${esc(item.id)}|correct" aria-pressed="${item.mastery==='correct'?'true':'false'}">✓ Acertei</button><button class="btn btn-soft btn-sm ${item.mastery==='review'?'active':''}" data-quiz-mastery="${esc(course.id)}|${esc(item.id)}|review" aria-pressed="${item.mastery==='review'?'true':'false'}">↻ Preciso revisar</button></div></article>`).join(''):emptyState('Nenhuma pergunta criada','Crie perguntas a partir do que foi ensinado em sala.')}</div>`;
   }
   function addQuizItem(courseId,question,answer,explanation){state.customQuizzes[courseId]=[{id:uid('quiz'),question:String(question).trim(),answer:String(answer).trim(),explanation:String(explanation).trim(),mastery:'',createdAt:new Date().toISOString()},...quizItems(getCourse(courseId))];saveState();}
   function setQuizMastery(courseId,itemId,mastery){const item=quizItems(getCourse(courseId)).find(i=>i.id===itemId);if(!item)return;item.mastery=item.mastery===mastery?'':mastery;saveState();}
@@ -626,7 +654,7 @@
     showToast('Backup exportado.');
   }
   function importBackupFile(file) {
-    const reader=new FileReader(); reader.onload=()=>{try{const parsed=JSON.parse(reader.result);const incoming=parsed?.state||parsed;if(!incoming||typeof incoming!=='object')throw new Error('Formato inválido');state=migrateLegacy(incoming);normalizeNotebookEntries(state);normalizeReviewItems(state);normalizeQuizzes(state);normalizeCalendar(state);saveState();syncSemesterSelect();applySidebarState();renderCurrentView();showToast('Backup importado com sucesso.');}catch(e){console.error(e);showToast('Não foi possível importar este backup.','warn');}};reader.readAsText(file);
+    const reader=new FileReader(); reader.onload=()=>{try{const parsed=JSON.parse(reader.result);const incoming=parsed?.state||parsed;if(!incoming||typeof incoming!=='object')throw new Error('Formato inválido');state=migrateLegacy(incoming);normalizeSimpleCourseMaps(state);normalizeNotebookEntries(state);normalizeReviewItems(state);normalizeQuizzes(state);normalizeCalendar(state);saveState();syncSemesterSelect();applySidebarState();renderCurrentView();showToast('Backup importado com sucesso.');}catch(e){console.error(e);showToast('Não foi possível importar este backup.','warn');}};reader.readAsText(file);
   }
   function resetData(){if(!confirm('Apagar caderno, calendário, revisões, quizzes, dados da turma, favoritas e status deste navegador?'))return;state=clone(defaultState);localStorage.removeItem(STORAGE_KEY);saveState();syncSemesterSelect();applySidebarState();renderCurrentView();showToast('Dados locais apagados.');}
 
@@ -659,7 +687,7 @@
     if(t.matches('[data-tab]')){$$('.course-tab',dialogContent).forEach(b=>{const active=b===t;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});$$('.tab-panel',dialogContent).forEach(p=>p.classList.toggle('active',p.dataset.panel===t.dataset.tab));return;}
     if(t.matches('[data-status]')){const id=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(!id)return;state.statuses[id]=t.dataset.status;saveState();refreshOpenCourse(id,$('.course-tab.active',dialogContent)?.dataset.tab||'overview');return;}
     if(t.matches('[data-notebook-new]')){createNotebookPage(getCourse(t.dataset.notebookNew));return;}
-    if(t.matches('[data-notebook-toggle]')){const [courseId,entryId]=t.dataset.notebookToggle.split('|');const page=t.closest('.notebook-page'),wasOpen=page.classList.contains('open');$$('.notebook-page',dialogContent).forEach(p=>p.classList.remove('open'));if(!wasOpen)page.classList.add('open');return;}
+    if(t.matches('[data-notebook-toggle]')){const page=t.closest('.notebook-page'),wasOpen=page.classList.contains('open');$$('.notebook-page',dialogContent).forEach(p=>{p.classList.remove('open');p.querySelector('[data-notebook-toggle]')?.setAttribute('aria-expanded','false');});if(!wasOpen){page.classList.add('open');t.setAttribute('aria-expanded','true');}return;}
     if(t.matches('[data-note-delete]')){const [c,e]=t.dataset.noteDelete.split('|');deleteNotebookPage(c,e);return;}
     if(t.matches('[data-note-pdf]')){const [c,e]=t.dataset.notePdf.split('|');printNotebookPage(c,e);return;}
     if(t.matches('[data-review-delete]')){const [c,i]=t.dataset.reviewDelete.split('|');deleteReview(c,i);openCourse(c,'review');return;}

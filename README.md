@@ -1,118 +1,59 @@
-# Arqueologia Study Hub · UNEB — v8.4
+# Arqueologia Study Hub · UNEB — v8.5
 
 Aplicativo independente de organização acadêmica para o Bacharelado em Arqueologia da UNEB — Campus VIII, estruturado a partir da matriz curricular e do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
-## O que é esta versão
+A linha v8 funciona como **caderno acadêmico digital**, sem tentar prever o conteúdo que cada professor irá ministrar. O app mantém os dados institucionais do PPP e deixa caderno, revisões, quiz, calendário e informações da turma sob controle do estudante.
 
-A v8.4 é uma revisão de estabilidade da linha v8. O foco foi corrigir incompatibilidades acumuladas entre HTML, CSS e JavaScript e manter o app como **grade oficial + caderno acadêmico + calendário + revisão e quiz criados pelo próprio estudante**.
+## O que existe no app
 
-Não há aulas, flashcards ou conteúdos didáticos gerados automaticamente no pacote.
+- Início com resumo do semestre e próximos compromissos;
+- Meu semestre com as disciplinas do período;
+- Toda a grade dos 8 semestres;
+- 14 optativas listadas no PPP;
+- Ementa e bibliografia oficiais quando disponíveis;
+- Minha turma: professor(a), período, horário, sala/laboratório, contato e plano/orientações;
+- Caderno digital com várias folhas por disciplina;
+- Exportação individual de folhas pela impressão nativa para PDF;
+- Revisões criadas pelo próprio estudante;
+- Quiz pessoal criado pelo próprio estudante;
+- Calendário mensal para nota, aula, prova, trabalho, leitura, prazo e lembrete;
+- Favoritos, busca e status das disciplinas;
+- Backup JSON e importação de backup;
+- Menu recolhível no desktop e drawer em tablet/mobile.
 
-## Estrutura acadêmica
-
-- 8 semestres;
-- 65 componentes obrigatórios;
-- distribuição: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
-- 4.020 h somadas a partir dos componentes obrigatórios listados na matriz;
-- 14 optativas listadas no PPP.
-
-Cada disciplina mantém:
-
-- Visão geral;
-- Ementa oficial;
-- Bibliografia oficial;
-- Minha turma;
-- Caderno em folhas;
-- Revisão personalizada;
-- Meu quiz.
-
-## Correções principais da v8.4
+## Correções da v8.5
 
 ### Calendário
 
-O bug das notas salvas foi corrigido. O HTML atual possuía dois blocos por item (conteúdo + ações), enquanto uma camada antiga de CSS ainda reservava três colunas. Isso espremia o texto da nota numa coluna estreita.
+O bug visual das notas salvas foi corrigido. O HTML atual do calendário usa duas áreas (`conteúdo + ações`), e o CSS foi alinhado a essa estrutura. Em telas com até 620 px, o cartão passa a empilhar conteúdo e ações, evitando que notas longas fiquem espremidas.
 
-A v8.4 alinha novamente o markup e o CSS e também:
+Também foram mantidos quebra de linha, texto multilinha, edição, conclusão e exclusão de itens.
 
-- corrige quebra de linha de observações longas;
-- preserva o estado concluído ao editar e mudar a data;
-- valida data e horário ao importar/salvar;
-- permite clicar em um compromisso da Home para abrir diretamente o dia correspondente;
-- inclui notas do calendário na busca global;
-- melhora formulário, legenda, painel do dia e responsividade.
+### Estado e importação
 
-### Compatibilidade de layout
+- validação real de `AAAA-MM` para o mês do calendário;
+- status, favoritos, anotação legada e dados de turma são normalizados ao carregar/importar;
+- dados associados a IDs inexistentes são descartados na normalização;
+- campos importados recebem limites seguros de tamanho;
+- numerações duplicadas de folhas antigas são corrigidas durante a normalização.
 
-Foram corrigidas classes usadas pela interface atual que estavam sem estilo canônico, como `course-grid`, `empty-state`, `course-card-head`, `course-summary`, `calendar-day-number`, `calendar-day-items` e `calendar-detail-head`.
+### Acessibilidade e interface
 
-Isso estabiliza especialmente:
+- favorito também expõe `aria-pressed`;
+- abas da matéria usam `tablist`/`tabpanel`;
+- folhas do caderno expõem e atualizam `aria-expanded`;
+- botões de autoavaliação do quiz expõem `aria-pressed`;
+- botões de exclusão possuem rótulos acessíveis;
+- versão do rodapé e versão do backup foram alinhadas para 8.5.
 
-- Toda a grade;
-- resultados de busca;
-- estados vazios;
-- calendário;
-- cartões de matéria.
+## Estrutura curricular validada
 
-### Caderno e formulários
+- 65 componentes obrigatórios;
+- 14 optativas;
+- distribuição por semestre: `7 / 8 / 9 / 9 / 9 / 9 / 8 / 6`;
+- soma dos componentes obrigatórios listados na matriz: `4.020 h`.
 
-- escrita em campos longos passa a usar salvamento agendado para reduzir gravações excessivas no `localStorage` durante a digitação;
-- mudança/saída do campo força gravação imediata;
-- novas folhas recebem `createdAt` e a lista é normalizada por numeração;
-- PDF aceita melhor anotações longas que atravessam mais de uma página.
-
-### Modal e navegação
-
-- fechar a matéria com `Esc` agora atualiza a página que ficou ao fundo;
-- abas receberam estado `aria-selected`;
-- favorito/status receberam estados de acessibilidade;
-- atalhos de navegação limpam corretamente a pesquisa visível.
-
-## Caderno digital
-
-Cada matéria possui folhas independentes com:
-
-- número permanente;
-- data;
-- título;
-- o que foi aprendido;
-- conceitos e palavras-chave;
-- dúvidas;
-- tarefas, leituras e prazos;
-- observações livres;
-- opção de salvar/imprimir a folha em PDF.
-
-## Calendário
-
-Permite registrar:
-
-- notas;
-- aulas;
-- provas;
-- trabalhos;
-- leituras;
-- prazos;
-- lembretes.
-
-Cada item pode receber matéria, horário, observações e status concluído/pendente.
-
-## Revisão e quiz
-
-A porcentagem de revisão representa somente os itens criados pelo usuário. O quiz também é criado pelo estudante e guarda pergunta, resposta, complemento e autoavaliação.
-
-## Backup
-
-O app continua usando a chave `arqueologia-study-hub-v8`, portanto dados salvos nas versões anteriores da linha v8 permanecem compatíveis. O backup JSON inclui caderno, calendário, revisões, quiz, favoritas, status e dados da turma.
-
-## Validação
-
-Execute:
-
-```bash
-node validate-data.js
-node validate-app.js
-```
-
-`validate-data.js` confere a matriz curricular. `validate-app.js` acrescenta verificações de estrutura do pacote, arquivos, IDs, CSS essencial e consistência entre `data.js` e `data.json`.
+O PPP contém inconsistências internas próprias; o app preserva a matriz usada como fonte em vez de inventar componentes para fechar contas divergentes do documento.
 
 ## Arquivos
 
@@ -121,11 +62,24 @@ node validate-app.js
 - `app.js`
 - `data.js`
 - `data.json`
-- `validate-data.js`
-- `validate-app.js`
 - `README.md`
 - `AUDITORIA.md`
+- `validate-data.js`
+- `validate-app.js`
 
-## Limite acadêmico
+Para publicar no GitHub/Cloudflare Pages, deixe esses arquivos na raiz do repositório.
 
-O app é um projeto independente. O PPP permanece como referência institucional; o conteúdo real das aulas é construído pelo estudante no caderno, nas revisões e no quiz conforme a turma e os professores avançam.
+## Validação local
+
+```bash
+node validate-data.js
+node validate-app.js
+node --check app.js
+```
+
+## Fonte institucional
+
+- Projeto Político-Pedagógico (PPP) do Bacharelado em Arqueologia — UNEB Campus VIII;
+- página oficial do curso no Campus VIII.
+
+Projeto independente, sem vínculo institucional com a UNEB. Desenvolvido por Mei.

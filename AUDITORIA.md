@@ -1,108 +1,143 @@
-# Auditoria completa — Arqueologia Study Hub v8.4
+# Auditoria — Arqueologia Study Hub v8.5
 
-## Motivo da revisão
+## Objetivo
 
-A revisão começou por um bug relatado ao salvar notas no calendário. A análise mostrou que o problema não estava nos dados salvos, e sim numa incompatibilidade entre o HTML atual e CSS legado acumulado de versões anteriores.
+A v8.5 é uma versão de **estabilidade e consolidação**. O foco da auditoria foi corrigir o bug das notas do calendário e revisar o funcionamento do app inteiro sem acrescentar uma funcionalidade grande nova.
 
-O item do calendário possuía `conteúdo + ações`, mas a regra antiga ainda usava uma grade com `28px + conteúdo + ações`. O texto acabava ocupando a coluna de 28 px. A v8.4 corrige essa origem e não apenas o sintoma.
+## Bug confirmado e corrigido: notas do calendário
 
-## Auditoria curricular
+O cartão atual do calendário possui duas áreas: conteúdo e ações. Camadas antigas de CSS ainda esperavam uma estrutura diferente, fazendo o texto da nota perder largura em telas estreitas.
 
-Validado por `validate-data.js` e `validate-app.js`:
+Correção aplicada:
 
-- 65 componentes obrigatórios;
-- 14 optativas;
+- estrutura canônica: `conteúdo + ações`;
+- até 620 px o cartão usa bloco único e os botões descem para uma linha própria;
+- títulos podem quebrar linha;
+- observações preservam múltiplas linhas e quebra de palavras;
+- sem overflow horizontal em 390 e 320 px nos testes.
+
+## Auditoria curricular/estática
+
+`node validate-data.js` e `node validate-app.js` verificam:
+
+- 65/65 componentes obrigatórios;
+- 14/14 optativas;
 - 8 semestres;
-- distribuição 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
-- 4.020 h na soma dos componentes obrigatórios da matriz;
+- distribuição `7 / 8 / 9 / 9 / 9 / 9 / 8 / 6`;
+- 4.020 h na matriz obrigatória listada;
 - IDs de disciplinas únicos;
-- `data.js` e `data.json` idênticos.
+- `data.js` e `data.json` idênticos;
+- IDs HTML únicos;
+- exatamente um botão sanduíche;
+- versão visual e `APP_VERSION` em 8.5;
+- classes estruturais atuais cobertas pelo CSS;
+- chaves CSS balanceadas;
+- ausência dos antigos arquivos de conteúdo gerado (`lesson-content.js`, `study-content.js`, `optative-content.js`).
 
-Os arquivos curriculares da v8.4 são byte a byte idênticos aos da v8.3; esta revisão não altera a grade nem as informações oficiais já cadastradas.
+## Testes reais de navegador
 
-## Bugs corrigidos
+O app foi carregado em Chromium por protocolo de depuração e testado com o HTML/CSS/JS reais.
 
-1. **Notas do calendário espremidas** — corrigido o grid incompatível entre markup e CSS.
-2. **Classes atuais sem estilo** — `course-grid`, `empty-state`, `course-card-head`, `course-summary` e classes atuais do calendário ganharam camada canônica.
-3. **Compromissos da Home sem navegação direta** — agora abrem o dia correspondente no calendário.
-4. **Busca não encontrava notas do calendário** — agora pesquisa título, observações e matéria vinculada.
-5. **Edição de calendário** — preserva status concluído, `createdAt`, mudança de data e adiciona `updatedAt`.
-6. **Datas/horários importados** — normalização passou de regex simples para validação real de calendário/relógio.
-7. **Modal fechado por Esc** — a tela ao fundo agora é atualizada também nesse caminho.
-8. **Atalho de navegação com busca antiga visível** — o campo de busca é limpo junto com o estado da busca.
-9. **Gravação excessiva durante digitação** — caderno e dados da turma usam salvamento agendado durante `input` e gravação imediata ao confirmar mudança.
-10. **PDF de folha longa** — conteúdo pode quebrar entre páginas e palavras extensas podem quebrar linha.
-11. **Acessibilidade das abas/status/favorito** — estados `aria-selected`/`aria-pressed` foram adicionados.
+### Responsividade
 
-## Testes dinâmicos no Chromium
+As 9 páginas principais foram verificadas em:
 
-Foi executada uma bateria automatizada com o app inteiro injetado no Chromium e interação real de DOM. Resultado: **100/100 verificações passaram**.
+- 1440 px;
+- 1024 px;
+- 834 px;
+- 768 px;
+- 430 px;
+- 390 px;
+- 320 px.
 
-A bateria cobriu:
+Foram 63 combinações de página/largura, sem overflow horizontal detectado.
 
-- inicialização do app;
-- 65 obrigatórias e 14 optativas;
-- abrir calendário;
-- criar nota longa com múltiplas linhas;
-- confirmar largura útil do texto e ausência de overflow;
-- concluir item;
-- editar item;
-- mover item para outra data;
-- preservar estado concluído durante edição;
-- reabrir item;
-- abrir um compromisso da Home diretamente no calendário;
-- encontrar a nota pela busca;
-- criar duas folhas no caderno;
-- confirmar acordeão com apenas uma folha aberta;
-- atualizar estado dos campos da folha;
-- gerar HTML de impressão/PDF sem sidebar;
-- adicionar, marcar e desmarcar revisão (0% → 100% → 0%);
-- criar pergunta no quiz;
-- alternar as sete abas de uma disciplina;
-- editar dados de Minha turma;
-- abrir **todas as 65 obrigatórias + 14 optativas** no modal;
-- menu sanduíche no desktop;
-- drawer no mobile;
-- ausência de exceções JavaScript.
+### Disciplinas
 
-## Responsividade testada
+Todas as **79 entradas** (65 obrigatórias + 14 optativas) foram abertas em:
 
-As nove páginas principais e o modal da disciplina foram verificados em:
+- 1024 px;
+- 390 px.
 
-- 1440 × 900;
-- 1024 × 768;
-- 834 × 1112;
-- 768 × 1024;
-- 430 × 900;
-- 390 × 844;
-- 320 × 700.
+Em cada uma, foram ativadas as 7 abas:
 
-Em todos os casos testados, `scrollWidth - clientWidth` ficou em **0** para a página, calendário e modal.
+1. Visão geral;
+2. Ementa oficial;
+3. Bibliografia;
+4. Minha turma;
+5. Caderno;
+6. Revisão;
+7. Meu quiz.
 
-## Verificações estáticas adicionais
+Total: **1.106 ativações de abas** sem overflow do modal e sem falha de abertura.
 
-- todos os arquivos `.js` passam em `node --check`;
-- CSS com chaves balanceadas;
-- nenhum ID duplicado no `index.html`;
-- arquivos locais referenciados pelo HTML existem;
-- um único `#menuBtn`;
-- arquivos antigos de conteúdo gerado (`lesson-content.js`, `study-content.js`, `optative-content.js`) não fazem parte do pacote;
-- todas as classes estáticas atuais do app possuem estilo, exceto `.meta`, que existe apenas dentro do HTML isolado de impressão e é estilizada ali mesmo.
+### Calendário
 
-## Observação sobre persistência
+Testado:
 
-O harness usado para injetar o app no Chromium não fornece acesso a `localStorage` por política de origem do documento injetado. Por isso o teste dinâmico valida atualização do estado interno, normalização e fluxo de backup, enquanto a persistência real continua implementada com `localStorage` e tratamento de erro. O app avisa o usuário se o navegador impedir o salvamento e recomenda exportar backup.
+- nota longa em 1440, 390 e 320 px;
+- criação pelo formulário;
+- edição;
+- horário;
+- observações;
+- marcar como concluído/reabrir;
+- exclusão pelo estado;
+- navegação e layout mensal.
 
-## Melhorias de produto incluídas
+A nota longa manteve o texto integral e passou a ocupar a largura útil do cartão em telas pequenas.
 
-Além das correções, a v8.4 melhora a experiência sem alterar a filosofia da v8:
+### Caderno
 
-- calendário pesquisável;
-- compromissos da Home clicáveis;
-- formulários e notas longas mais robustos;
-- salvamento durante digitação mais leve;
-- validador `validate-app.js` para evitar regressões estruturais.
+Testado:
+
+- criação de múltiplas folhas;
+- numeração;
+- acordeão com somente uma folha aberta;
+- atualização de `aria-expanded`;
+- edição dos campos;
+- estado em memória;
+- geração do HTML de impressão/PDF com título, matéria e conteúdo da folha.
+
+### Revisão e quiz
+
+Testado:
+
+- criação de item de revisão;
+- marcar e desmarcar;
+- porcentagem `0% → 100% → 0%` em cenário unitário;
+- criação de pergunta de quiz;
+- resposta e complemento;
+- `Acertei` e desfazer autoavaliação.
+
+### Minha turma, status e favoritos
+
+Testado:
+
+- professor e horário;
+- status `Cursando`;
+- favoritar/desfavoritar;
+- mudança do semestre atual.
+
+### Backup
+
+Testado:
+
+- exportação gera payload com versão `8.5`;
+- nome do arquivo segue `arqueologia-study-hub-backup-AAAA-MM-DD.json`;
+- importação de um arquivo JSON válido atualiza o estado no app.
+
+## Robustez adicionada
+
+- mês do calendário é validado de 01 a 12;
+- mapas simples de estado são normalizados por IDs válidos;
+- valores importados são convertidos/limitados;
+- números duplicados de folhas antigas são normalizados;
+- controles importantes receberam estados ARIA coerentes.
+
+## Limitação do ambiente de teste
+
+O navegador automatizado do ambiente bloqueia `localStorage` em documentos injetados localmente por política administrativa. Por isso, a persistência foi validada pela lógica de estado, normalização e fluxo de backup/importação, enquanto a gravação persistente real continua baseada no `localStorage` padrão usado normalmente quando o app é servido pelo Cloudflare Pages.
 
 ## Resultado
 
-A v8.4 é a primeira revisão da linha v8 em que o calendário, caderno, revisão, quiz, modal, menu e todas as páginas principais foram submetidos à mesma bateria automatizada de interface e responsividade.
+A bateria funcional terminou sem erros JavaScript detectados nos fluxos testados. A v8.5 é considerada a base estável recomendada desta linha.

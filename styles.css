@@ -2432,3 +2432,10 @@ h2 { font-size: 24px; letter-spacing: -.02em; }
 .search-calendar-list .upcoming-item { width: 100%; border: 1px solid var(--line); background: var(--panel); cursor: pointer; text-align: left; color: inherit; }
 .search-calendar-list .upcoming-item:hover { border-color: #cdbfb4; background: #faf5ef; }
 @media (max-width: 700px) { .search-calendar-list { grid-template-columns: 1fr; } }
+
+/* v8.5 · correção definitiva dos cartões do calendário em telas estreitas */
+@media (max-width: 620px) {
+  .calendar-entry { display: block; grid-template-columns: none !important; }
+  .calendar-entry-title { flex-wrap: wrap; }
+  .calendar-entry-actions { margin-top: 10px; justify-content: flex-end; }
+}
