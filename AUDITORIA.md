@@ -1,107 +1,98 @@
-# Auditoria final — Arqueologia Study Hub v7.5
+# Auditoria — Arqueologia Study Hub v8
 
-## Resultado curricular
+## Escopo
+
+A v8 foi reorganizada para funcionar como caderno acadêmico digital. A auditoria desta versão verifica a matriz curricular, a remoção do material didático gerado automaticamente e a estrutura das ferramentas que passam a ser preenchidas pelo próprio estudante.
+
+## Matriz preservada
+
+O validador confirma:
 
 - 65/65 componentes obrigatórios;
 - 14/14 optativas;
 - 8 semestres;
-- distribuição: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
-- 4.020 h obrigatórias somadas a partir da lista da matriz;
-- 560 h das optativas listadas;
-- 397/397 tópicos obrigatórios com aula aprofundada;
-- 70/70 aulas sugeridas das optativas;
-- 1.588/1.588 perguntas obrigatórias com resposta comentada;
-- 280 perguntas de revisão nas optativas.
+- distribuição obrigatória: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
+- 4.020 h dos componentes obrigatórios listados na matriz;
+- 560 h das 14 optativas listadas.
 
 `node validate-data.js` conclui sem erros.
 
-## Revisão de conteúdo
+## Conteúdo gerado removido
 
-A auditoria final separou três camadas:
+A v8 não carrega mais:
 
-1. texto oficial do PPP;
-2. conceitos/roteiros de apoio;
-3. aulas aprofundadas.
+- `study-content.js`;
+- `lesson-content.js`;
+- `optative-content.js`;
+- aulas geradas automaticamente;
+- flashcards gerados automaticamente;
+- quizzes gerados automaticamente;
+- checklist artificial de conteúdos previstos.
 
-Foram corrigidos cruzamentos semânticos que surgiram por palavras iguais usadas com sentidos diferentes:
+A matéria passa a ser organizada a partir do que é institucionalmente conhecido (matriz, ementa e bibliografia) e do que o usuário registra durante a graduação.
 
-- Sociologia: contexto histórico-social, sem definição estratigráfica;
-- Linguística: contexto linguístico/discursivo, sem definição estratigráfica;
-- Direito: contexto jurídico/institucional;
-- Estágio II: contexto de atuação profissional;
-- Seminários: escrita acadêmica, não “sistema gráfico”;
-- Arqueogenética: reconstruída para seguir a ementa de Genética do PPP.
+## Estrutura de cada disciplina
 
-Arqueogenética não contém mais blocos de Antropologia Física sobre estimativa biológica, diagnóstico, população comparativa ou características anatômicas. O termo `segregação independente` substitui a expressão anterior inadequada `assortimento independente`.
+Foram mantidas sete áreas:
 
-## Repetição
+1. Visão geral;
+2. Ementa oficial;
+3. Bibliografia;
+4. Minha turma;
+5. Caderno;
+6. Revisão;
+7. Meu quiz.
 
-O validador impede duplicação literal de:
+As optativas continuam identificadas como sem ementa detalhada quando o PPP consultado apenas lista nome e carga horária.
 
-- parágrafos longos;
-- exemplos;
-- perguntas de revisão;
-- itens de resumo, erros comuns, passos de estudo e respostas comentadas.
+## Caderno
 
-Isso não significa que conceitos transversais sejam removidos. Termos como sítio, ética, cronologia, patrimônio e cultura material podem reaparecer quando são pertinentes a mais de uma disciplina. A repetição da estrutura visual das aulas também é intencional para manter o caderno didático previsível.
+A estrutura suporta várias folhas por matéria, com numeração permanente, acordeão, autosalvamento e exportação de uma folha pela impressão nativa do navegador para PDF.
 
-## Testes de interface
+A normalização de dados preserva folhas compatíveis de versões anteriores e atribui número permanente a registros legados que ainda não possuíam `pageNumber`.
 
-### Todas as disciplinas
+## Revisão
 
-Teste automatizado em Chromium:
+A porcentagem de revisão é calculada somente a partir dos itens criados pelo usuário:
 
-- 65/65 matérias obrigatórias abriram o modal;
-- todas apresentaram abas e aulas;
-- 14/14 optativas abriram em 390 px;
-- optativas exibiram `Aula sugerida aprofundada` e a fórmula `75% aulas · 25% flashcards`;
-- nenhum erro JavaScript foi registrado nessas baterias.
+`concluídos / total de itens × 100`.
 
-### Progresso
+Se não existirem itens, a interface informa que não há revisão cadastrada em vez de atribuir um percentual artificial à disciplina.
 
-Teste funcional em Introdução à Arqueologia:
+## Quiz personalizado
 
-- tópico: 0% → 9% → 0% ao marcar e desmarcar;
-- flashcard: 0% → 2% → 0% ao marcar “Acertei” e depois “Ainda não sei”.
+As perguntas são criadas pelo usuário e armazenam pergunta, resposta, complemento opcional e estado de autoavaliação. O app não atribui nota acadêmica nem presume o conteúdo cobrado pelo professor.
 
-O cálculo mantém 100% reservado à conclusão dos critérios ou à declaração manual de matéria concluída; ao desmarcar um componente necessário, o estado é recalculado.
+## Calendário
 
-### Caderno
+O estado da v8 preserva calendário mensal com título, tipo, matéria opcional, horário, observações e estado concluído/pendente. Os próximos compromissos podem aparecer no Início.
 
-- três folhas criadas com numeração permanente `Folha 01`, `Folha 02`, `Folha 03`;
-- somente uma folha permanece aberta por vez;
-- troca de folha preserva o comportamento de acordeão;
-- título e conteúdo entram no HTML preparado para PDF;
-- o documento de impressão contém os campos do caderno sem os controles do app.
+## Busca
 
-### Responsividade
+A busca inclui dados institucionais e conteúdo criado pelo usuário: nome da disciplina, ementa, bibliografia, professor, dados da turma, caderno, revisões e perguntas do quiz.
 
-Testado em:
+## Backup e migração
 
-- 1440;
-- 1024;
-- 960;
-- 834;
-- 768;
-- 620;
-- 520;
-- 430;
-- 390;
-- 360;
-- 320 px.
+O estado da v8 é salvo em `arqueologia-study-hub-v8`. A migração procura chaves anteriores compatíveis e preserva, quando disponíveis:
 
-Resultado: página principal e modal sem overflow horizontal nas larguras testadas.
+- semestre atual;
+- status;
+- favoritas;
+- anotações antigas;
+- dados da turma;
+- folhas do caderno;
+- calendário;
+- revisões personalizadas;
+- quizzes personalizados.
 
-### Menu
+Os conteúdos automáticos antigos não são importados como conteúdo da nova interface.
 
-No desktop, o botão sanduíche alternou corretamente a classe de sidebar recolhida. Em larguras menores, o mesmo sistema usa drawer responsivo.
+## Responsividade
 
-## Estrutura do código
+A estrutura CSS mantém os breakpoints já usados no projeto para desktop, tablet e mobile, incluindo menu lateral recolhível/drawer, grade de cartões, diálogo da disciplina, calendário e formulários.
 
-`study-content.js` e `lesson-content.js` foram consolidados após a auditoria. Isso removeu a necessidade de manter conteúdo antigo “por baixo” de patches de correção em tempo de execução. Os arquivos agora representam diretamente o estado final usado pelo app.
+Foram produzidas prévias da v8 em desktop, tablet e mobile durante o desenvolvimento. A validação estrutural também verifica que os arquivos locais referenciados pelo HTML existem.
 
-Todos os arquivos JavaScript passam em `node --check`.
+## Limites
 
-## Limite da conclusão
-
-Esta auditoria é estrutural, funcional e de coerência semântica. Ela não equivale a revisão por um corpo docente ou revisão por pares de cada afirmação acadêmica. O app continua identificando o PPP oficial separadamente e deve ser complementado pelo plano de ensino, professor e bibliografia da turma.
+Esta auditoria não transforma o app em fonte oficial da UNEB. O objetivo da v8 é justamente evitar prever o que o professor ensinará. O PPP permanece como referência institucional e o conteúdo real passa a ser construído no caderno, nas revisões e nos quizzes do próprio usuário.

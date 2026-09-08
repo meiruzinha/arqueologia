@@ -1,38 +1,34 @@
 (() => {
+  'use strict';
+
   const DATA = window.ARCHAEOLOGY_DATA;
-  const STUDY = window.ARCHAEOLOGY_STUDY_CONTENT || {};
-  const LESSONS = window.ARCHAEOLOGY_LESSON_CONTENT || { deep: {} };
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const APP_VERSION = '7.5';
-  const STORAGE_KEY = 'arqueologia-study-hub-v7';
-  const V62_STORAGE_KEY = 'arqueologia-study-hub-v6-2';
-  const V61_STORAGE_KEY = 'arqueologia-study-hub-v6-1';
-  const V6_STORAGE_KEY = 'arqueologia-study-hub-v6';
-  const V53_STORAGE_KEY = 'arqueologia-study-hub-v5-3';
-  const V5_STORAGE_KEY = 'arqueologia-study-hub-v5';
-  const V4_STORAGE_KEY = 'arqueologia-study-hub-v4';
-  const V3_STORAGE_KEY = 'arqueologia-study-hub-v3';
-  const V2_STORAGE_KEY = 'arqueologia-study-hub-v2';
-  const V1_STORAGE_KEY = 'arqueologia-study-hub-v1';
+  const APP_VERSION = '8.0';
+  const STORAGE_KEY = 'arqueologia-study-hub-v8';
+  const LEGACY_KEYS = [
+    'arqueologia-study-hub-v7', 'arqueologia-study-hub-v6-2', 'arqueologia-study-hub-v6-1',
+    'arqueologia-study-hub-v6', 'arqueologia-study-hub-v5-3', 'arqueologia-study-hub-v5',
+    'arqueologia-study-hub-v4', 'arqueologia-study-hub-v3', 'arqueologia-study-hub-v2',
+    'arqueologia-study-hub-v1'
+  ];
+
   const defaultState = {
     currentSemester: 1,
+    semesterFilter: 1,
     statuses: {},
-    topicChecks: {},
-    notes: {},
     favorites: {},
-    flashcardMastery: {},
-    quizScores: {},
-    quizAttempts: {},
+    notes: {},
     coursePlans: {},
     notebookEntries: {},
+    reviewItems: {},
+    customQuizzes: {},
+    calendarEntries: {},
+    calendarMonth: '',
+    calendarSelectedDate: '',
     sidebarCollapsed: false,
-    view: 'dashboard',
-    semesterFilter: 1,
+    view: 'dashboard'
   };
-
-  let state = loadState();
-  let searchQuery = '';
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -42,1354 +38,567 @@
   const sidebar = $('#sidebar');
   const overlay = $('#overlay');
 
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return mergeState(JSON.parse(raw));
-      const v62 = localStorage.getItem(V62_STORAGE_KEY);
-      if (v62) {
-        const migrated = mergeState(JSON.parse(v62));
-        canonicalizeTopicChecks(migrated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v61 = localStorage.getItem(V61_STORAGE_KEY);
-      if (v61) {
-        const migrated = mergeState(JSON.parse(v61));
-        canonicalizeTopicChecks(migrated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v6 = localStorage.getItem(V6_STORAGE_KEY);
-      if (v6) {
-        const migrated = mergeState(JSON.parse(v6));
-        canonicalizeTopicChecks(migrated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v53 = localStorage.getItem(V53_STORAGE_KEY);
-      if (v53) {
-        const migrated = mergeState(JSON.parse(v53));
-        canonicalizeTopicChecks(migrated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v5 = localStorage.getItem(V5_STORAGE_KEY);
-      if (v5) {
-        const migrated = mergeState(JSON.parse(v5));
-        canonicalizeTopicChecks(migrated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v4 = localStorage.getItem(V4_STORAGE_KEY);
-      if (v4) {
-        const migrated = mergeState(JSON.parse(v4));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v3 = localStorage.getItem(V3_STORAGE_KEY);
-      if (v3) {
-        const migrated = mergeState(JSON.parse(v3));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const v2 = localStorage.getItem(V2_STORAGE_KEY);
-      if (v2) {
-        const migrated = mergeState(JSON.parse(v2));
-        // v3 auditou e reordenou conceitos; índices antigos de flashcards/quizzes não são confiáveis.
-        migrated.flashcardMastery = {};
-        migrated.quizScores = {};
-        migrated.quizAttempts = {};
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-      const old = localStorage.getItem(V1_STORAGE_KEY);
-      if (old) {
-        const migrated = mergeState(JSON.parse(old));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-        return migrated;
-      }
-    } catch (_) {}
-    return structuredCloneSafe(defaultState);
-  }
+  let state = loadState();
+  let searchQuery = '';
+  let calendarEditingId = null;
 
-  function structuredCloneSafe(obj) { return JSON.parse(JSON.stringify(obj)); }
+  function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
   function plainObject(value) { return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; }
   function safeSemester(value) { const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 8 ? n : 1; }
-  function mergeState(incoming = {}) {
-    const allowedViews = new Set(['dashboard', 'semester', 'notebook', 'all', 'review', 'optatives', 'favorites', 'glossary', 'about']);
-    const viewName = allowedViews.has(incoming.view) ? incoming.view : 'dashboard';
+  function esc(value = '') {
+    return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+  }
+  function normalizeText(value = '') {
+    return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').replace(/\s+/g, ' ').trim();
+  }
+  function uid(prefix = 'id') {
+    if (window.crypto?.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+  function todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+  function monthISO(date = new Date()) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+  function formatDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return '';
+    const [y, m, d] = value.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  function formatMonth(value) {
+    if (!/^\d{4}-\d{2}$/.test(String(value || ''))) return '';
+    const [y, m] = value.split('-').map(Number);
+    return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
+  }
+  function wordCount(text) { return String(text || '').trim() ? String(text).trim().split(/\s+/).length : 0; }
+
+  function migrateLegacy(raw) {
+    const incoming = plainObject(raw);
     return {
-      ...structuredCloneSafe(defaultState),
-      ...incoming,
+      ...clone(defaultState),
       currentSemester: safeSemester(incoming.currentSemester),
       semesterFilter: safeSemester(incoming.semesterFilter || incoming.currentSemester),
-      view: viewName,
-      statuses: plainObject(incoming.statuses), topicChecks: plainObject(incoming.topicChecks), notes: plainObject(incoming.notes), favorites: plainObject(incoming.favorites),
-      flashcardMastery: plainObject(incoming.flashcardMastery), quizScores: plainObject(incoming.quizScores), quizAttempts: plainObject(incoming.quizAttempts),
+      statuses: plainObject(incoming.statuses),
+      favorites: plainObject(incoming.favorites),
+      notes: plainObject(incoming.notes),
       coursePlans: plainObject(incoming.coursePlans),
       notebookEntries: plainObject(incoming.notebookEntries),
+      calendarEntries: plainObject(incoming.calendarEntries),
+      calendarMonth: /^\d{4}-\d{2}$/.test(String(incoming.calendarMonth || '')) ? incoming.calendarMonth : '',
+      calendarSelectedDate: /^\d{4}-\d{2}-\d{2}$/.test(String(incoming.calendarSelectedDate || '')) ? incoming.calendarSelectedDate : '',
       sidebarCollapsed: incoming.sidebarCollapsed === true,
+      view: ['dashboard','semester','notebook','calendar','review','all','optatives','favorites','about'].includes(incoming.view) ? incoming.view : 'dashboard',
+      reviewItems: plainObject(incoming.reviewItems),
+      customQuizzes: plainObject(incoming.customQuizzes)
     };
   }
 
-  function canonicalizeTopicChecks(targetState) {
-    const allCourses = [...(DATA.courses || []), ...(DATA.optatives || [])];
-    const source = plainObject(targetState.topicChecks);
+  function normalizeNotebookEntries(target) {
+    const allowed = new Set(allCourses().map(c => c.id));
     const normalized = {};
-
-    allCourses.forEach(course => {
-      const oldChecks = plainObject(source[course.id]);
-      const nextChecks = {};
-      (course.topics || []).forEach((topic, index) => {
-        // A chave pelo nome vence conflitos com índices antigos.
-        if (Object.prototype.hasOwnProperty.call(oldChecks, topic)) nextChecks[topic] = oldChecks[topic] === true;
-        else if (Object.prototype.hasOwnProperty.call(oldChecks, String(index))) nextChecks[topic] = oldChecks[String(index)] === true;
-      });
-      if (Object.keys(nextChecks).length) normalized[course.id] = nextChecks;
-    });
-
-    targetState.topicChecks = normalized;
-    return targetState;
-  }
-
-  function canonicalizeNotebookEntries(targetState) {
-    const allCourses = [...(DATA.courses || []), ...(DATA.optatives || [])];
-    const allowed = new Set(allCourses.map(course => course.id));
-    const source = plainObject(targetState.notebookEntries);
-    const normalized = {};
-
-    Object.entries(source).forEach(([courseId, rawEntries]) => {
-      if (!allowed.has(courseId) || !Array.isArray(rawEntries)) return;
-      const cleaned = rawEntries.filter(entry => entry && typeof entry === 'object').map((entry, index) => ({
-        id: String(entry.id || `legacy-${courseId}-${index}`),
-        pageNumber: Number.isInteger(Number(entry.pageNumber)) && Number(entry.pageNumber) > 0 ? Number(entry.pageNumber) : null,
+    Object.entries(plainObject(target.notebookEntries)).forEach(([courseId, entries]) => {
+      if (!allowed.has(courseId) || !Array.isArray(entries)) return;
+      const cleaned = entries.filter(Boolean).map((entry, index) => ({
+        id: String(entry.id || uid(`legacy-${courseId}-${index}`)),
+        pageNumber: Number(entry.pageNumber) > 0 ? Number(entry.pageNumber) : null,
         date: /^\d{4}-\d{2}-\d{2}$/.test(String(entry.date || '')) ? String(entry.date) : '',
         title: String(entry.title || ''), learned: String(entry.learned || ''), concepts: String(entry.concepts || ''),
         questions: String(entry.questions || ''), tasks: String(entry.tasks || ''), free: String(entry.free || '')
       }));
-
-      const used = new Set(cleaned.map(entry => entry.pageNumber).filter(Boolean));
-      let nextNumber = used.size ? Math.max(...used) : 0;
-      // Entradas legadas são armazenadas da mais nova para a mais antiga. Numere as antigas cronologicamente.
-      for (let i = cleaned.length - 1; i >= 0; i--) {
-        if (!cleaned[i].pageNumber) {
-          do { nextNumber += 1; } while (used.has(nextNumber));
-          cleaned[i].pageNumber = nextNumber;
-          used.add(nextNumber);
-        }
-      }
+      let max = Math.max(0, ...cleaned.map(e => e.pageNumber || 0));
+      for (let i = cleaned.length - 1; i >= 0; i--) if (!cleaned[i].pageNumber) cleaned[i].pageNumber = ++max;
       if (cleaned.length) normalized[courseId] = cleaned;
     });
-
-    targetState.notebookEntries = normalized;
-    return targetState;
+    target.notebookEntries = normalized;
   }
 
-  canonicalizeTopicChecks(state);
-  canonicalizeNotebookEntries(state);
+  function normalizeReviewItems(target) {
+    const allowed = new Set(allCourses().map(c => c.id));
+    const normalized = {};
+    Object.entries(plainObject(target.reviewItems)).forEach(([courseId, items]) => {
+      if (!allowed.has(courseId) || !Array.isArray(items)) return;
+      const clean = items.filter(Boolean).map((item, i) => ({
+        id: String(item.id || `review-${courseId}-${i}`),
+        title: String(item.title || '').slice(0, 240),
+        details: String(item.details || '').slice(0, 12000),
+        done: item.done === true,
+        createdAt: String(item.createdAt || '')
+      })).filter(item => item.title || item.details);
+      if (clean.length) normalized[courseId] = clean;
+    });
+    target.reviewItems = normalized;
+  }
+
+  function normalizeQuizzes(target) {
+    const allowed = new Set(allCourses().map(c => c.id));
+    const normalized = {};
+    Object.entries(plainObject(target.customQuizzes)).forEach(([courseId, items]) => {
+      if (!allowed.has(courseId) || !Array.isArray(items)) return;
+      const clean = items.filter(Boolean).map((item, i) => ({
+        id: String(item.id || `quiz-${courseId}-${i}`),
+        question: String(item.question || '').slice(0, 4000),
+        answer: String(item.answer || '').slice(0, 8000),
+        explanation: String(item.explanation || '').slice(0, 8000),
+        mastery: ['correct','review'].includes(item.mastery) ? item.mastery : '',
+        createdAt: String(item.createdAt || '')
+      })).filter(item => item.question || item.answer);
+      if (clean.length) normalized[courseId] = clean;
+    });
+    target.customQuizzes = normalized;
+  }
+
+  function normalizeCalendar(target) {
+    const allowed = new Set(allCourses().map(c => c.id));
+    const normalized = {};
+    Object.entries(plainObject(target.calendarEntries)).forEach(([date, entries]) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Array.isArray(entries)) return;
+      const clean = entries.filter(Boolean).map((entry, i) => ({
+        id: String(entry.id || `calendar-${date}-${i}`),
+        title: String(entry.title || '').slice(0, 200),
+        type: ['note','class','exam','assignment','reading','deadline','reminder'].includes(entry.type) ? entry.type : 'note',
+        courseId: allowed.has(String(entry.courseId || '')) ? String(entry.courseId) : '',
+        time: /^\d{2}:\d{2}$/.test(String(entry.time || '')) ? String(entry.time) : '',
+        details: String(entry.details || '').slice(0, 10000),
+        done: entry.done === true,
+        createdAt: String(entry.createdAt || '')
+      })).filter(entry => entry.title || entry.details);
+      if (clean.length) normalized[date] = clean;
+    });
+    target.calendarEntries = normalized;
+  }
+
+  function loadState() {
+    let result = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) result = migrateLegacy(JSON.parse(raw));
+      if (!result) {
+        for (const key of LEGACY_KEYS) {
+          const old = localStorage.getItem(key);
+          if (!old) continue;
+          result = migrateLegacy(JSON.parse(old));
+          break;
+        }
+      }
+    } catch (error) { console.warn('Falha ao ler dados salvos.', error); }
+    result ||= clone(defaultState);
+    normalizeNotebookEntries(result);
+    normalizeReviewItems(result);
+    normalizeQuizzes(result);
+    normalizeCalendar(result);
+    return result;
+  }
 
   let storageWarningShown = false;
   function showToast(message, tone = 'info') {
-    let toast = document.querySelector('.app-toast');
+    let toast = $('.app-toast');
     if (!toast) {
-      toast = document.createElement('div');
-      toast.className = 'app-toast';
-      toast.setAttribute('role', 'status');
-      document.body.appendChild(toast);
+      toast = document.createElement('div'); toast.className = 'app-toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast);
     }
-    toast.className = `app-toast ${tone}`;
-    toast.textContent = message;
-    toast.classList.add('show');
-    clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => toast.classList.remove('show'), 4200);
+    toast.className = `app-toast ${tone}`; toast.textContent = message; toast.classList.add('show');
+    clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove('show'), 3800);
   }
-
   function saveState() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (error) {
-      console.warn('Não foi possível salvar o estado local do app.', error);
-      if (!storageWarningShown) {
-        storageWarningShown = true;
-        showToast('Não foi possível salvar neste navegador. Exporte um backup antes de fechar a página.', 'warn');
-      }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch (error) {
+      console.warn('Não foi possível salvar o estado local.', error);
+      if (!storageWarningShown) { storageWarningShown = true; showToast('Não foi possível salvar neste navegador. Exporte um backup.', 'warn'); }
     }
-    updateGlobalProgress();
+    updateSidebarProgress();
   }
 
-  function esc(value = '') {
-    return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+  function allCourses() { return [...(DATA.courses || []), ...(DATA.optatives || [])]; }
+  function requiredCourses() { return DATA.courses || []; }
+  function optativeCourses() { return DATA.optatives || []; }
+  function getCourse(id) { return allCourses().find(c => c.id === id); }
+  function semesterCourses(semester = state.currentSemester) { return requiredCourses().filter(c => c.semester === Number(semester)); }
+  function courseTypeLabel(course) { return course.type === 'optional' ? 'Optativa' : `${course.semester}º semestre`; }
+  function statusLabel(status) { return status === 'done' ? 'Concluída' : status === 'studying' ? 'Cursando' : 'Não iniciada'; }
+  function courseStatus(course) { return state.statuses[course.id] || 'todo'; }
+  function notebookPages(course) { return Array.isArray(state.notebookEntries[course.id]) ? state.notebookEntries[course.id] : []; }
+  function reviewItems(course) { return Array.isArray(state.reviewItems[course.id]) ? state.reviewItems[course.id] : []; }
+  function quizItems(course) { return Array.isArray(state.customQuizzes[course.id]) ? state.customQuizzes[course.id] : []; }
+  function reviewProgress(course) {
+    const items = reviewItems(course); if (!items.length) return null;
+    return Math.round((items.filter(i => i.done).length / items.length) * 100);
+  }
+  function coursePlan(course) {
+    return { professor:'', schedule:'', room:'', period:'', contact:'', plan:'', ...plainObject(state.coursePlans[course.id]) };
+  }
+  function totalCurrentReviewProgress() {
+    const items = semesterCourses().flatMap(c => reviewItems(c));
+    if (!items.length) return 0;
+    return Math.round((items.filter(i => i.done).length / items.length) * 100);
+  }
+  function updateSidebarProgress() {
+    const p = totalCurrentReviewProgress();
+    const text = $('#sidebarProgressText'), bar = $('#sidebarProgressBar');
+    if (text) text.textContent = `${p}%`; if (bar) bar.style.width = `${p}%`;
   }
 
-  function normalizeText(value = '') {
-    return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').replace(/\s+/g, ' ').trim();
+  function courseSearchText(course) {
+    const plan = coursePlan(course);
+    const pages = notebookPages(course).map(p => Object.values(p).join(' ')).join(' ');
+    const reviews = reviewItems(course).map(r => `${r.title} ${r.details}`).join(' ');
+    const quizzes = quizItems(course).map(q => `${q.question} ${q.answer} ${q.explanation}`).join(' ');
+    return normalizeText([
+      course.title, course.syllabus, course.bibliographyBasic, course.bibliographyComplementary, course.note,
+      plan.professor, plan.schedule, plan.room, plan.period, plan.contact, plan.plan,
+      state.notes[course.id], pages, reviews, quizzes
+    ].join(' '));
   }
 
-  const CONCEPT_ALLOW = {
-    'acao social': ['s1-4-sociologia'],
-    'fato social': ['s1-4-sociologia'],
-    'sig': ['s3-3-cartografia-topografia-e-geoprocessamento', 's7-2-pratica-de-laboratorio-ii'],
-    'graficos': ['s2-8-estatistica'],
-    'dna antigo': ['s6-7-arqueogenetica'],
-    'andes': ['s5-5-arqueologia-latino-americana'],
-    'reserva tecnica': ['s5-7-gestao-do-patrimonio-arqueologico', 's6-2-pratica-de-laboratorio-i', 's6-5-musealizacao-da-arqueologia'],
-    'estado': ['s5-1-arqueologia-do-oriente-proximo', 's5-2-arqueologia-africana', 's5-3-arqueologia-asiatica'],
-    'mito': ['s3-4-mitologia-e-ritual', 's5-3-arqueologia-asiatica'],
-    'arqueologia historica': ['s3-6-arqueologia-historica-i', 's4-5-arqueologia-historica-ii', 's7-7-seminario-de-arqueologia-ii'],
-    'evolucao humana na africa': ['s1-3-pre-historia-geral', 's5-2-arqueologia-africana', 's7-4-arqueologia-do-quaternario'],
-    'avaliacao de projeto educativo': ['s8-2-educacao-patrimonial'],
-    'analise tecnico-tipologica': ['s7-2-pratica-de-laboratorio-ii'],
-    'comunicacao tecnica': ['s8-4-relatorio-tecnico-pareceres-e-pericia-profissionais']
-  };
-
-  function conceptIsRelevant(course, concept) {
-    const key = normalizeText(concept?.term || '');
-    if (!key) return false;
-    const allowed = CONCEPT_ALLOW[key];
-    return !allowed || allowed.includes(course.id);
+  function statCard(value, label, hint = '') {
+    return `<div class="stat-card"><strong>${esc(value)}</strong><span>${esc(label)}</span>${hint ? `<small>${esc(hint)}</small>` : ''}</div>`;
   }
-
-  function conceptsForCourse(course) {
-    return (packFor(course).concepts || []).filter(c => conceptIsRelevant(course, c));
+  function emptyState(title, text, action = '') {
+    return `<div class="empty-state"><div class="empty-icon">⌁</div><h3>${esc(title)}</h3><p>${esc(text)}</p>${action}</div>`;
   }
-
-  function courseById(id) { return [...DATA.courses, ...DATA.optatives].find(c => c.id === id); }
-  function packFor(course) { return STUDY[course.id] || { overview: course.syllabus, concepts: [], studyTips: [] }; }
-  function statusLabel(status) { return status === 'done' ? 'Concluída' : status === 'studying' ? 'Estudando' : 'Não iniciada'; }
-  function semesterLabel(n) { return `${n}º semestre`; }
-
-  function topicKey(course, index) { return course.topics[index] || String(index); }
-  function topicChecked(course, index) {
-    const checks = state.topicChecks[course.id] || {};
-    const key = topicKey(course, index);
-    // O formato atual (nome do tópico) é sempre a fonte de verdade.
-    // Só recorremos ao índice legado quando ainda não existe uma chave atual.
-    if (Object.prototype.hasOwnProperty.call(checks, key)) return checks[key] === true;
-    if (Object.prototype.hasOwnProperty.call(checks, String(index))) return checks[String(index)] === true;
-    return false;
-  }
-  function completedTopicCount(course) {
-    return course.topics.reduce((acc, _, index) => acc + (topicChecked(course, index) ? 1 : 0), 0);
-  }
-
-  function suggestedOptativeAnswer(topic, course) {
-    const lesson = LESSONS.deep?.[course.id]?.[topic];
-    if (lesson?.remember?.length) return lesson.remember.slice(0, 2).join(' ');
-    const guide = (packFor(course).topicGuides || []).find(g => normalizeText(g.topic) === normalizeText(topic));
-    const points = (guide?.points || []).slice(0, 2);
-    if (points.length) return points.map(p => `${p.term}: ${p.definition}`).join(' ');
-    return `Este é um roteiro sugerido para a optativa ${course.title}. Relacione o tema “${topic}” às fontes, evidências e métodos adequados à disciplina e ajuste o estudo ao plano de ensino quando a matéria for ofertada.`;
-  }
-
-  function flashcardsForCourse(course) {
-    const p = packFor(course);
-    if (course.officialSyllabusAvailable === false) {
-      return (course.topics || []).slice(0, 8).map(topic => ({
-        q: `O que vale investigar em “${topic}”?`,
-        a: suggestedOptativeAnswer(topic, course),
-        term: topic
-      }));
-    }
-    const cards = [{ q: `Qual é o foco central de ${course.title}?`, a: p.overview }];
-    conceptsForCourse(course).slice(0, 8).forEach(c => cards.push({ q: `Explique: ${c.term}.`, a: c.definition, term: c.term }));
-    return cards;
-  }
-
-  function flashKey(card, index) { return normalizeText(card.term || card.q || String(index)); }
-  function flashState(course, card, index) {
-    const m = state.flashcardMastery[course.id] || {};
-    const key = flashKey(card, index);
-    if (Object.prototype.hasOwnProperty.call(m, key)) return m[key];
-    return m[index];
-  }
-  function masteredCardCount(course) {
-    const cards = flashcardsForCourse(course);
-    return cards.reduce((n, card, i) => n + (flashState(course, card, i) === true ? 1 : 0), 0);
-  }
-
-  function courseProgress(course) {
-    // A porcentagem mede conclusão do percurso de estudo, não a nota acadêmica.
-    // Nas matérias com os três componentes: 60% aulas + 20% flashcards + 20% quiz.
-    // O quiz completa sua parcela ao atingir 70%; a melhor nota continua exibida separadamente.
-    // Se uma matéria não tiver algum componente (ex.: optativa sem quiz), os pesos disponíveis
-    // são normalizados para que seja possível chegar a 100% sem inventar atividade inexistente.
-    if ((state.statuses[course.id] || 'todo') === 'done') return 100;
-
-    let earned = 0;
-    let available = 0;
-
-    if (course.topics.length) {
-      available += 60;
-      earned += (completedTopicCount(course) / course.topics.length) * 60;
-    }
-
-    const cards = flashcardsForCourse(course);
-    if (cards.length) {
-      available += 20;
-      earned += (masteredCardCount(course) / cards.length) * 20;
-    }
-
-    const quiz = quizForCourse(course);
-    if (quiz.length) {
-      available += 20;
-      const score = Number(state.quizScores[course.id] || 0);
-      earned += Math.min(score / 70, 1) * 20;
-    }
-
-    if (!available) return 0;
-    const allTopicsMet = !course.topics.length || completedTopicCount(course) === course.topics.length;
-    const allFlashMet = !cards.length || masteredCardCount(course) === cards.length;
-    const quizMet = !quiz.length || Number(state.quizScores[course.id] || 0) >= 70;
-    if (allTopicsMet && allFlashMet && quizMet) return 100;
-    return Math.max(0, Math.min(99, Math.round((earned / available) * 100)));
-  }
-
-  function progressFormula(course) {
-    const components = [];
-    if (course.topics.length) components.push(['aulas', 60]);
-    const cards = flashcardsForCourse(course);
-    if (cards.length) components.push(['flashcards', 20]);
-    const quiz = quizForCourse(course);
-    if (quiz.length) components.push(['quiz', 20]);
-    const total = components.reduce((sum, [, weight]) => sum + weight, 0) || 1;
-    const labels = components.map(([label, weight]) => `${Math.round((weight / total) * 100)}% ${label}`);
-    return `Progresso de estudo: ${labels.join(' · ')}${quiz.length ? ' (quiz completa a parcela a partir de 70%)' : ''}`;
-  }
-
-  function globalProgress() {
-    if (!DATA.courses.length) return 0;
-    return Math.round(DATA.courses.reduce((sum, c) => sum + courseProgress(c), 0) / DATA.courses.length);
-  }
-
-  function updateGlobalProgress() {
-    const p = globalProgress();
-    if ($('#sidebarProgressText')) $('#sidebarProgressText').textContent = `${p}%`;
-    if ($('#sidebarProgressBar')) $('#sidebarProgressBar').style.width = `${p}%`;
-  }
-
-  function statusBadge(course) {
-    const status = state.statuses[course.id] || 'todo';
-    const cls = status === 'done' ? 'done' : status === 'studying' ? 'study' : '';
-    return `<span class="badge ${cls}">${statusLabel(status)}</span>`;
-  }
-
-  function setActiveNav(viewName) {
-    $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === viewName));
-  }
-
-  function isDrawerMode() { return window.matchMedia('(max-width: 960px)').matches; }
-
-  function updateSidebarButtons() {
-    const drawerOpen = sidebar.classList.contains('open');
-    const expanded = isDrawerMode() ? drawerOpen : !state.sidebarCollapsed;
-    const menuBtn = $('#menuBtn');
-    const sideBtn = $('#sidebarToggle');
-    if (menuBtn) {
-      menuBtn.setAttribute('aria-expanded', String(expanded));
-      menuBtn.setAttribute('aria-label', expanded ? 'Fechar menu' : 'Abrir menu');
-      menuBtn.title = expanded ? 'Fechar menu' : 'Abrir menu';
-    }
-    if (sideBtn) {
-      sideBtn.setAttribute('aria-expanded', String(expanded));
-      sideBtn.setAttribute('aria-label', 'Fechar menu');
-      sideBtn.title = 'Fechar menu';
-    }
-  }
-
-  function applySidebarState() {
-    if (isDrawerMode()) {
-      document.body.classList.remove('sidebar-collapsed');
-    } else {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('show');
-      document.body.classList.toggle('sidebar-collapsed', state.sidebarCollapsed === true);
-    }
-    updateSidebarButtons();
-  }
-
-  function closeSidebar() {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('show');
-    updateSidebarButtons();
-  }
-
-  function toggleSidebar() {
-    if (isDrawerMode()) {
-      const willOpen = !sidebar.classList.contains('open');
-      sidebar.classList.toggle('open', willOpen);
-      overlay.classList.toggle('show', willOpen);
-    } else {
-      state.sidebarCollapsed = !state.sidebarCollapsed;
-      saveState();
-      applySidebarState();
-    }
-    updateSidebarButtons();
-  }
-  function navigate(viewName, opts = {}) {
-    searchQuery = '';
-    const search = $('#searchInput');
-    if (search) search.value = '';
-    state.view = viewName;
-    if (opts.semester) state.semesterFilter = Number(opts.semester);
-    if (viewName === 'semester' && !opts.semester) state.semesterFilter = Number(state.currentSemester || 1);
-    saveState(); setActiveNav(viewName); render(); closeSidebar(); window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function statsForSemester(semester) {
-    const list = DATA.courses.filter(c => c.semester === semester);
-    const hours = list.reduce((a, c) => a + c.matrixHours, 0);
-    const done = list.filter(c => state.statuses[c.id] === 'done').length;
-    const avg = list.length ? Math.round(list.reduce((a, c) => a + courseProgress(c), 0) / list.length) : 0;
-    return { count: list.length, hours, done, avg };
+  function sectionHead(title, text = '', action = '') {
+    return `<div class="section-head"><div><h2>${esc(title)}</h2>${text ? `<p>${esc(text)}</p>` : ''}</div>${action}</div>`;
   }
 
   function courseCard(course) {
-    const p = courseProgress(course), fav = !!state.favorites[course.id], pack = packFor(course);
-    const excerpt = pack.overview.length > 150 ? `${pack.overview.slice(0, 150).trim()}…` : pack.overview;
-    const score = state.quizScores[course.id];
-    return `<article class="course-card clickable" data-course-id="${esc(course.id)}" tabindex="0">
-      <div class="course-card-top"><div class="badges">
-        ${course.semester ? `<span class="badge">${course.semester}º sem.</span>` : `<span class="badge">Optativa</span>`}
-        <span class="badge">${course.matrixHours}h</span>${course.officialSyllabusAvailable === false ? `<span class="badge warn">PPP: sem ementa</span>` : course.note ? `<span class="badge warn">PPP ⚠</span>` : ''}${statusBadge(course)}
-        ${score !== undefined ? `<span class="badge quiz-badge">Quiz ${score}%</span>` : ''}
-      </div><button class="favorite-btn ${fav ? 'active' : ''}" data-fav-id="${esc(course.id)}" aria-label="${fav ? 'Remover dos favoritos' : 'Favoritar matéria'}" aria-pressed="${fav ? 'true' : 'false'}">${fav ? '★' : '☆'}</button></div>
-      <h3>${esc(course.title)}</h3><p>${esc(excerpt)}</p>
-      <div class="course-card-footer"><div class="progress-track"><div class="progress-fill" style="width:${p}%"></div></div><small>${p}%</small></div>
+    const status = courseStatus(course), pages = notebookPages(course).length, reviews = reviewItems(course), p = reviewProgress(course);
+    const fav = state.favorites[course.id] === true;
+    return `<article class="course-card" data-course-card="${esc(course.id)}">
+      <div class="course-card-head"><div><span class="course-sem">${esc(courseTypeLabel(course))}</span><h3>${esc(course.title)}</h3></div>
+      <button class="favorite-btn ${fav ? 'active' : ''}" data-favorite="${esc(course.id)}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">${fav ? '★' : '☆'}</button></div>
+      <div class="course-meta"><span>${course.matrixHours || 0}h</span><span class="status-chip status-${esc(status)}">${esc(statusLabel(status))}</span></div>
+      <p class="course-summary">${esc(course.syllabus || (course.type === 'optional' ? 'Disciplina optativa listada no PPP.' : 'Sem ementa cadastrada.'))}</p>
+      <div class="course-card-stats"><span>✎ ${pages} ${pages === 1 ? 'folha' : 'folhas'}</span><span>↻ ${reviews.length} ${reviews.length === 1 ? 'revisão' : 'revisões'}</span></div>
+      <div class="course-card-footer">${p === null ? '<small>Sem revisão cadastrada</small>' : `<div class="progress-track"><div class="progress-fill" style="width:${p}%"></div></div><small>${p}% revisado</small>`}<button class="btn btn-soft btn-sm" data-course-open="${esc(course.id)}">Abrir</button></div>
     </article>`;
   }
 
-  function semesterChips(active = null) {
-    return `<div class="semester-chips">${Array.from({ length: 8 }, (_, i) => i + 1).map(s => `<button class="chip ${s === active ? 'active' : ''}" data-sem-chip="${s}">${s}º</button>`).join('')}</div>`;
+  function renderDashboard() {
+    const courses = semesterCourses();
+    const pages = courses.reduce((n,c) => n + notebookPages(c).length, 0);
+    const reviews = courses.flatMap(c => reviewItems(c));
+    const pending = reviews.filter(r => !r.done).length;
+    const upcoming = upcomingCalendarEntries(5);
+    view.innerHTML = `<div class="page-enter">
+      <section class="hero-panel">
+        <div><span class="eyebrow">Seu caderno acadêmico</span><h1>${state.currentSemester}º semestre</h1><p>A grade oficial organiza o caminho. O conteúdo real da sua turma nasce aqui: no caderno, nas revisões e nos quizzes que você mesma cria a partir das aulas.</p></div>
+        <div class="hero-actions"><button class="btn" data-view-go="notebook">Abrir caderno</button><button class="btn btn-outline" data-view-go="calendar">Calendário</button></div>
+      </section>
+      <div class="stats-grid">${statCard(courses.length, 'matérias no semestre')}${statCard(pages, 'folhas no caderno')}${statCard(reviews.length, 'itens de revisão', `${pending} pendentes`)}${statCard(`${totalCurrentReviewProgress()}%`, 'das revisões concluídas')}</div>
+      ${sectionHead('Matérias do semestre', 'Abra uma disciplina para ver o PPP e registrar o que realmente foi ensinado.')}
+      <div class="course-grid">${courses.map(courseCard).join('')}</div>
+      ${sectionHead('Próximos compromissos', 'Itens que você adicionou ao calendário.', '<button class="text-btn" data-view-go="calendar">Ver calendário →</button>')}
+      <div class="upcoming-list">${upcoming.length ? upcoming.map(calendarCompactCard).join('') : emptyState('Nada próximo', 'Adicione provas, trabalhos, leituras ou lembretes no calendário.')}</div>
+    </div>`;
   }
 
-  function nextStudyItem() {
-    const sem = Number(state.currentSemester || 1);
-    const courses = DATA.courses.filter(c => c.semester === sem);
-    for (const c of courses) {
-      if (state.statuses[c.id] === 'done') continue;
-      const idx = c.topics.findIndex((_, i) => !topicChecked(c, i));
-      return { course: c, topic: idx >= 0 ? c.topics[idx] : 'Faça os flashcards e o quiz desta matéria.', topicIndex: idx };
-    }
-    return null;
+  function renderSemester() {
+    const s = Number(state.semesterFilter || state.currentSemester), courses = requiredCourses().filter(c => c.semester === s);
+    view.innerHTML = `<div class="page-enter">${sectionHead('Meu semestre', 'A matriz é a referência oficial; seu caderno registra a experiência real da turma.')}
+      <div class="semester-chips">${[1,2,3,4,5,6,7,8].map(n => `<button class="semester-chip ${n===s?'active':''}" data-semester-filter="${n}">${n}º</button>`).join('')}</div>
+      <div class="notice info"><div>✦</div><div><strong>Como usar</strong><p>Abra uma matéria, consulte a ementa oficial e use Caderno, Revisão e Quiz conforme o professor avançar.</p></div></div>
+      <div class="course-grid">${courses.map(courseCard).join('')}</div></div>`;
   }
 
-  function reviewState(course) {
-    const cards = flashcardsForCourse(course);
-    const mastered = masteredCardCount(course);
-    const score = state.quizScores[course.id];
-    const attempts = Number(state.quizAttempts[course.id] || 0);
-    const unchecked = Math.max(0, (course.topics || []).length - completedTopicCount(course));
-    const started = (state.statuses[course.id] || 'todo') === 'studying' || completedTopicCount(course) > 0 || mastered > 0 || attempts > 0 || score !== undefined;
-    const topicsPending = unchecked > 0;
-    const flashPending = cards.length > 0 && mastered < cards.length;
-    const quizPending = quizForCourse(course).length > 0 && Number(score || 0) < 70;
-    return { cards, mastered, score, unchecked, started, topicsPending, flashPending, quizPending, need: started && (topicsPending || flashPending || quizPending) };
+  function renderAll() {
+    view.innerHTML = `<div class="page-enter">${sectionHead('Toda a grade', '65 componentes obrigatórios organizados pelos 8 semestres do PPP.')}
+      ${[1,2,3,4,5,6,7,8].map(s => `<section class="semester-block"><div class="semester-title"><h3>${s}º semestre</h3><span>${requiredCourses().filter(c=>c.semester===s).length} matérias</span></div><div class="course-grid">${requiredCourses().filter(c=>c.semester===s).map(courseCard).join('')}</div></section>`).join('')}
+    </div>`;
   }
 
-  function reviewCount() {
-    return DATA.courses.reduce((n, course) => n + (state.statuses[course.id] !== 'done' && reviewState(course).need ? 1 : 0), 0);
+  function renderOptatives() {
+    view.innerHTML = `<div class="page-enter">${sectionHead('Optativas', 'O PPP consultado lista estas disciplinas e suas cargas. O conteúdo será registrado por você quando alguma delas for ofertada.')}
+      <div class="notice warn"><div>◇</div><div><strong>Sem ementa detalhada no PPP consultado</strong><p>Por isso o app não cria aulas nem conteúdos para as optativas. Use o caderno quando receber o plano da disciplina.</p></div></div>
+      <div class="course-grid">${optativeCourses().map(courseCard).join('')}</div></div>`;
   }
 
-  function dashboard() {
-    const sem = Number(state.currentSemester || 1), stats = statsForSemester(sem), current = DATA.courses.filter(c => c.semester === sem);
-    const next = nextStudyItem();
-    const startedCourses = DATA.courses.filter(c => state.statuses[c.id] === 'studying').length;
-    return `<section class="hero">
-      <div class="eyebrow">Bacharelado em Arqueologia · UNEB Campus VIII</div>
-      <h1>Um app para estudar a graduação inteira.</h1>
-      <p>O PPP oficial fica separado do material didático. Em cada matéria você tem aulas para ler e estudar, conceitos-chave, exemplos aplicados, perguntas de revisão, flashcards, quiz, bibliografia e um caderno digital para registrar o que foi aprendido em sala.</p>
-      <div class="hero-actions"><button class="btn btn-light" data-go-sem="${sem}">Abrir ${sem}º semestre</button><button class="btn" data-go-review>Ir para revisão</button></div>
-    </section>
-
-    <div class="stat-grid">
-      <div class="stat-card"><span>Matérias obrigatórias</span><strong>${DATA.meta.requiredComponents}</strong><small>em 8 semestres</small></div>
-      <div class="stat-card"><span>Progresso geral</span><strong>${globalProgress()}%</strong><small>${startedCourses} em estudo agora</small></div>
-      <div class="stat-card"><span>${sem}º semestre</span><strong>${stats.avg}%</strong><small>${stats.done}/${stats.count} concluídas</small></div>
-      <div class="stat-card"><span>Precisando de revisão</span><strong>${reviewCount()}</strong><small>matérias iniciadas</small></div>
-    </div>
-
-    ${next ? `<section class="today-card">
-      <div><span class="eyebrow">Continuar estudando</span><h2>${esc(next.course.title)}</h2><p>Próximo tópico: <strong>${esc(next.topic)}</strong></p></div>
-      <button class="btn" data-course-open="${esc(next.course.id)}" data-open-tab="content">Estudar agora →</button>
-    </section>` : `<div class="notice info"><div>✓</div><div><strong>Semestre concluído</strong><p>Você marcou todas as matérias do ${sem}º semestre como concluídas. Use a revisão para manter os conceitos vivos.</p></div></div>`}
-
-    <div class="section-head"><div><span class="eyebrow">Seu semestre atual</span><h2>${sem}º semestre</h2><p>${stats.count} componentes · ${stats.hours}h pela matriz.</p></div><button class="btn btn-outline btn-sm" data-go-sem="${sem}">Ver todas</button></div>
-    <div class="card-grid">${current.map(courseCard).join('')}</div>
-
-    <div class="notice" style="margin-top:24px"><div>⚠</div><div><strong>O plano do professor continua mandando</strong><p>O app cobre a matriz e o ementário do PPP e cria material de preparação a partir deles. Quando você receber o plano de ensino de uma disciplina, ele deve ser usado para atualizar a ordem, leituras e avaliações daquela turma.</p></div></div>`;
+  function renderFavorites() {
+    const courses = allCourses().filter(c => state.favorites[c.id]);
+    view.innerHTML = `<div class="page-enter">${sectionHead('Favoritas', 'Acesso rápido às matérias que você marcou.')}${courses.length ? `<div class="course-grid">${courses.map(courseCard).join('')}</div>` : emptyState('Nenhuma favorita', 'Use a estrela em uma matéria para fixá-la aqui.')}</div>`;
   }
 
-  function semesterView(sem) {
-    const courses = DATA.courses.filter(c => c.semester === sem), stats = statsForSemester(sem);
-    return `<div class="section-head top-section"><div><span class="eyebrow">Matriz curricular</span><h1>${semesterLabel(sem)}</h1><p>${stats.count} componentes · ${stats.hours}h pela matriz · ${stats.avg}% estudado</p></div>${semesterChips(sem)}</div>
-      <div class="notice info"><div>✦</div><div><strong>Como usar este semestre</strong><p>Abra uma matéria e siga Guia → Aulas → Flashcards → Quiz. A ementa e bibliografia oficiais ficam em abas próprias.</p></div></div>
-      <div class="card-grid">${courses.map(courseCard).join('')}</div>`;
+  function renderNotebook() {
+    const courses = semesterCourses();
+    view.innerHTML = `<div class="page-enter">${sectionHead('Caderno digital', 'Cada disciplina funciona como um caderno próprio. Crie uma folha para cada aula, texto, orientação ou atividade.')}
+      <div class="notebook-dashboard-grid">${courses.map(course => {
+        const pages = notebookPages(course), last = pages[0];
+        return `<article class="notebook-course-card"><span class="course-sem">${course.semester}º semestre</span><h3>${esc(course.title)}</h3><div class="notebook-card-count"><strong>${pages.length}</strong><span>${pages.length===1?'folha':'folhas'}</span></div>${last ? `<p>Última: <strong>${esc(last.title || `Folha ${String(last.pageNumber).padStart(2,'0')}`)}</strong>${last.date ? ` · ${formatDate(last.date)}` : ''}</p>` : '<p>Seu caderno desta matéria ainda está vazio.</p>'}<button class="btn btn-soft" data-course-open="${esc(course.id)}" data-open-tab="notes">${pages.length ? 'Abrir caderno' : '+ Começar caderno'}</button></article>`;
+      }).join('')}</div></div>`;
   }
 
-  function allView() {
-    return `<div class="section-head top-section"><div><span class="eyebrow">Do começo ao TCC</span><h1>Toda a grade</h1><p>Os 8 semestres da matriz curricular do PPP.</p></div>${semesterChips(null)}</div>
-      ${Array.from({ length: 8 }, (_, i) => i + 1).map(sem => {
-        const courses = DATA.courses.filter(c => c.semester === sem), st = statsForSemester(sem);
-        return `<section class="semester-section" id="semester-${sem}"><div class="section-head"><div><h2>${sem}º semestre</h2><p>${st.count} componentes · ${st.hours}h · ${st.avg}% estudado</p></div><button class="btn btn-outline btn-sm" data-go-sem="${sem}">Abrir semestre</button></div><div class="card-grid">${courses.map(courseCard).join('')}</div></section>`;
-      }).join('')}`;
+  function renderReview() {
+    const courses = semesterCourses();
+    const groups = courses.map(course => ({ course, items: reviewItems(course) })).filter(g => g.items.length);
+    view.innerHTML = `<div class="page-enter">${sectionHead('Minhas revisões', 'Você decide o que precisa revisar com base nas aulas, leituras e orientações do professor.')}
+      <div class="notice info"><div>↻</div><div><strong>Progresso real, criado por você</strong><p>A porcentagem desta página considera somente os itens de revisão que você cadastrou. Ela não tenta medir quanto da disciplina o professor já ensinou.</p></div></div>
+      ${groups.length ? `<div class="review-overview">${groups.map(({course,items}) => {
+        const done = items.filter(i=>i.done).length, pct = Math.round(done/items.length*100);
+        return `<article class="review-course-block"><div class="review-course-head"><div><span class="course-sem">${course.semester}º semestre</span><h3>${esc(course.title)}</h3></div><strong>${pct}%</strong></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><div class="review-mini-list">${items.slice(0,5).map(i => `<label class="mini-check ${i.done?'done':''}"><input type="checkbox" data-review-toggle="${esc(course.id)}|${esc(i.id)}" ${i.done?'checked':''}><span>${esc(i.title || i.details)}</span></label>`).join('')}</div><button class="btn btn-soft btn-sm" data-course-open="${esc(course.id)}" data-open-tab="review">Abrir revisão</button></article>`;
+      }).join('')}</div>` : emptyState('Nenhuma revisão cadastrada', 'Abra uma matéria e adicione os tópicos que o professor pedir ou que você quiser revisar.')}</div>`;
   }
 
-  function optativesView() {
-    return `<div class="section-head top-section"><div><span class="eyebrow">Formação optativa</span><h1>Optativas</h1><p>${DATA.optatives.length} opções listadas no PPP.</p></div></div>
-      <div class="notice"><div>i</div><div><strong>Atenção às optativas</strong><p>O PPP lista nomes e cargas horárias, mas não traz ementário específico dessas optativas. Por isso o conteúdo de estudo aqui é uma preparação sugerida e deve ser substituído/complementado pelo plano de ensino quando a disciplina for ofertada.</p></div></div>
-      <div class="card-grid">${DATA.optatives.map(courseCard).join('')}</div>`;
+  function renderAbout() {
+    view.innerHTML = `<div class="page-enter">${sectionHead('Sobre o PPP e este app')}
+      <section class="panel prose"><span class="source-pill official">Base oficial</span><h3>O que vem da UNEB</h3><p>O app mantém a estrutura da matriz curricular, a carga horária, a ementa e as bibliografias presentes no Projeto Político-Pedagógico consultado para o Bacharelado em Arqueologia — Campus VIII.</p>
+      <h3>O que vem de você</h3><p>O conteúdo real das aulas fica no seu caderno, nas revisões e nos quizzes que você mesma cria. Assim o app não presume a ordem, as leituras, as avaliações ou o aprofundamento escolhido por cada professor.</p>
+      <div class="hero-actions"><a class="btn" href="https://dedc8.uneb.br/wp-content/uploads/2023/05/Projeto-Politico-Pedagogico-Arqueologia-DEDC-VIII.pdf" target="_blank" rel="noopener noreferrer">Abrir PPP</a><a class="btn btn-outline" href="https://dedc8.uneb.br/arqueologia/" target="_blank" rel="noopener noreferrer">Site do curso</a></div></section>
+      ${sectionHead('Backup', 'Guarde uma cópia antes de trocar de aparelho ou navegador.')}
+      <section class="panel"><div class="hero-actions"><button class="btn" data-export>Exportar backup</button><button class="btn btn-outline" data-import>Importar backup</button><button class="btn btn-danger" data-reset>Apagar meus dados</button></div></section>
+    </div>`;
   }
 
-  function notebookView() {
-    const sem = Number(state.currentSemester || 1);
-    const courses = DATA.courses.filter(c => c.semester === sem);
-    const total = courses.reduce((sum, course) => sum + notebookEntriesFor(course).length, 0);
-    const rows = courses.map(course => {
-      const entries = notebookEntriesFor(course);
-      const latest = entries[0];
-      return `<article class="notebook-course-row">
-        <div><span class="eyebrow">${sem}º semestre</span><h3>${esc(course.title)}</h3><p>${entries.length ? `${entries.length} folha(s) de aula${latest?.date ? ` · mais recente: ${esc(formatDateBR(latest.date))}` : ''}` : 'Nenhuma folha de aula ainda.'}</p></div>
-        <button class="btn ${entries.length ? 'btn-soft' : 'btn-outline'}" data-course-open="${esc(course.id)}" data-open-tab="notes" ${entries.length ? '' : 'data-new-note="1"'}>${entries.length ? 'Abrir caderno' : '+ Começar caderno'}</button>
-      </article>`;
-    }).join('');
-    return `<div class="section-head top-section"><div><span class="eyebrow">Caderno digital</span><h1>Meu caderno do ${sem}º semestre</h1><p>${total} folha(s) salvas nas ${courses.length} matérias do seu semestre atual.</p></div><button class="btn btn-outline" data-course-open="${esc(courses[0]?.id || '')}" data-open-tab="notes" ${courses.length ? '' : 'disabled'}>Abrir caderno</button></div>
-      <div class="notice info"><div>✎</div><div><strong>Este espaço é seu caderno de sala</strong><p>As aulas do app são material de apoio. Aqui você cria folhas por aula para registrar o que o professor realmente ensinou, exemplos dados em sala, dúvidas, leituras e tarefas.</p></div></div>
-      <div class="notebook-course-list">${rows}</div>`;
+  function renderSearch() {
+    const q = normalizeText(searchQuery);
+    const results = allCourses().filter(c => courseSearchText(c).includes(q));
+    view.innerHTML = `<div class="page-enter">${sectionHead(`Resultados para “${searchQuery}”`, `${results.length} ${results.length===1?'matéria encontrada':'matérias encontradas'}.`)}${results.length ? `<div class="course-grid">${results.map(courseCard).join('')}</div>` : emptyState('Nada encontrado', 'Tente o nome da matéria, professor, uma frase do caderno, revisão ou pergunta de quiz.')}</div>`;
   }
 
-  function favoritesView() {
-    const items = [...DATA.courses, ...DATA.optatives].filter(c => state.favorites[c.id]);
-    return `<div class="section-head top-section"><div><span class="eyebrow">Sua seleção</span><h1>Favoritas</h1><p>Matérias que você quer manter por perto.</p></div></div>
-      ${items.length ? `<div class="card-grid">${items.map(courseCard).join('')}</div>` : `<div class="empty"><h3>Nenhuma favorita ainda</h3><p>Toque na estrela de uma matéria para ela aparecer aqui.</p></div>`}`;
+  function renderCurrentView() {
+    $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
+    if (searchQuery.trim()) return renderSearch();
+    ({ dashboard: renderDashboard, semester: renderSemester, notebook: renderNotebook, calendar: renderCalendar, review: renderReview, all: renderAll, optatives: renderOptatives, favorites: renderFavorites, about: renderAbout }[state.view] || renderDashboard)();
+    updateSidebarProgress();
   }
 
-  function glossaryView() {
-    const entries = [];
-    const seen = new Map();
-    DATA.courses.forEach(course => conceptsForCourse(course).forEach(concept => {
-      const key = normalizeText(concept.term);
-      if (!key || seen.has(key)) return;
-      seen.set(key, true);
-      entries.push({ term: concept.term, definition: concept.definition, course });
-    }));
-    entries.sort((a, b) => a.term.localeCompare(b.term, 'pt-BR'));
-    return `<div class="section-head top-section"><div><span class="eyebrow">Conceitos-chave</span><h1>Glossário</h1><p>${entries.length} conceitos de apoio das disciplinas obrigatórias. Use a busca do topo para localizar termos.</p></div></div>
-      <div class="notice info"><div>i</div><div><strong>Glossário de apoio</strong><p>As definições ajudam na revisão, mas não substituem a definição adotada pelo professor ou pela bibliografia da disciplina.</p></div></div>
-      <div class="glossary-list">${entries.map(e => `<article class="glossary-item"><div><strong>${esc(e.term)}</strong><span>${e.course.semester}º · ${esc(e.course.title)}</span></div><p>${esc(e.definition)}</p><button class="btn btn-outline btn-sm" data-course-open="${esc(e.course.id)}" data-open-tab="content">Abrir matéria</button></article>`).join('')}</div>`;
+  // ---------- CALENDÁRIO ----------
+  const CAL_TYPES = {
+    note:['Nota','•'], class:['Aula','A'], exam:['Prova','P'], assignment:['Trabalho','T'], reading:['Leitura','L'], deadline:['Prazo','!'], reminder:['Lembrete','○']
+  };
+  function calendarEntriesFor(date) { return Array.isArray(state.calendarEntries[date]) ? state.calendarEntries[date] : []; }
+  function upcomingCalendarEntries(limit = 6) {
+    const today = todayISO();
+    return Object.entries(state.calendarEntries).flatMap(([date,entries]) => entries.map(entry => ({...entry,date}))).filter(e => e.date >= today && !e.done).sort((a,b) => `${a.date} ${a.time||'99:99'}`.localeCompare(`${b.date} ${b.time||'99:99'}`)).slice(0,limit);
+  }
+  function calendarCompactCard(entry) {
+    const course = getCourse(entry.courseId), type = CAL_TYPES[entry.type] || CAL_TYPES.note;
+    return `<article class="upcoming-item ${entry.done?'done':''}"><div class="upcoming-date"><strong>${entry.date.slice(8,10)}</strong><span>${new Intl.DateTimeFormat('pt-BR',{month:'short'}).format(new Date(`${entry.date}T12:00:00`)).replace('.','')}</span></div><div><span class="calendar-type type-${esc(entry.type)}">${type[1]} ${type[0]}</span><h4>${esc(entry.title || 'Sem título')}</h4><p>${entry.time ? `${esc(entry.time)} · ` : ''}${course ? esc(course.title) : 'Sem matéria vinculada'}</p></div></article>`;
+  }
+  function calendarCell(date, day, currentMonth) {
+    const entries = calendarEntriesFor(date), isToday = date === todayISO(), selected = date === state.calendarSelectedDate;
+    return `<button class="calendar-day ${currentMonth?'':'outside'} ${isToday?'today':''} ${selected?'selected':''}" data-calendar-date="${date}"><span class="day-number">${day}</span><div class="day-events">${entries.slice(0,3).map(e => `<span class="day-event type-${esc(e.type)}" title="${esc(e.title)}">${esc(e.title || 'Nota')}</span>`).join('')}${entries.length>3?`<small>+${entries.length-3}</small>`:''}</div></button>`;
+  }
+  function renderCalendar() {
+    const month = state.calendarMonth || monthISO(); state.calendarMonth = month;
+    if (!state.calendarSelectedDate || !state.calendarSelectedDate.startsWith(month)) state.calendarSelectedDate = month === monthISO() ? todayISO() : `${month}-01`;
+    const [year, mon] = month.split('-').map(Number), first = new Date(year,mon-1,1), start = new Date(year,mon-1,1-first.getDay());
+    const cells = [];
+    for (let i=0;i<42;i++) { const d=new Date(start); d.setDate(start.getDate()+i); const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; cells.push(calendarCell(iso,d.getDate(),d.getMonth()===mon-1)); }
+    const selectedEntries = calendarEntriesFor(state.calendarSelectedDate);
+    view.innerHTML = `<div class="page-enter">${sectionHead('Calendário', 'Provas, trabalhos, leituras, aulas, prazos e notas em uma visão mensal.', '<button class="btn btn-soft" data-calendar-today>Hoje</button>')}
+      <div class="calendar-layout"><section class="calendar-panel panel"><div class="calendar-toolbar"><button class="icon-btn" data-calendar-prev aria-label="Mês anterior">‹</button><h3>${esc(formatMonth(month))}</h3><button class="icon-btn" data-calendar-next aria-label="Próximo mês">›</button></div><div class="calendar-weekdays">${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d=>`<span>${d}</span>`).join('')}</div><div class="calendar-grid">${cells.join('')}</div></section>
+      <aside class="calendar-detail panel"><div class="calendar-detail-head"><div><span class="eyebrow">Dia selecionado</span><h3>${formatDate(state.calendarSelectedDate)}</h3></div><button class="btn btn-soft btn-sm" data-calendar-new>+ Adicionar</button></div>
+      <div class="calendar-entry-list">${selectedEntries.length ? selectedEntries.map(e => calendarEntryCard(state.calendarSelectedDate,e)).join('') : '<p class="muted">Nenhum item neste dia.</p>'}</div><div id="calendarFormSlot"></div></aside></div></div>`;
+    if (calendarEditingId === 'new') renderCalendarForm(state.calendarSelectedDate, null);
+    else if (calendarEditingId) renderCalendarForm(state.calendarSelectedDate, selectedEntries.find(e=>e.id===calendarEditingId));
+  }
+  function calendarEntryCard(date, entry) {
+    const course=getCourse(entry.courseId), type=CAL_TYPES[entry.type]||CAL_TYPES.note;
+    return `<article class="calendar-entry ${entry.done?'done':''}"><div class="calendar-entry-main"><div class="calendar-entry-title"><span class="calendar-type type-${esc(entry.type)}">${type[1]} ${type[0]}</span><strong>${esc(entry.title || 'Sem título')}</strong></div><p>${entry.time?`${esc(entry.time)} · `:''}${course?esc(course.title):'Sem matéria vinculada'}</p>${entry.details?`<small>${esc(entry.details)}</small>`:''}</div><div class="calendar-entry-actions"><button class="icon-btn small" data-calendar-done="${esc(date)}|${esc(entry.id)}" title="${entry.done?'Reabrir':'Concluir'}">${entry.done?'↶':'✓'}</button><button class="icon-btn small" data-calendar-edit="${esc(entry.id)}" title="Editar">✎</button><button class="icon-btn small danger" data-calendar-delete="${esc(date)}|${esc(entry.id)}" title="Excluir">×</button></div></article>`;
+  }
+  function renderCalendarForm(date, entry) {
+    const slot=$('#calendarFormSlot'); if(!slot)return;
+    slot.innerHTML=`<form class="calendar-form" data-calendar-form><h4>${entry?'Editar item':'Novo item'}</h4><div class="form-grid two"><label>Título<input name="title" required maxlength="200" value="${esc(entry?.title||'')}"></label><label>Tipo<select name="type">${Object.entries(CAL_TYPES).map(([k,v])=>`<option value="${k}" ${entry?.type===k?'selected':''}>${v[0]}</option>`).join('')}</select></label></div><div class="form-grid two"><label>Data<input type="date" name="date" value="${esc(date)}" required></label><label>Horário<input type="time" name="time" value="${esc(entry?.time||'')}"></label></div><label>Matéria<select name="courseId"><option value="">Sem matéria</option>${allCourses().map(c=>`<option value="${esc(c.id)}" ${entry?.courseId===c.id?'selected':''}>${esc(c.title)}</option>`).join('')}</select></label><label>Observações<textarea name="details" rows="4">${esc(entry?.details||'')}</textarea></label><div class="form-actions"><button class="btn" type="submit">Salvar</button><button class="btn btn-outline" type="button" data-calendar-cancel>Cancelar</button></div></form>`;
   }
 
-  function reviewView() {
-    const sem = Number(state.currentSemester || 1);
-    const current = DATA.courses.filter(c => c.semester === sem);
-    const needs = current.map(c => ({ c, ...reviewState(c) })).filter(r => r.need && state.statuses[r.c.id] !== 'done');
-    return `<div class="section-head top-section"><div><span class="eyebrow">Memória ativa</span><h1>Revisão</h1><p>Veja o que ainda falta consolidar no ${sem}º semestre entre as matérias que você já iniciou.</p></div><button class="btn btn-outline" data-go-sem="${sem}">Voltar às matérias</button></div>
-      <div class="review-explainer"><strong>Regra simples:</strong> tente explicar sem olhar, confira a resposta e marque “Acertei” só quando conseguir responder com suas próprias palavras. No quiz, use 70% como mínimo para consolidar a parcela de revisão.</div>
-      ${needs.length ? `<div class="review-list">${needs.map(r => `<article class="review-row">
-        <div><span class="eyebrow">${r.c.semester}º semestre</span><h3>${esc(r.c.title)}</h3><p>${r.unchecked} aula(s) pendente(s) · ${r.mastered}/${r.cards.length} flashcards dominados · quiz ${r.score === undefined ? 'não feito' : `${r.score}%`}</p></div>
-        <div class="review-actions">${r.topicsPending ? `<button class="btn btn-soft btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="content">Aulas</button>` : ''}${r.flashPending ? `<button class="btn btn-soft btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="flash">Flashcards</button>` : ''}${r.quizPending ? `<button class="btn btn-outline btn-sm" data-course-open="${esc(r.c.id)}" data-open-tab="quiz">Quiz</button>` : ''}</div>
-      </article>`).join('')}</div>` : `<div class="empty"><h3>Nada pendente entre as matérias iniciadas 🎉</h3><p>Quando você começar uma matéria, as aulas, flashcards ou quiz que ainda faltarem aparecerão aqui.</p></div>`}`;
+  // ---------- DIÁLOGO DA MATÉRIA ----------
+  function tabButton(id,label,active){return `<button type="button" class="course-tab ${active===id?'active':''}" data-tab="${id}">${label}</button>`;}
+  function openCourse(courseId, initialTab='overview', openNotebookId=null) {
+    const course=getCourse(courseId); if(!course)return;
+    const status=courseStatus(course), fav=state.favorites[course.id]===true, pages=notebookPages(course), reviews=reviewItems(course), quizzes=quizItems(course), rp=reviewProgress(course);
+    dialogContent.innerHTML=`<article class="course-dialog-page" data-course-dialog="${esc(course.id)}">
+      <header class="course-dialog-header"><div><span class="course-sem">${esc(courseTypeLabel(course))}</span><h2>${esc(course.title)}</h2><div class="course-meta"><span>${course.matrixHours||0}h</span>${course.credits?`<span>${esc(course.credits)}</span>`:''}${course.officialSyllabusAvailable===false?'<span class="source-pill suggested">PPP: sem ementa</span>':'<span class="source-pill official">PPP oficial</span>'}</div></div><button class="favorite-btn large ${fav?'active':''}" data-favorite="${esc(course.id)}">${fav?'★':'☆'}</button></header>
+      <div class="status-row">${[['todo','Não iniciada'],['studying','Cursando'],['done','Concluída']].map(([v,l])=>`<button class="status-btn ${status===v?'active':''}" data-status="${v}">${l}</button>`).join('')}</div>
+      <div class="course-quick-stats"><span>✎ ${pages.length} ${pages.length===1?'folha':'folhas'}</span><span>↻ ${reviews.length} revisões</span><span>? ${quizzes.length} perguntas</span>${rp===null?'<span>Sem progresso de revisão</span>':`<span>${rp}% das revisões concluídas</span>`}</div>
+      <div class="course-tabs">${tabButton('overview','Visão geral',initialTab)}${tabButton('syllabus','Ementa oficial',initialTab)}${tabButton('biblio','Bibliografia',initialTab)}${tabButton('class','Minha turma',initialTab)}${tabButton('notes','Caderno',initialTab)}${tabButton('review','Revisão',initialTab)}${tabButton('quiz','Meu quiz',initialTab)}</div>
+      <div class="course-panels">
+        <section class="tab-panel ${initialTab==='overview'?'active':''}" data-panel="overview">${renderCourseOverview(course)}</section>
+        <section class="tab-panel ${initialTab==='syllabus'?'active':''}" data-panel="syllabus">${renderSyllabus(course)}</section>
+        <section class="tab-panel ${initialTab==='biblio'?'active':''}" data-panel="biblio">${renderBibliography(course)}</section>
+        <section class="tab-panel ${initialTab==='class'?'active':''}" data-panel="class">${renderClassPanel(course)}</section>
+        <section class="tab-panel ${initialTab==='notes'?'active':''}" data-panel="notes"><div data-notebook-root></div></section>
+        <section class="tab-panel ${initialTab==='review'?'active':''}" data-panel="review"><div data-review-root></div></section>
+        <section class="tab-panel ${initialTab==='quiz'?'active':''}" data-panel="quiz"><div data-quiz-root></div></section>
+      </div></article>`;
+    renderNotebookList(course, openNotebookId);
+    renderReviewPanel(course);
+    renderQuizPanel(course);
+    if (!dialog.open) dialog.showModal();
+  }
+  function renderCourseOverview(course) {
+    const plan=coursePlan(course);
+    return `<div class="tab-heading"><div><span class="eyebrow">Disciplina</span><h3>Seu espaço desta matéria</h3><p>O app não presume o conteúdo das aulas. Use a ementa como referência e construa o restante conforme sua turma avançar.</p></div></div>
+      <div class="overview-grid"><div class="overview-card"><span>Professor(a)</span><strong>${esc(plan.professor || 'Ainda não informado')}</strong></div><div class="overview-card"><span>Horário</span><strong>${esc(plan.schedule || 'Ainda não informado')}</strong></div><div class="overview-card"><span>Caderno</span><strong>${notebookPages(course).length} folhas</strong></div><div class="overview-card"><span>Revisão</span><strong>${reviewItems(course).length} itens</strong></div></div>
+      <div class="notice info"><div>✦</div><div><strong>Fluxo sugerido</strong><p>Depois da aula, crie uma folha no Caderno. Quando aparecer algo importante para prova ou fixação, adicione em Revisão. Se quiser testar sua memória, transforme o conteúdo em perguntas no Meu quiz.</p></div></div>
+      ${state.notes[course.id] ? `<div class="legacy-note"><h4>Anotação geral antiga</h4><p>${esc(state.notes[course.id])}</p></div>` : ''}`;
+  }
+  function renderSyllabus(course) {
+    return `<div class="official-box"><span class="source-pill official">PPP oficial</span><h3>Ementa</h3><p class="syllabus">${esc(course.syllabus || 'O PPP não informa ementa específica para este componente.')}</p>${course.note?`<div class="notice warn"><div>!</div><div><strong>Observação</strong><p>${esc(course.note)}</p></div></div>`:''}</div>`;
+  }
+  function renderBibliography(course) {
+    return `<div class="official-box"><span class="source-pill official">PPP oficial</span><h3>Bibliografia</h3>${course.bibliographyBasic?`<div class="biblio"><h4>Bibliografia básica</h4><p>${esc(course.bibliographyBasic)}</p></div>`:`<p class="syllabus">${course.officialSyllabusAvailable===false?'O PPP consultado não apresenta bibliografia específica para esta optativa.':'O PPP não informa bibliografia específica para este componente.'}</p>`}${course.bibliographyComplementary?`<div class="biblio"><h4>Bibliografia complementar</h4><p>${esc(course.bibliographyComplementary)}</p></div>`:''}</div>`;
+  }
+  function renderClassPanel(course) {
+    const p=coursePlan(course);
+    return `<div class="tab-heading"><div><span class="eyebrow">Sua turma</span><h3>Informações práticas</h3><p>Preencha quando receber os dados da disciplina. Tudo salva automaticamente.</p></div></div><form class="class-form" data-class-form="${esc(course.id)}"><div class="form-grid two"><label>Professor(a)<input name="professor" value="${esc(p.professor)}"></label><label>Período letivo<input name="period" placeholder="Ex.: 2026.2" value="${esc(p.period)}"></label></div><div class="form-grid two"><label>Horário<input name="schedule" placeholder="Ex.: segunda, 14h–18h" value="${esc(p.schedule)}"></label><label>Sala / laboratório<input name="room" value="${esc(p.room)}"></label></div><label>Contato / AVA / grupo<input name="contact" value="${esc(p.contact)}"></label><label>Plano de ensino / observações<textarea name="plan" rows="6">${esc(p.plan)}</textarea></label><div class="autosave-note">Salvamento automático</div></form>`;
   }
 
-  function aboutView() {
-    const discrepancyRows = DATA.courses.filter(c => c.note).map(c => `<tr><th>${esc(c.title)}</th><td>${esc(c.note)}</td></tr>`).join('');
-    const m = DATA.meta;
-    return `<div class="section-head top-section"><div><span class="eyebrow">Fonte e auditoria</span><h1>Sobre o PPP</h1><p>O que é oficial, o que é apoio e quais inconsistências existem no próprio documento.</p></div></div>
-      <div class="about-grid"><section class="panel"><h2>Fonte oficial</h2><table class="detail-table">
-        <tr><th>Curso</th><td>${esc(m.course)}</td></tr><tr><th>Instituição</th><td>${esc(m.institution)}</td></tr><tr><th>Campus</th><td>${esc(m.campus)}</td></tr><tr><th>Documento</th><td>${esc(m.sourceTitle)}</td></tr><tr><th>Semestres</th><td>${m.semesters}</td></tr><tr><th>Componentes listados</th><td>${m.matrixListedComponents} obrigatórios + ${m.optionalComponents} optativas</td></tr>
-      </table><p class="source-link"><a href="${esc(m.sourceUrl)}" target="_blank" rel="noopener">Abrir PDF oficial da UNEB ↗</a></p></section>
-      <section class="panel"><h2>O que cada camada significa</h2><p><strong>Oficial do PPP:</strong> nome na matriz, carga horária, ementa, créditos e bibliografia quando presentes.</p><p><strong>Roteiro sugerido:</strong> tópicos, explicações, flashcards, quiz e dicas criados para facilitar seus estudos a partir da ementa.</p><p><strong>Plano da turma:</strong> quando o professor entregar, ele é a referência para ordem das aulas, avaliações e leituras efetivamente cobradas.</p></section></div>
-      <div class="section-head"><div><h2>Auditoria da matriz</h2><p>Conferência matemática e estrutural do próprio PPP.</p></div></div>
-      <div class="audit-grid">
-        <div class="audit-card"><span>Matriz enumerada</span><strong>${m.matrixListedComponents}</strong><small>componentes obrigatórios</small></div>
-        <div class="audit-card"><span>Soma da matriz</span><strong>${m.matrixRequiredHoursSum}h</strong><small>pelas cargas listadas</small></div>
-        <div class="audit-card warn"><span>PPP declara</span><strong>${m.pppDeclaredRequiredHours}h</strong><small>diferença de ${m.pppDeclaredRequiredHours - m.matrixRequiredHoursSum}h</small></div>
-        <div class="audit-card warn"><span>Estágios</span><strong>${m.matrixListedStages}</strong><small>o texto introdutório fala em ${m.pppDeclaredStages}</small></div>
-      </div>
-      <div class="audit-grid audit-grid-secondary">
-        <div class="audit-card warn"><span>Créditos no item 2.11</span><strong>${m.pppDeclaredCreditsMatrixSection}</strong><small>créditos mínimos declarados</small></div>
-        <div class="audit-card warn"><span>Créditos no item 2.13</span><strong>${m.pppDeclaredCreditsRegimeSection}</strong><small>o mesmo PPP declara outro total</small></div>
-        <div class="audit-card warn"><span>Percentuais declarados</span><strong>${m.pppDeclaredSpecificPercent}/${m.pppDeclaredOptionalPercent}/${m.pppDeclaredFreePercent}%</strong><small>específica / optativa / livre</small></div>
-        <div class="audit-card"><span>Percentuais pela conta do PPP</span><strong>${m.recomputedSpecificPercent}/${m.recomputedOptionalPercent}/${m.recomputedFreePercent}%</strong><small>usando 4.840h como denominador</small></div>
-      </div>
-      <div class="notice"><div>⚠</div><div><strong>O PPP não fecha matematicamente</strong><p>A matriz listada soma ${m.matrixRequiredHoursSum}h. Somando as ${m.optionalCatalogHoursSum}h de optativas e ${m.freeFormationHours}h de formação livre, o total recomposto seria ${m.recomputedTotalFromListedMatrix}h, enquanto o documento declara ${m.pppDeclaredTotalHours}h. O app não inventa uma disciplina de 60h para completar a conta.</p></div></div>
-      <div class="section-head"><div><h2>Divergências por disciplina</h2><p>Diferenças de nome ou carga horária encontradas entre matriz e ementário.</p></div></div><section class="panel"><table class="detail-table">${discrepancyRows}</table></section>
-      <div class="section-head"><div><h2>Backup</h2><p>Salve seu progresso antes de trocar de celular, navegador ou domínio.</p></div></div><section class="panel"><div class="hero-actions"><button class="btn" data-export>Exportar backup</button><button class="btn btn-outline" data-import>Importar backup</button><button class="btn btn-danger" data-reset>Apagar meu progresso</button></div></section>`;
+  // ---------- CADERNO ----------
+  function nextPageNumber(course) { return Math.max(0,...notebookPages(course).map(e=>Number(e.pageNumber)||0))+1; }
+  function createNotebookPage(course) {
+    const entry={ id:uid('page'), pageNumber:nextPageNumber(course), date:todayISO(), title:'', learned:'', concepts:'', questions:'', tasks:'', free:'' };
+    state.notebookEntries[course.id]=[entry,...notebookPages(course)]; saveState(); openCourse(course.id,'notes',entry.id); return entry;
+  }
+  function notebookPreview(entry) {
+    const text=[entry.learned,entry.concepts,entry.questions,entry.tasks,entry.free].filter(Boolean).join(' ');
+    return text.length>140?`${text.slice(0,140)}…`:text;
+  }
+  function renderNotebookList(course, openEntryId=null) {
+    const root=$('[data-notebook-root]',dialogContent); if(!root)return;
+    const pages=notebookPages(course);
+    root.innerHTML=`<div class="tab-heading"><div><span class="eyebrow">Caderno digital</span><h3>Folhas da matéria</h3><p>Crie uma folha para cada aula, orientação, leitura ou atividade. As folhas antigas ficam recolhidas.</p></div><button class="btn" data-notebook-new="${esc(course.id)}">+ Nova folha</button></div>${pages.length?`<div class="notebook-pages">${pages.map(entry=>renderNotebookPage(course,entry,entry.id===openEntryId)).join('')}</div>`:emptyState('Caderno vazio','Crie sua primeira folha quando a disciplina começar pelo botão acima.')}`;
+  }
+  function renderNotebookPage(course,entry,isOpen=false) {
+    const label=`Folha ${String(entry.pageNumber||0).padStart(2,'0')}`;
+    return `<article class="notebook-page ${isOpen?'open':''}" data-notebook-page="${esc(entry.id)}"><button class="notebook-page-cover" data-notebook-toggle="${esc(course.id)}|${esc(entry.id)}"><div><span class="page-number">${label}</span><h4>${esc(entry.title || 'Sem título')}</h4><p>${entry.date?formatDate(entry.date):'Sem data'} · ${wordCount([entry.learned,entry.concepts,entry.questions,entry.tasks,entry.free].join(' '))} palavras</p>${notebookPreview(entry)?`<small>${esc(notebookPreview(entry))}</small>`:''}</div><span class="page-chevron">⌄</span></button><div class="notebook-page-body"><div class="paper-sheet"><div class="form-grid two"><label>Data<input type="date" data-note-field="date" value="${esc(entry.date)}"></label><label>Título da aula / folha<input data-note-field="title" value="${esc(entry.title)}" placeholder="Ex.: Aula 03 — Cultura material"></label></div><label>O que aprendi na sala<textarea data-note-field="learned" rows="9" placeholder="Registre a explicação do professor com suas próprias palavras...">${esc(entry.learned)}</textarea></label><label>Conceitos e palavras-chave<textarea data-note-field="concepts" rows="4">${esc(entry.concepts)}</textarea></label><label>Dúvidas para perguntar ou revisar<textarea data-note-field="questions" rows="4">${esc(entry.questions)}</textarea></label><label>Tarefas, leituras e prazos<textarea data-note-field="tasks" rows="4">${esc(entry.tasks)}</textarea></label><label>Observações livres<textarea data-note-field="free" rows="5">${esc(entry.free)}</textarea></label></div><div class="notebook-page-actions"><button class="btn btn-soft btn-sm" data-note-pdf="${esc(course.id)}|${esc(entry.id)}">Salvar PDF</button><button class="btn btn-danger btn-sm" data-note-delete="${esc(course.id)}|${esc(entry.id)}">Excluir folha</button></div></div></article>`;
+  }
+  function getNotebookEntry(courseId,entryId){return notebookPages(getCourse(courseId)).find(e=>e.id===entryId);}
+  function saveNotebookField(courseId,entryId,field,value){const entry=getNotebookEntry(courseId,entryId); if(!entry||!['date','title','learned','concepts','questions','tasks','free'].includes(field))return; entry[field]=String(value); saveState();}
+  function deleteNotebookPage(courseId,entryId){const course=getCourse(courseId); if(!course)return; if(!confirm('Excluir esta folha do caderno?'))return; state.notebookEntries[courseId]=notebookPages(course).filter(e=>e.id!==entryId); saveState(); openCourse(courseId,'notes');}
+  function printNotebookPage(courseId,entryId) {
+    const course=getCourse(courseId), entry=getNotebookEntry(courseId,entryId); if(!course||!entry)return;
+    const sections=[['O que aprendi',entry.learned],['Conceitos e palavras-chave',entry.concepts],['Dúvidas',entry.questions],['Tarefas, leituras e prazos',entry.tasks],['Observações',entry.free]].filter(([,v])=>String(v).trim());
+    const html=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(course.title)} — Folha ${entry.pageNumber}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#28231f;line-height:1.55;font-size:11pt}header{border-bottom:2px solid #765746;padding-bottom:10px;margin-bottom:20px}small{color:#766b63}h1{font-size:20pt;margin:4px 0}h2{font-size:13pt;margin:22px 0 6px;color:#684a3a;page-break-after:avoid}p{white-space:pre-wrap;margin:0}.meta{display:flex;justify-content:space-between;gap:20px}.brand{font-weight:700;color:#684a3a}section{break-inside:avoid;margin-bottom:14px}footer{margin-top:28px;padding-top:8px;border-top:1px solid #ddd;color:#777;font-size:9pt}</style></head><body><header><div class="brand">Arqueologia Study Hub · UNEB</div><small>${esc(course.title)} · Folha ${String(entry.pageNumber).padStart(2,'0')}</small><h1>${esc(entry.title||'Anotação de aula')}</h1><div class="meta"><span>${entry.date?formatDate(entry.date):'Sem data'}</span><span>${wordCount(sections.map(s=>s[1]).join(' '))} palavras</span></div></header>${sections.map(([h,t])=>`<section><h2>${esc(h)}</h2><p>${esc(t)}</p></section>`).join('')}<footer>Caderno acadêmico pessoal · Projeto independente baseado na grade do Bacharelado em Arqueologia da UNEB — Campus VIII.</footer><script>window.onload=()=>window.print()<\/script></body></html>`;
+    const w=window.open('','_blank'); if(!w){showToast('O navegador bloqueou a janela de impressão. Permita pop-ups e tente novamente.','warn');return;} try{w.opener=null;}catch(_){} w.document.open();w.document.write(html);w.document.close();
   }
 
-  const courseSearchCache = new Map();
-  function courseStaticSearchText(course) {
-    if (courseSearchCache.has(course.id)) return courseSearchCache.get(course.id);
-    const p = packFor(course);
-    const lessonParts = Object.values(LESSONS.deep?.[course.id] || {}).flatMap(lesson => [
-      lesson?.explanation, lesson?.deepDive, lesson?.example, ...(lesson?.remember || []), ...(lesson?.review || []), ...(lesson?.reviewAnswers || []), ...(lesson?.commonMistakes || []), ...(lesson?.studySteps || [])
-    ]);
-    const hay = normalizeText([course.title, course.matrixNameOriginal, course.syllabus, course.ementaryName, ...(course.topics || []), course.bibliographyBasic, course.bibliographyComplementary, p.overview, ...(p.studyTips || []), ...conceptsForCourse(course).flatMap(x => [x.term, x.definition]), ...lessonParts].join(' '));
-    courseSearchCache.set(course.id, hay);
-    return hay;
+  // ---------- REVISÃO PERSONALIZADA ----------
+  function renderReviewPanel(course) {
+    const root=$('[data-review-root]',dialogContent); if(!root)return;
+    const items=reviewItems(course), done=items.filter(i=>i.done).length, pct=items.length?Math.round(done/items.length*100):0;
+    root.innerHTML=`<div class="tab-heading"><div><span class="eyebrow">Criado por você</span><h3>Revisão da matéria</h3><p>Adicione somente o que realmente apareceu na sua turma ou o que você decidiu revisar.</p></div></div>
+      ${items.length?`<div class="review-progress-box"><div><strong>${done}/${items.length}</strong><span>itens concluídos</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><strong>${pct}%</strong></div>`:''}
+      <form class="creator-form" data-review-form="${esc(course.id)}"><label>Tópico / questão para revisar<input name="title" required placeholder="Ex.: Diferença entre contexto primário e secundário"></label><label>Notas de revisão <span>(opcional)</span><textarea name="details" rows="3" placeholder="O que você precisa lembrar, página do texto, observação do professor..."></textarea></label><button class="btn" type="submit">+ Adicionar à revisão</button></form>
+      <div class="custom-list">${items.length?items.map(item=>`<article class="custom-review-item ${item.done?'done':''}"><label class="review-check"><input type="checkbox" data-review-toggle="${esc(course.id)}|${esc(item.id)}" ${item.done?'checked':''}><span><strong>${esc(item.title||'Item sem título')}</strong>${item.details?`<small>${esc(item.details)}</small>`:''}</span></label><button class="icon-btn small danger" data-review-delete="${esc(course.id)}|${esc(item.id)}" title="Excluir">×</button></article>`).join(''):emptyState('Nenhum item de revisão','Adicione o primeiro tópico depois de uma aula ou leitura.')}</div>`;
   }
+  function addReviewItem(courseId,title,details){state.reviewItems[courseId]=[{id:uid('review'),title:String(title).trim(),details:String(details).trim(),done:false,createdAt:new Date().toISOString()},...reviewItems(getCourse(courseId))];saveState();}
+  function toggleReview(courseId,itemId){const item=reviewItems(getCourse(courseId)).find(i=>i.id===itemId);if(!item)return;item.done=!item.done;saveState();}
+  function deleteReview(courseId,itemId){state.reviewItems[courseId]=reviewItems(getCourse(courseId)).filter(i=>i.id!==itemId);saveState();}
 
-  function searchView(query) {
-    const q = normalizeText(query);
-    const items = [...DATA.courses, ...DATA.optatives].filter(c => {
-      const personal = [state.notes[c.id] || '', ...Object.values(state.coursePlans[c.id] || {}), ...notebookEntriesFor(c).flatMap(n => [n.title, n.learned, n.concepts, n.questions, n.tasks, n.free])];
-      return `${courseStaticSearchText(c)} ${normalizeText(personal.join(' '))}`.includes(q);
-    });
-    return `<div class="section-head top-section"><div><span class="eyebrow">Busca</span><h1>“${esc(query)}”</h1><p>${items.length} resultado(s) em matérias, ementas, aulas, conceitos e no seu caderno.</p></div></div>${items.length ? `<div class="card-grid">${items.map(courseCard).join('')}</div>` : `<div class="empty"><h3>Nada encontrado</h3><p>Tente termos como “ossos”, “cerâmica”, “estratigrafia”, “patrimônio”, “DNA”, “estatística” ou “campo”.</p></div>`}`;
+  // ---------- QUIZ PERSONALIZADO ----------
+  function renderQuizPanel(course) {
+    const root=$('[data-quiz-root]',dialogContent); if(!root)return;
+    const items=quizItems(course), correct=items.filter(i=>i.mastery==='correct').length, review=items.filter(i=>i.mastery==='review').length;
+    root.innerHTML=`<div class="tab-heading"><div><span class="eyebrow">Criado por você</span><h3>Meu quiz</h3><p>Transforme o que o professor passou em perguntas. Na revisão, tente responder antes de revelar o gabarito e faça sua própria avaliação.</p></div></div>
+      ${items.length?`<div class="quiz-summary"><span><strong>${items.length}</strong> perguntas</span><span><strong>${correct}</strong> acertei</span><span><strong>${review}</strong> preciso revisar</span></div>`:''}
+      <form class="creator-form" data-quiz-form="${esc(course.id)}"><label>Pergunta<textarea name="question" required rows="3" placeholder="Ex.: O que diferencia um artefato de um ecofato?"></textarea></label><label>Resposta correta<textarea name="answer" required rows="4" placeholder="Escreva a resposta que você quer usar como gabarito."></textarea></label><label>Explicação / complemento <span>(opcional)</span><textarea name="explanation" rows="3" placeholder="Observação do professor, exemplo, página do texto..."></textarea></label><button class="btn" type="submit">+ Adicionar pergunta</button></form>
+      <div class="quiz-custom-list">${items.length?items.map((item,index)=>`<article class="custom-quiz-card"><div class="quiz-question-head"><span>Questão ${items.length-index}</span><button class="icon-btn small danger" data-quiz-delete="${esc(course.id)}|${esc(item.id)}" title="Excluir">×</button></div><h4>${esc(item.question)}</h4><details><summary>Ver resposta</summary><div class="answer-box"><strong>Resposta</strong><p>${esc(item.answer)}</p>${item.explanation?`<strong>Complemento</strong><p>${esc(item.explanation)}</p>`:''}</div></details><div class="self-grade"><span>Depois de conferir:</span><button class="btn btn-soft btn-sm ${item.mastery==='correct'?'active':''}" data-quiz-mastery="${esc(course.id)}|${esc(item.id)}|correct">✓ Acertei</button><button class="btn btn-soft btn-sm ${item.mastery==='review'?'active':''}" data-quiz-mastery="${esc(course.id)}|${esc(item.id)}|review">↻ Preciso revisar</button></div></article>`).join(''):emptyState('Nenhuma pergunta criada','Crie perguntas a partir do que foi ensinado em sala.')}</div>`;
   }
+  function addQuizItem(courseId,question,answer,explanation){state.customQuizzes[courseId]=[{id:uid('quiz'),question:String(question).trim(),answer:String(answer).trim(),explanation:String(explanation).trim(),mastery:'',createdAt:new Date().toISOString()},...quizItems(getCourse(courseId))];saveState();}
+  function setQuizMastery(courseId,itemId,mastery){const item=quizItems(getCourse(courseId)).find(i=>i.id===itemId);if(!item)return;item.mastery=item.mastery===mastery?'':mastery;saveState();}
+  function deleteQuiz(courseId,itemId){state.customQuizzes[courseId]=quizItems(getCourse(courseId)).filter(i=>i.id!==itemId);saveState();}
 
-  function render() {
-    if (searchQuery.trim()) view.innerHTML = searchView(searchQuery);
-    else {
-      switch (state.view) {
-        case 'semester': view.innerHTML = semesterView(Number(state.semesterFilter || state.currentSemester || 1)); break;
-        case 'notebook': view.innerHTML = notebookView(); break;
-        case 'all': view.innerHTML = allView(); break;
-        case 'review': view.innerHTML = reviewView(); break;
-        case 'optatives': view.innerHTML = optativesView(); break;
-        case 'favorites': view.innerHTML = favoritesView(); break;
-        case 'glossary': view.innerHTML = glossaryView(); break;
-        case 'about': view.innerHTML = aboutView(); break;
-        default: view.innerHTML = dashboard();
-      }
-    }
-    bindDynamic(); updateGlobalProgress();
+  // ---------- BACKUP ----------
+  function exportBackup() {
+    const payload={ app:'Arqueologia Study Hub · UNEB', version:APP_VERSION, exportedAt:new Date().toISOString(), state };
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url;a.download=`arqueologia-study-hub-backup-${todayISO()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast('Backup exportado.');
   }
+  function importBackupFile(file) {
+    const reader=new FileReader(); reader.onload=()=>{try{const parsed=JSON.parse(reader.result);const incoming=parsed?.state||parsed;if(!incoming||typeof incoming!=='object')throw new Error('Formato inválido');state=migrateLegacy(incoming);normalizeNotebookEntries(state);normalizeReviewItems(state);normalizeQuizzes(state);normalizeCalendar(state);saveState();syncSemesterSelect();applySidebarState();renderCurrentView();showToast('Backup importado com sucesso.');}catch(e){console.error(e);showToast('Não foi possível importar este backup.','warn');}};reader.readAsText(file);
+  }
+  function resetData(){if(!confirm('Apagar caderno, calendário, revisões, quizzes, dados da turma, favoritas e status deste navegador?'))return;state=clone(defaultState);localStorage.removeItem(STORAGE_KEY);saveState();syncSemesterSelect();applySidebarState();renderCurrentView();showToast('Dados locais apagados.');}
 
-  const CATEGORY_LESSON = {
-    theory: {
-      approach: 'Neste tipo de conteúdo, o objetivo não é decorar nomes isolados. Compare problemas, conceitos, pressupostos, evidências e críticas. Pergunte sempre o que cada abordagem consegue explicar e o que deixa de fora.',
-      example: 'Pegue a mesma evidência e imagine duas interpretações diferentes. Depois identifique qual conceito ou pressuposto faz cada leitura chegar a uma conclusão distinta.'
-    },
-    heritage: {
-      approach: 'Relacione patrimônio, memória, território, instituições e pessoas afetadas. Diferencie valor científico, valor social, obrigação legal e decisão ética, porque eles podem convergir ou entrar em conflito.',
-      example: 'Imagine uma área com interesse arqueológico afetada por uma obra. Liste pesquisadores, comunidade, órgão público e empreendedor e pergunte quais valores, responsabilidades e riscos cada ator percebe.'
-    },
-    material: {
-      approach: 'A análise material começa pela cadeia de ações: obtenção da matéria-prima, produção, uso, manutenção, descarte e transformação pós-deposicional. Forma, matéria-prima e contexto precisam ser interpretados em conjunto.',
-      example: 'Compare dois objetos visualmente semelhantes encontrados em contextos diferentes e pergunte se foram produzidos, usados e descartados da mesma maneira.'
-    },
-    quant: {
-      approach: 'Defina unidade de análise, variável, procedimento de coleta e forma de comparação antes de calcular ou classificar. Um número só é útil quando sabemos exatamente o que foi medido, como e com qual margem de incerteza.',
-      example: 'Monte uma pequena tabela hipotética com dez vestígios e pergunte quais variáveis realmente ajudam a responder à pergunta de pesquisa e quais apenas acrescentam números sem interpretação.'
-    },
-    science: {
-      approach: 'Conecte observação, amostragem, processos naturais e hipótese arqueológica. Em conteúdos bioambientais, identificar um vestígio é apenas o começo: é preciso entender preservação, formação e significado contextual.',
-      example: 'Imagine uma amostra biológica retirada de um sítio e descreva o caminho desde a coleta até a interpretação, incluindo riscos de contaminação, identificação e contexto.'
-    },
-    law: {
-      approach: 'Separe norma, competência institucional, procedimento e responsabilidade profissional. Em Direito aplicado, não basta saber que uma proteção existe: é preciso entender quando ela se aplica e quem deve agir.',
-      example: 'Construa um caso hipotético de obra com patrimônio arqueológico e identifique quais decisões são técnicas, quais são administrativas e quais dependem de obrigação legal.'
-    },
-    regional: {
-      approach: 'Organize cronologia, ambiente, tipos de sítio, cultura material e modelos interpretativos. Evite transformar regiões inteiras em uma única cultura: compare diversidade interna e mudanças no tempo.',
-      example: 'Escolha dois sítios ou conjuntos de uma mesma região e compare cronologia, ambiente, materiais e interpretação antes de concluir que pertencem ao mesmo processo histórico.'
-    },
-    method: {
-      approach: 'Pense como um fluxo de trabalho: entrada de dados, procedimento, controle de qualidade, produto e interpretação. Métodos arqueológicos precisam ser repetíveis o suficiente para que outra pessoa entenda como o resultado foi produzido.',
-      example: 'Desenhe um passo a passo do procedimento e marque em que etapas um erro de registro poderia alterar a conclusão final.'
-    },
-    historical: {
-      approach: 'Cruze cultura material com documentos, imagens, oralidade e contexto arquitetônico. Fontes diferentes podem concordar, complementar-se ou contradizer-se; nenhuma deve ser tomada automaticamente como mais verdadeira.',
-      example: 'Imagine que um inventário descreve poucos bens, mas a escavação encontra grande variedade de objetos. Liste hipóteses para explicar a diferença antes de escolher uma interpretação.'
-    },
-    earth: {
-      approach: 'Relacione processos geológicos e geomorfológicos à formação, preservação e leitura do registro arqueológico. Escala temporal, transporte e deposição são essenciais para não confundir contexto original com material retrabalhado.',
-      example: 'Considere um artefato encontrado em depósito fluvial e pergunte se ele foi deixado ali por pessoas ou transportado depois por processos naturais.'
-    },
-    bio: {
-      approach: 'Diferencie identificação, inferência e diagnóstico. Dados biológicos exigem protocolos, comparação e incerteza explícita; uma característica isolada raramente sustenta uma conclusão forte.',
-      example: 'Imagine um conjunto de restos humanos ou dados genéticos e escreva quais observações seriam necessárias antes de inferir idade, ancestralidade, parentesco ou condição de saúde.'
-    },
-    field: {
-      approach: 'Trabalho de campo é documentação irreversível. Planejamento, segurança, contexto, proveniência e cadeia de registro são tão importantes quanto encontrar materiais.',
-      example: 'Monte um checklist de campo desde a abertura de uma unidade até o acondicionamento do material e identifique onde uma informação pode ser perdida.'
-    },
-    lab: {
-      approach: 'No laboratório, preserve proveniência e rastreabilidade. Limpeza, catalogação, classificação e armazenamento precisam seguir protocolos porque toda análise depende da ligação correta entre material e contexto.',
-      example: 'Imagine duas caixas com materiais semelhantes e etiquetas trocadas. Explique quais interpretações se tornam inseguras e por que cadeia de custódia é parte do dado.'
-    },
-    professional: {
-      approach: 'A formação profissional exige ler criticamente, sintetizar argumentos, comunicar evidências e reconhecer limites. O foco é transformar informação dispersa em uma posição acadêmica clara e verificável.',
-      example: 'Escolha dois textos que discordam e produza uma síntese curta indicando pergunta, evidência, argumento e ponto de divergência.'
-    },
-    methods: {
-      approach: 'Relatórios e projetos precisam permitir rastrear pergunta, método, evidência e conclusão. Estrutura textual não é burocracia: ela ajuda o leitor a verificar se o argumento realmente decorre dos dados.',
-      example: 'Pegue uma conclusão hipotética e trabalhe de trás para frente: que resultado, método e dado seriam necessários para sustentá-la?' 
-    }
+  // ---------- NAVEGAÇÃO / EVENTOS ----------
+  function syncSemesterSelect() {
+    const select=$('#currentSemester'); if(!select)return; select.innerHTML=[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}" ${n===state.currentSemester?'selected':''}>${n}º semestre</option>`).join('');
+  }
+  function applySidebarState() {
+    const desktop=window.matchMedia('(min-width: 961px)').matches;
+    document.body.classList.toggle('sidebar-collapsed', desktop && state.sidebarCollapsed);
+    if (!desktop) sidebar.classList.remove('open');
+    const expanded=desktop?!state.sidebarCollapsed:sidebar.classList.contains('open');
+    $('#menuBtn')?.setAttribute('aria-expanded', String(expanded));
+  }
+  function toggleSidebar() {
+    if(window.matchMedia('(min-width: 961px)').matches){state.sidebarCollapsed=!state.sidebarCollapsed;saveState();applySidebarState();}
+    else{sidebar.classList.toggle('open');overlay.classList.toggle('show',sidebar.classList.contains('open'));$('#menuBtn')?.setAttribute('aria-expanded',String(sidebar.classList.contains('open')));}
+  }
+  function closeMobileSidebar(){sidebar.classList.remove('open');overlay.classList.remove('show');}
+  function closeDialog(){if(dialog.open)dialog.close();renderCurrentView();}
+  function refreshOpenCourse(courseId,tab){openCourse(courseId,tab);}
+
+  document.addEventListener('click', event => {
+    const t=event.target.closest('button,a'); if(!t)return;
+    if(t.matches('[data-view]')){state.view=t.dataset.view;searchQuery='';$('#searchInput').value='';saveState();renderCurrentView();closeMobileSidebar();return;}
+    if(t.matches('[data-view-go]')){state.view=t.dataset.viewGo;searchQuery='';saveState();renderCurrentView();return;}
+    if(t.matches('[data-semester-filter]')){state.semesterFilter=Number(t.dataset.semesterFilter);saveState();renderSemester();return;}
+    if(t.matches('[data-course-open]')){openCourse(t.dataset.courseOpen,t.dataset.openTab||'overview');return;}
+    if(t.matches('[data-favorite]')){const id=t.dataset.favorite;state.favorites[id]=!state.favorites[id];saveState(); if(dialog.open&&$('[data-course-dialog]',dialogContent)?.dataset.courseDialog===id)refreshOpenCourse(id,$('.course-tab.active',dialogContent)?.dataset.tab||'overview'); else renderCurrentView();return;}
+    if(t.matches('[data-tab]')){$$('.course-tab',dialogContent).forEach(b=>b.classList.toggle('active',b===t));$$('.tab-panel',dialogContent).forEach(p=>p.classList.toggle('active',p.dataset.panel===t.dataset.tab));return;}
+    if(t.matches('[data-status]')){const id=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(!id)return;state.statuses[id]=t.dataset.status;saveState();refreshOpenCourse(id,$('.course-tab.active',dialogContent)?.dataset.tab||'overview');return;}
+    if(t.matches('[data-notebook-new]')){createNotebookPage(getCourse(t.dataset.notebookNew));return;}
+    if(t.matches('[data-notebook-toggle]')){const [courseId,entryId]=t.dataset.notebookToggle.split('|');const page=t.closest('.notebook-page'),wasOpen=page.classList.contains('open');$$('.notebook-page',dialogContent).forEach(p=>p.classList.remove('open'));if(!wasOpen)page.classList.add('open');return;}
+    if(t.matches('[data-note-delete]')){const [c,e]=t.dataset.noteDelete.split('|');deleteNotebookPage(c,e);return;}
+    if(t.matches('[data-note-pdf]')){const [c,e]=t.dataset.notePdf.split('|');printNotebookPage(c,e);return;}
+    if(t.matches('[data-review-delete]')){const [c,i]=t.dataset.reviewDelete.split('|');deleteReview(c,i);openCourse(c,'review');return;}
+    if(t.matches('[data-quiz-delete]')){const [c,i]=t.dataset.quizDelete.split('|');deleteQuiz(c,i);openCourse(c,'quiz');return;}
+    if(t.matches('[data-quiz-mastery]')){const [c,i,m]=t.dataset.quizMastery.split('|');setQuizMastery(c,i,m);openCourse(c,'quiz');return;}
+    if(t.matches('[data-calendar-prev],[data-calendar-next]')){const [y,m]=state.calendarMonth.split('-').map(Number),d=new Date(y,m-1+(t.matches('[data-calendar-next]')?1:-1),1);state.calendarMonth=monthISO(d);state.calendarSelectedDate=`${state.calendarMonth}-01`;calendarEditingId=null;saveState();renderCalendar();return;}
+    if(t.matches('[data-calendar-today]')){state.calendarMonth=monthISO();state.calendarSelectedDate=todayISO();calendarEditingId=null;saveState();renderCalendar();return;}
+    if(t.matches('[data-calendar-date]')){state.calendarSelectedDate=t.dataset.calendarDate;state.calendarMonth=t.dataset.calendarDate.slice(0,7);calendarEditingId=null;saveState();renderCalendar();return;}
+    if(t.matches('[data-calendar-new]')){calendarEditingId='new';renderCalendar();return;}
+    if(t.matches('[data-calendar-edit]')){calendarEditingId=t.dataset.calendarEdit;renderCalendar();return;}
+    if(t.matches('[data-calendar-cancel]')){calendarEditingId=null;renderCalendar();return;}
+    if(t.matches('[data-calendar-done]')){const [date,id]=t.dataset.calendarDone.split('|'),entry=calendarEntriesFor(date).find(e=>e.id===id);if(entry){entry.done=!entry.done;saveState();renderCalendar();}return;}
+    if(t.matches('[data-calendar-delete]')){const [date,id]=t.dataset.calendarDelete.split('|');if(confirm('Excluir este item do calendário?')){state.calendarEntries[date]=calendarEntriesFor(date).filter(e=>e.id!==id);if(!state.calendarEntries[date].length)delete state.calendarEntries[date];saveState();renderCalendar();}return;}
+    if(t.matches('[data-export]')||t.id==='exportBtn'){exportBackup();return;}
+    if(t.matches('[data-import]')){$('#importInput').click();return;}
+    if(t.matches('[data-reset]')){resetData();return;}
+  });
+
+  document.addEventListener('change', event => {
+    const el=event.target;
+    if(el.id==='currentSemester'){state.currentSemester=safeSemester(el.value);state.semesterFilter=state.currentSemester;saveState();renderCurrentView();return;}
+    if(el.matches('[data-note-field]')){const page=el.closest('[data-notebook-page]'),courseId=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(page&&courseId)saveNotebookField(courseId,page.dataset.notebookPage,el.dataset.noteField,el.value);return;}
+    if(el.matches('[data-review-toggle]')){const [c,i]=el.dataset.reviewToggle.split('|');toggleReview(c,i);if(dialog.open&&$('[data-course-dialog]',dialogContent)?.dataset.courseDialog===c)openCourse(c,'review');else renderCurrentView();return;}
+  });
+  document.addEventListener('input', event => {
+    const el=event.target;
+    if(el.matches('[data-note-field]')){const page=el.closest('[data-notebook-page]'),courseId=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(page&&courseId)saveNotebookField(courseId,page.dataset.notebookPage,el.dataset.noteField,el.value);return;}
+    if(el.closest('[data-class-form]')){const form=el.closest('[data-class-form]'),id=form.dataset.classForm;state.coursePlans[id]={...coursePlan(getCourse(id)),[el.name]:el.value};saveState();return;}
+  });
+  document.addEventListener('submit', event => {
+    const form=event.target;
+    if(form.matches('[data-review-form]')){event.preventDefault();const id=form.dataset.reviewForm,fd=new FormData(form);addReviewItem(id,fd.get('title'),fd.get('details'));openCourse(id,'review');return;}
+    if(form.matches('[data-quiz-form]')){event.preventDefault();const id=form.dataset.quizForm,fd=new FormData(form);addQuizItem(id,fd.get('question'),fd.get('answer'),fd.get('explanation'));openCourse(id,'quiz');return;}
+    if(form.matches('[data-calendar-form]')){event.preventDefault();const fd=new FormData(form),date=String(fd.get('date')),entry={id:calendarEditingId&&calendarEditingId!=='new'?calendarEditingId:uid('calendar'),title:String(fd.get('title')).trim(),type:String(fd.get('type')),courseId:String(fd.get('courseId')),time:String(fd.get('time')),details:String(fd.get('details')).trim(),done:false,createdAt:new Date().toISOString()};if(!entry.title){showToast('Dê um título ao item.','warn');return;}if(calendarEditingId&&calendarEditingId!=='new'){for(const [d,entries] of Object.entries(state.calendarEntries)){const old=entries.find(e=>e.id===calendarEditingId);if(old){entry.done=old.done;state.calendarEntries[d]=entries.filter(e=>e.id!==calendarEditingId);if(!state.calendarEntries[d].length)delete state.calendarEntries[d];break;}}}state.calendarEntries[date]=[entry,...calendarEntriesFor(date)];state.calendarMonth=date.slice(0,7);state.calendarSelectedDate=date;calendarEditingId=null;saveState();renderCalendar();return;}
+  });
+
+  $('#searchInput').addEventListener('input', e => { searchQuery=e.target.value; renderCurrentView(); });
+  $('#menuBtn').addEventListener('click', toggleSidebar);
+  $('#sidebarToggle').addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', closeMobileSidebar);
+  $('#dialogClose').addEventListener('click', closeDialog);
+  dialog.addEventListener('click', e => { if(e.target===dialog)closeDialog(); });
+  $('#importInput').addEventListener('change', e => { const file=e.target.files?.[0]; if(file) importBackupFile(file); e.target.value=''; });
+  window.addEventListener('resize', applySidebarState);
+
+  // Pequena API interna para testes automatizados do pacote.
+  window.__ARCH_TEST__ = {
+    getState: () => clone(state),
+    courseCount: () => requiredCourses().length,
+    optativeCount: () => optativeCourses().length,
+    reviewProgress: id => reviewProgress(getCourse(id)),
+    addReview: (id,title='Teste') => { addReviewItem(id,title,''); return reviewProgress(getCourse(id)); },
+    toggleFirstReview: id => { const item=reviewItems(getCourse(id))[0]; if(item)toggleReview(id,item.id); return reviewProgress(getCourse(id)); },
+    addQuiz: id => { addQuizItem(id,'Pergunta teste?','Resposta teste',''); return quizItems(getCourse(id)).length; },
+    addPage: id => createNotebookPage(getCourse(id)).pageNumber
   };
 
-  function guidePoints(course, topic) {
-    const guide = (packFor(course).topicGuides || []).find(g => g.topic === topic);
-    const direct = (guide?.points || []).filter(c => {
-      const term = normalizeText(c?.term || '');
-      const definition = normalizeText(c?.definition || '');
-      const helper = term === 'como dominar este topico' || definition.includes('conecte sua resposta ao foco geral da materia');
-      return !helper && conceptIsRelevant(course, c);
-    });
-    if (direct.length) return direct;
-    const topicNorm = normalizeText(topic);
-    const matched = conceptsForCourse(course).filter(c => topicNorm.includes(normalizeText(c.term)) || normalizeText(c.term).split(' ').some(w => w.length > 5 && topicNorm.includes(w)));
-    return matched.slice(0, 3);
-  }
-
-  function topicSpecificExample(topic, course, fallback) {
-    const t = normalizeText(`${topic} ${course.title}`);
-    const rules = [
-      ['estratig', 'Imagine três camadas sobrepostas. Antes de atribuir idade, verifique se há cortes, raízes, fossas ou retrabalhamento que possam ter misturado os depósitos.'],
-      ['ceram', 'Compare fragmentos por pasta, tratamento de superfície, forma, decoração, marcas de uso e contexto. Um tipo só ganha significado quando sua distribuição e cronologia são conhecidas.'],
-      ['litic', 'Observe matéria-prima, córtex, plataforma, negativos de retirada, retoques e desgaste para reconstruir etapas de produção e uso.'],
-      ['zooarque', 'Num conjunto de ossos, combine identificação anatômica, taxonomia, marcas de corte, queima, fraturas e quantificação antes de inferir dieta ou atividade.'],
-      ['arqueogen', 'Antes de interpretar um resultado genético, pergunte sobre qualidade da amostra, contaminação, laboratório, população comparativa e limite estatístico da inferência.'],
-      ['cartografia', 'Mapeie pontos de um sítio em um sistema de referência e teste como escala, projeção e precisão do equipamento influenciam a leitura espacial.'],
-      ['geoprocess', 'Crie camadas separadas para sítios, relevo, hidrografia e uso do solo; depois pergunte se a relação espacial observada é histórica ou efeito do modo de amostragem.'],
-      ['estat', 'Com um conjunto de medidas, calcule tendência central e dispersão, mas também olhe a distribuição: duas amostras podem ter a mesma média e comportamentos muito diferentes.'],
-      ['arte rupestre', 'Documente técnica, suporte, sobreposição, conservação e contexto do painel antes de propor significado simbólico.'],
-      ['paleontolog', 'Um fóssil só contribui para reconstrução paleoambiental quando identificação, posição estratigráfica e processos de fossilização são controlados.'],
-      ['antropologia fisica', 'Ao analisar um esqueleto, separe observação anatômica de estimativa biológica e registre incerteza em vez de apresentar categorias como certezas absolutas.'],
-      ['licenciamento', 'Em um empreendimento, organize o fluxo entre diagnóstico, autorização, pesquisa, medidas de gestão, guarda do acervo e entrega dos relatórios.'],
-      ['tcc', 'Transforme um tema amplo em problema delimitado, escolha um corpus que realmente possa respondê-lo e mantenha uma tabela ligando objetivos, dados e capítulos.'],
-      ['etnograf', 'Ao usar uma descrição etnográfica, identifique quem observou, em que contexto, qual foi a relação com interlocutores e quais categorias foram usadas na escrita.'],
-      ['muse', 'Ao montar uma exposição, compare o que o objeto comunica sozinho com a narrativa criada por legenda, seleção, iluminação e sequência espacial.'],
-      ['patrimonio', 'Considere um sítio valorizado de formas diferentes por pesquisadores, moradores e poder público. A gestão precisa reconhecer esses valores sem reduzi-los a uma única escala.']
-    ];
-    for (const [needle, text] of rules) if (t.includes(needle)) return text;
-    return fallback;
-  }
-
-  function lessonSupport(course) {
-    const category = packFor(course).category || 'theory';
-    const support = {
-      theory: { steps: ['Defina o conceito com suas próprias palavras.', 'Identifique qual problema ele ajuda a explicar.', 'Aplique-o a uma evidência ou caso.', 'Compare com uma interpretação alternativa.'], mistakes: ['Decorar termos sem entender relações.', 'Usar teoria como rótulo automático.', 'Ignorar contexto histórico e críticas da abordagem.'] },
-      heritage: { steps: ['Identifique bem, território e atores envolvidos.', 'Separe valores científicos, sociais, legais e éticos.', 'Mapeie responsabilidades e conflitos.', 'Compare alternativas de preservação, gestão e comunicação.'], mistakes: ['Tratar patrimônio apenas como objeto físico.', 'Ignorar comunidades afetadas.', 'Confundir proteção legal com consenso social.'] },
-      material: { steps: ['Descreva matéria-prima e atributos observáveis.', 'Reconstrua produção, uso, manutenção e descarte.', 'Relacione alterações pós-deposicionais.', 'Interprete sempre em conjunto com proveniência e contexto.'], mistakes: ['Classificar só pela aparência.', 'Inferir função diretamente da forma.', 'Ignorar cadeia operatória e contexto.'] },
-      quant: { steps: ['Defina unidade de análise e variáveis.', 'Verifique amostra, escala e qualidade dos dados.', 'Escolha medida, gráfico ou teste adequado.', 'Interprete resultado com dispersão e incerteza.'], mistakes: ['Calcular antes de definir a pergunta.', 'Confundir correlação com causalidade.', 'Apresentar média ou porcentagem sem contexto.'] },
-      science: { steps: ['Defina a amostra e o fenômeno observado.', 'Explique formação, preservação e possíveis alterações.', 'Descreva o método de identificação ou medição.', 'Relacione o resultado à hipótese arqueológica com incerteza explícita.'], mistakes: ['Tratar identificação como interpretação final.', 'Ignorar tafonomia, contaminação ou preservação.', 'Generalizar a partir de um indicador isolado.'] },
-      law: { steps: ['Identifique a situação e o bem protegido.', 'Separe norma, competência e procedimento.', 'Verifique obrigações e documentação aplicável.', 'Registre limites e confirme a vigência normativa.'], mistakes: ['Memorizar número de norma sem entender aplicação.', 'Confundir decisão técnica com decisão administrativa.', 'Usar regra desatualizada sem conferir fonte oficial.'] },
-      regional: { steps: ['Monte cronologia e localização espacial.', 'Compare ambientes, sítios e cultura material.', 'Diferencie dado, modelo e debate historiográfico.', 'Procure diversidade e mudança dentro da própria região.'], mistakes: ['Tratar região como cultura homogênea.', 'Transformar cultura arqueológica em povo fixo.', 'Usar cronologia sem discutir base de datação.'] },
-      method: { steps: ['Comece pela pergunta de pesquisa.', 'Defina dados e amostragem necessários.', 'Descreva o procedimento passo a passo.', 'Explique controle de qualidade, produto e limites.'], mistakes: ['Escolher técnica antes da pergunta.', 'Confundir ferramenta com método.', 'Omitir critérios de registro e incerteza.'] },
-      methods: { steps: ['Comece pela pergunta e objetivos.', 'Mostre como método e amostra produzem os dados.', 'Organize resultados de modo rastreável.', 'Faça a conclusão responder apenas ao que os dados sustentam.'], mistakes: ['Relatório sem ligação entre objetivo, método e resultado.', 'Esconder limitações.', 'Conclusão mais forte que a evidência.'] },
-      historical: { steps: ['Identifique cada tipo de fonte e sua proveniência.', 'Faça crítica de fonte antes de cruzá-las.', 'Compare cronologia, materialidade e contexto social.', 'Explique concordâncias e contradições sem hierarquia automática.'], mistakes: ['Tratar documento escrito como verdade absoluta.', 'Usar cultura material apenas para ilustrar texto.', 'Ignorar silêncios e vieses de cada fonte.'] },
-      earth: { steps: ['Identifique processo geológico/geomorfológico.', 'Defina escala espacial e temporal.', 'Avalie transporte, deposição e retrabalhamento.', 'Explique como o processo afeta preservação e contexto arqueológico.'], mistakes: ['Confundir posição atual com posição original.', 'Ignorar retrabalhamento sedimentar.', 'Atribuir idade só pela profundidade.'] },
-      bio: { steps: ['Defina a unidade biológica analisada.', 'Explique observação, método e referência comparativa.', 'Avalie preservação e contaminação.', 'Apresente inferência com incerteza e contexto.'], mistakes: ['Transformar estimativa em certeza.', 'Confundir marcador biológico com identidade social.', 'Ignorar preservação, amostra ou população comparativa.'] },
-      field: { steps: ['Defina objetivo e estratégia de intervenção.', 'Planeje segurança, unidades, amostragem e logística.', 'Documente proveniência e cada alteração do contexto durante o trabalho.', 'Integre registro de campo, acondicionamento e análise posterior.'], mistakes: ['Escavar sem pergunta e plano de registro.', 'Registrar informações só depois.', 'Perder proveniência ou cadeia de custódia.'] },
-      lab: { steps: ['Confirme identificação e proveniência antes de intervir.', 'Documente limpeza, catalogação e atributos.', 'Aplique protocolo analítico adequado.', 'Preserve rastreabilidade, acondicionamento e reprodutibilidade.'], mistakes: ['Misturar lotes ou etiquetas.', 'Limpar/analisar sem protocolo.', 'Confundir classificação tipológica com interpretação final.'] },
-      professional: { steps: ['Defina objetivo e público da comunicação.', 'Separe evidência, argumento e conclusão.', 'Use referências e linguagem técnica verificável.', 'Revise limites éticos, autoria e responsabilidade profissional.'], mistakes: ['Escrever sem deixar rastreável a evidência.', 'Confundir opinião com conclusão técnica.', 'Omitir limites, autoria ou conflito ético.'] }
-    };
-    return support[category] || support.theory;
-  }
-
-  function buildLessonData(topic, course) {
-    const deep = LESSONS.deep?.[course.id]?.[topic];
-    const points = guidePoints(course, topic);
-    const cat = CATEGORY_LESSON[packFor(course).category] || CATEGORY_LESSON.theory;
-    const overview = packFor(course).overview || course.syllabus || '';
-    const support = lessonSupport(course);
-    const definitionBridge = points.length
-      ? `Os conceitos centrais desta aula são ${points.map(p => p.term).join(', ')}. Eles devem ser entendidos em relação ao problema da aula, e não como definições soltas.`
-      : `O ponto principal é transformar o tema “${topic}” em perguntas observáveis: o que precisa ser descrito, que evidência pode responder e quais interpretações alternativas existem.`;
-    const conceptNarrative = points.length
-      ? points.map((p, i) => `${i === 0 ? 'Comece por' : 'Relacione também'} ${p.term}: ${p.definition}`).join(' ')
-      : '';
-    const explanation = deep?.explanation || `Esta aula aborda ${topic.toLocaleLowerCase('pt-BR')} dentro de ${course.title}. ${overview}\n\n${definitionBridge} ${conceptNarrative}\n\n${cat.approach}`;
-    const deepDive = deep?.deepDive || `Para aprofundar este assunto, não tente apenas memorizar a definição. Pergunte como o tema aparece no tipo de evidência estudado em ${course.title}, que procedimentos permitem reconhecê-lo e quais interpretações concorrentes poderiam explicar o mesmo padrão.\n\nUse a ementa da disciplina como limite: este material organiza o estudo, mas o plano de ensino do professor pode selecionar autores, exemplos e estudos de caso diferentes. Ao revisar, procure sempre ligar conceito, evidência, método e limite da inferência.`;
-    const fallbackExample = cat.example;
-    const example = deep?.example || topicSpecificExample(topic, course, fallbackExample);
-    const remember = deep?.remember || [
-      `Explique com suas palavras o que “${topic}” significa dentro de ${course.title}.`,
-      points.length ? `Domine os conceitos: ${points.map(p => p.term).join(', ')}.` : 'Relacione pergunta, evidência, método e interpretação.',
-      'Consiga dar um exemplo e também apontar pelo menos um limite ou cuidado na interpretação.'
-    ];
-    const review = deep?.review || [
-      `Qual é a ideia central de “${topic}”?`,
-      points.length ? `Como ${points[0].term} ajuda a compreender esse assunto?` : 'Que evidência seria necessária para investigar esse tema?',
-      'Que erro de interpretação alguém poderia cometer ao estudar esse assunto de forma superficial?'
-    ];
-    const commonMistakes = deep?.commonMistakes || support.mistakes;
-    const studySteps = deep?.studySteps || support.steps;
-    const reviewAnswers = Array.isArray(deep?.reviewAnswers) ? deep.reviewAnswers : [];
-    return { explanation, deepDive, example, remember, review, reviewAnswers, points, commonMistakes, studySteps, expanded: !!deep };
-  }
-
-  function paragraphsHtml(text) {
-    return String(text || '').split(/\n\s*\n/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join('');
-  }
-
-  const REVIEW_STOPWORDS = new Set('a o as os um uma uns umas de da do das dos e em no na nos nas para por com sem que qual quais como porque porquê porque por que se ao aos à às é são foi foram ser estar isso esse essa esses essas este esta estes estas sua seu suas seus'.split(' '));
-  function reviewTokens(text) {
-    return normalizeText(text).split(/\s+/).filter(x => x.length > 3 && !REVIEW_STOPWORDS.has(x));
-  }
-  function reviewSentences(text) {
-    return (String(text || '').replace(/\s+/g, ' ').match(/[^.!?]+[.!?]+|[^.!?]+$/g) || []).map(x => x.trim()).filter(x => x.length > 20);
-  }
-  function reviewAnswer(question, data, index) {
-    if (data.reviewAnswers?.[index]) return data.reviewAnswers[index];
-    const qTokens = reviewTokens(question);
-    const sourceSentences = [
-      ...reviewSentences(data.explanation),
-      ...reviewSentences(data.deepDive),
-      ...data.points.map(p => `${p.term}: ${p.definition}`),
-      ...reviewSentences(data.example),
-      ...data.remember
-    ];
-    const ranked = sourceSentences.map((sentence, order) => {
-      const norm = normalizeText(sentence);
-      const overlap = qTokens.reduce((n, t) => n + (norm.includes(t) ? 1 : 0), 0);
-      const conceptBonus = data.points.some(p => normalizeText(question).includes(normalizeText(p.term))) && data.points.some(p => sentence.includes(p.term)) ? 2 : 0;
-      return { sentence, score: overlap * 3 + conceptBonus - order * 0.002 };
-    }).sort((a,b) => b.score - a.score);
-    const picked = [];
-    for (const item of ranked) {
-      if (picked.some(x => normalizeText(x) === normalizeText(item.sentence))) continue;
-      if (item.score <= 0 && picked.length) break;
-      picked.push(item.sentence);
-      if (picked.length === 2) break;
-    }
-    if (!picked.length) picked.push(data.remember[Math.min(index, data.remember.length - 1)] || data.remember[0]);
-    return picked.join(' ');
-  }
-  function lessonReadingMinutes(data) {
-    const words = [data.explanation, data.deepDive, data.example, ...data.remember, ...data.points.map(p => p.definition)].join(' ').trim().split(/\s+/).filter(Boolean).length;
-    return Math.max(3, Math.ceil(words / 170));
-  }
-
-  function lessonText(topic, course) {
-    const data = buildLessonData(topic, course);
-    const conceptHtml = data.points.length
-      ? `<div class="lesson-concepts"><h4>Conceitos essenciais</h4><div class="concept-grid">${data.points.map(c => `<div class="concept-inline"><strong>${esc(c.term)}</strong><p>${esc(c.definition)}</p></div>`).join('')}</div></div>`
-      : '';
-    const reviewHtml = data.review.map((q, i) => `<li><div class="review-question">${esc(q)}</div><details class="review-answer"><summary>Ver resposta comentada</summary><p>${esc(reviewAnswer(q, data, i))}</p><small>Use esta resposta como referência. O ideal é conseguir explicar a mesma ideia com suas próprias palavras.</small></details></li>`).join('');
-    const lessonLabel = course.officialSyllabusAvailable === false
-      ? (data.expanded ? 'Aula sugerida aprofundada' : 'Aula sugerida')
-      : (data.expanded ? 'Aula aprofundada' : 'Aula guiada');
-    return `<div class="lesson-depth ${data.expanded ? 'expanded' : ''}"><span>${lessonLabel}</span><small>${data.expanded ? `leitura desenvolvida · cerca de ${lessonReadingMinutes(data)} min` : `material guiado · cerca de ${lessonReadingMinutes(data)} min`}</small></div>
-      <div class="lesson-section"><h4>1. Entenda o assunto</h4>${paragraphsHtml(data.explanation)}</div>
-      <div class="lesson-section lesson-deep-dive"><h4>2. Aprofundamento</h4>${paragraphsHtml(data.deepDive)}</div>
-      ${conceptHtml}
-      <div class="lesson-section lesson-study-steps"><h4>3. Como raciocinar sobre este tema</h4><ol>${data.studySteps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>
-      <div class="lesson-section lesson-example"><h4>4. Exemplo aplicado</h4><p>${esc(data.example)}</p></div>
-      <div class="lesson-section lesson-mistakes"><h4>5. Erros comuns</h4><ul>${data.commonMistakes.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
-      <div class="lesson-section lesson-remember"><h4>6. O que você precisa guardar</h4><ul>${data.remember.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
-      <div class="lesson-section lesson-review"><h4>7. Perguntas de revisão</h4><p class="review-instruction">Tente responder sem olhar. Depois abra “Ver resposta comentada” e compare com o que você escreveu ou falou.</p><ol>${reviewHtml}</ol></div>`;
-  }
-
-  function tabButton(id, label, active) { return `<button type="button" class="course-tab ${active === id ? 'active' : ''}" data-tab="${id}">${label}</button>`; }
-
-  function quizForCourse(course) {
-    if (course.officialSyllabusAvailable === false) return [];
-    const unique = [];
-    const seenDefinitions = new Set();
-    conceptsForCourse(course).forEach(c => {
-      const key = normalizeText(c.definition);
-      if (!key || seenDefinitions.has(key)) return;
-      seenDefinitions.add(key); unique.push(c);
-    });
-    if (unique.length < 4) return [];
-    const pool = unique.slice(0, Math.min(10, unique.length));
-    return pool.slice(0, Math.min(5, pool.length)).map((correct, qi) => {
-      const distractors = [];
-      for (let step = 1; distractors.length < 3 && step < pool.length + 3; step++) {
-        const cand = pool[(qi + step) % pool.length];
-        if (cand.term !== correct.term && cand.definition !== correct.definition && !distractors.some(d => d.definition === cand.definition)) distractors.push(cand);
-      }
-      if (distractors.length < 3) return null;
-      const options = [correct, ...distractors].map((item, oi) => ({ item, order: (normalizeText(item.term).charCodeAt(0) + qi * 11 + oi * 7) % 97 })).sort((a, b) => a.order - b.order).map(x => x.item);
-      return { q: `Qual alternativa define melhor “${correct.term}”?`, correct: correct.definition, correctTerm: correct.term, options: options.map(o => o.definition) };
-    }).filter(Boolean);
-  }
-
-  function notebookEntriesFor(course) {
-    const value = state.notebookEntries[course.id];
-    return Array.isArray(value) ? value : [];
-  }
-
-  function localDateISO() {
-    const d = new Date();
-    const pad = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  }
-
-  function formatDateBR(value) {
-    const m = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    return m ? `${m[3]}/${m[2]}/${m[1]}` : String(value || '');
-  }
-
-  function noteWordCount(entry) {
-    return ['learned', 'concepts', 'questions', 'tasks', 'free'].reduce((sum, key) => {
-      const text = String(entry?.[key] || '').trim();
-      return sum + (text ? text.split(/\s+/).filter(Boolean).length : 0);
-    }, 0);
-  }
-
-  function notePreview(entry) {
-    const source = [entry?.learned, entry?.concepts, entry?.free, entry?.tasks, entry?.questions]
-      .map(value => String(value || '').trim()).find(Boolean) || '';
-    if (!source) return 'Folha vazia · abra para começar a escrever.';
-    return source.length > 115 ? `${source.slice(0, 112).trim()}…` : source;
-  }
-
-  function notebookPdfText(value = '') {
-    const text = String(value || '').trim();
-    if (!text) return '<p class=\"empty-field\">—</p>';
-    return `<p>${esc(text).replace(/\n/g, '<br>')}</p>`;
-  }
-
-  function notebookPdfDocument(course, entry, pageLabel) {
-    const title = String(entry?.title || 'Anotação de aula').trim() || 'Anotação de aula';
-    const date = entry?.date ? formatDateBR(entry.date) : 'Sem data';
-    const filenameTitle = `${course.title} - ${pageLabel} - ${title}`;
-    const section = (label, value, cls = '') => `<section class=\"note-section ${cls}\"><h2>${esc(label)}</h2>${notebookPdfText(value)}</section>`;
-    return `<!doctype html>
-<html lang=\"pt-BR\">
-<head>
-<meta charset=\"utf-8\">
-<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">
-<title>${esc(filenameTitle)}</title>
-<style>
-  @page { size: A4; margin: 15mm 16mm 17mm; }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #fff; color: #2f2925; }
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.55; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { width: 100%; }
-  header { border-bottom: 2px solid #8b6d59; padding: 0 0 10px; margin-bottom: 15px; }
-  .brand { margin: 0 0 4px; color: #7a5c49; font-size: 8.5pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-  h1 { margin: 0; font-size: 20pt; line-height: 1.2; color: #2f2925; }
-  .meta { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 8px; color: #6d625a; font-size: 9pt; }
-  .meta b { color: #433a34; }
-  .note-section { break-inside: auto; margin: 0 0 13px; padding: 0 0 11px; border-bottom: 1px solid #e5ddd6; }
-  .note-section:last-of-type { border-bottom: 0; }
-  .note-section h2 { break-after: avoid; margin: 0 0 5px; font-size: 10.5pt; color: #6d5140; text-transform: uppercase; letter-spacing: .035em; }
-  .note-section p { margin: 0; orphans: 3; widows: 3; white-space: normal; overflow-wrap: anywhere; }
-  .main-note { padding: 10px 12px 12px 20px; border: 1px solid #ded3ca; border-radius: 8px; background: repeating-linear-gradient(to bottom, #fffdf9 0 26px, #e9e1d8 26px 27px); }
-  .main-note h2 { background: rgba(255,253,249,.94); display: inline-block; padding-right: 6px; }
-  .main-note p { line-height: 27px; }
-  .empty-field { color: #9b918a; }
-  footer { margin-top: 18px; padding-top: 8px; border-top: 1px solid #ddd4cc; color: #81766e; font-size: 8pt; }
-  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 18mm 16mm; background: #f5f1ec; } .page { background:#fff; padding:15mm 16mm; box-shadow:0 8px 28px rgba(0,0,0,.08); } }
-  @media print { body { background:#fff; } .page { padding:0; box-shadow:none; } }
-</style>
-</head>
-<body>
-<article class=\"page\">
-  <header>
-    <p class=\"brand\">Arqueologia Study Hub · Caderno digital</p>
-    <h1>${esc(title)}</h1>
-    <div class=\"meta\"><span><b>Matéria:</b> ${esc(course.title)}</span><span><b>${esc(pageLabel)}</b></span><span><b>Data:</b> ${esc(date)}</span></div>
-  </header>
-  ${section('O que aprendi na sala', entry?.learned, 'main-note')}
-  ${section('Conceitos e palavras-chave', entry?.concepts)}
-  ${section('Dúvidas para perguntar/revisar', entry?.questions)}
-  ${section('Tarefas, leituras e prazos', entry?.tasks)}
-  ${section('Observações livres', entry?.free)}
-  <footer>Material pessoal de estudo exportado do Arqueologia Study Hub. Desenvolvido por Mei.</footer>
-</article>
-<script>
-  window.addEventListener('load', () => {
-    setTimeout(() => { window.focus(); window.print(); }, 180);
-    window.addEventListener('afterprint', () => setTimeout(() => window.close(), 120));
-  });
-<\/script>
-</body>
-</html>`;
-  }
-
-  function saveNotebookPageAsPdf(course, entryId) {
-    const entries = notebookEntriesFor(course);
-    const index = entries.findIndex(item => item.id === entryId);
-    if (index < 0) return;
-    const entry = entries[index];
-    const pageLabel = `Folha ${String(entry.pageNumber || index + 1).padStart(2, '0')}`;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      alert('Não foi possível abrir a janela de PDF. Permita pop-ups para este site e tente novamente.');
-      return;
-    }
-    try { printWindow.opener = null; } catch (_) {}
-    printWindow.document.open();
-    printWindow.document.write(notebookPdfDocument(course, entry, pageLabel));
-    printWindow.document.close();
-  }
-
-  function notebookEntryHtml(entry, index, openEntryId = null) {
-    const words = noteWordCount(entry);
-    const isOpen = entry.id === openEntryId;
-    const pageLabel = `Folha ${String(entry.pageNumber || index + 1).padStart(2, '0')}`;
-    return `<details class="notebook-page" data-note-entry="${esc(entry.id)}" ${isOpen ? 'open' : ''}>
-      <summary class="notebook-page-cover">
-        <span class="notebook-page-number">${pageLabel}</span>
-        <span class="notebook-page-cover-copy">
-          <strong data-note-display-title>${esc(entry.title || 'Anotação de aula')}</strong>
-          <small><span data-note-display-date>${entry.date ? esc(formatDateBR(entry.date)) : 'sem data'}</span> · <span data-note-wordcount>${words}</span> palavras</small>
-          <span class="notebook-page-preview" data-note-preview>${esc(notePreview(entry))}</span>
-        </span>
-        <span class="notebook-page-toggle" aria-hidden="true">⌄</span>
-      </summary>
-      <div class="notebook-sheet">
-        <div class="notebook-sheet-toolbar">
-          <span><b>${pageLabel}</b> · escreva o que aconteceu nesta aula</span>
-          <div class="notebook-sheet-actions">
-            <button type="button" class="btn btn-soft btn-sm notebook-pdf" data-save-note-pdf="${esc(entry.id)}" title="Abrir esta folha pronta para salvar como PDF">Salvar PDF</button>
-            <button type="button" class="btn btn-outline btn-sm notebook-delete" data-delete-note="${esc(entry.id)}">Excluir folha</button>
-          </div>
-        </div>
-        <div class="notebook-fields">
-          <label><span>Título da aula</span><input class="plan-input" data-note-field="title" value="${esc(entry.title || '')}" placeholder="Ex.: Cultura material e contexto"></label>
-          <label><span>Data</span><input class="plan-input" type="date" data-note-field="date" value="${esc(entry.date || '')}"></label>
-          <label class="span-2 notebook-writing-block"><span>O que aprendi na sala</span><textarea class="notes-area notebook-area notebook-paper-area" data-note-field="learned" placeholder="Escreva com suas palavras o que o professor explicou, exemplos dados em aula, comparações e ideias principais...">${esc(entry.learned || '')}</textarea></label>
-          <label class="span-2"><span>Conceitos e palavras-chave</span><textarea class="notes-area notebook-area compact" data-note-field="concepts" placeholder="Termos, autores, métodos, datas, definições ou conceitos que precisam ficar registrados...">${esc(entry.concepts || '')}</textarea></label>
-          <label><span>Dúvidas para perguntar/revisar</span><textarea class="notes-area notebook-area compact" data-note-field="questions" placeholder="O que não ficou claro? O que você quer perguntar ao professor?">${esc(entry.questions || '')}</textarea></label>
-          <label><span>Tarefas, leituras e prazos</span><textarea class="notes-area notebook-area compact" data-note-field="tasks" placeholder="Capítulos, artigos, exercícios, trabalhos, datas de entrega...">${esc(entry.tasks || '')}</textarea></label>
-          <label class="span-2"><span>Observações livres</span><textarea class="notes-area notebook-area compact" data-note-field="free" placeholder="Qualquer detalhe da aula que você queira guardar...">${esc(entry.free || '')}</textarea></label>
-        </div>
-      </div>
-    </details>`;
-  }
-
-  function notebookListHtml(course, openEntryId = null) {
-    const entries = notebookEntriesFor(course);
-    if (!entries.length) return `<div class="notebook-empty"><strong>Seu caderno desta matéria ainda está vazio.</strong><p>Crie uma folha para cada aula presencial. Cada folha fica recolhida quando você não estiver usando, como páginas de um caderno digital.</p></div>`;
-    return entries.map((entry, index) => notebookEntryHtml(entry, index, openEntryId)).join('');
-  }
-
-  function renderNotebookList(course, openEntryId = null) {
-    const list = $('[data-notebook-list]', dialogContent);
-    if (!list) return;
-    list.innerHTML = notebookListHtml(course, openEntryId);
-    bindNotebookFields(course);
-  }
-
-  function bindNotebookFields(course) {
-    $$('[data-note-entry]', dialogContent).forEach(card => {
-      const id = card.dataset.noteEntry;
-      const summary = $('summary', card);
-      summary?.addEventListener('click', () => {
-        if (card.open) return;
-        $$('[data-note-entry]', dialogContent).forEach(other => {
-          if (other !== card) other.open = false;
-        });
-      });
-      $$('[data-note-field]', card).forEach(field => field.addEventListener('input', () => {
-        const entries = notebookEntriesFor(course);
-        const entry = entries.find(item => item.id === id);
-        if (!entry) return;
-        entry[field.dataset.noteField] = field.value;
-        if (field.dataset.noteField === 'title') {
-          const display = $('[data-note-display-title]', card);
-          if (display) display.textContent = field.value.trim() || 'Anotação de aula';
-        }
-        if (field.dataset.noteField === 'date') {
-          const display = $('[data-note-display-date]', card);
-          if (display) display.textContent = field.value ? formatDateBR(field.value) : 'sem data';
-        }
-        const wc = $('[data-note-wordcount]', card);
-        if (wc) wc.textContent = String(noteWordCount(entry));
-        const preview = $('[data-note-preview]', card);
-        if (preview) preview.textContent = notePreview(entry);
-        saveState();
-      }));
-    });
-    $$('[data-save-note-pdf]', dialogContent).forEach(btn => btn.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      saveNotebookPageAsPdf(course, btn.dataset.saveNotePdf);
-    }));
-    $$('[data-delete-note]', dialogContent).forEach(btn => btn.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (!confirm('Excluir esta folha do caderno?')) return;
-      const entries = notebookEntriesFor(course);
-      state.notebookEntries[course.id] = entries.filter(item => item.id !== btn.dataset.deleteNote);
-      saveState();
-      renderNotebookList(course);
-    }));
-  }
-
-  function openCourse(course, initialTab = 'guide') {
-    if (!course) return;
-    const pack = packFor(course), status = state.statuses[course.id] || 'todo';
-    const cards = flashcardsForCourse(course), quiz = quizForCourse(course);
-    const score = state.quizScores[course.id];
-    const plan = state.coursePlans[course.id] || {};
-    const studyPct = courseProgress(course);
-
-    dialogContent.innerHTML = `<header class="course-hero"><div class="badges">
-      ${course.semester ? `<span class="badge">${course.semester}º semestre</span>` : `<span class="badge">Optativa</span>`}<span class="badge">${course.matrixHours}h na matriz</span>${course.credits ? `<span class="badge">${esc(course.credits)} no ementário</span>` : ''}${course.officialSyllabusAvailable === false ? `<span class="badge warn">PPP: sem ementa</span>` : course.note ? `<span class="badge warn">PPP ⚠</span>` : ''}
-      </div><h2>${esc(course.title)}</h2><p>${course.matrixNameOriginal && course.matrixNameOriginal !== course.title ? `Como aparece na matriz: ${esc(course.matrixNameOriginal)}. ` : ''}${course.ementaryName && course.ementaryName !== course.title ? `Nome no ementário: ${esc(course.ementaryName)}.` : 'Guia organizado a partir do PPP do curso.'}</p>
-      <div class="course-progress-line" title="${esc(progressFormula(course))}"><div class="progress-track"><div class="progress-fill" data-dialog-progress-bar style="width:${studyPct}%"></div></div><strong data-dialog-progress-text>${studyPct}%</strong></div><small class="progress-formula">${esc(progressFormula(course))}</small>
-      <div class="status-row">${[['todo', 'Não iniciada'], ['studying', 'Estudando'], ['done', 'Concluída']].map(([v, l]) => `<button type="button" class="status-btn ${status === v ? 'active' : ''}" data-status="${v}">${l}</button>`).join('')}</div></header>
-
-      <div class="course-content">${course.note ? `<div class="notice"><div>${course.officialSyllabusAvailable === false ? 'ℹ' : '⚠'}</div><div><strong>${course.officialSyllabusAvailable === false ? 'Limite da fonte' : 'Divergência no PPP'}</strong><p>${esc(course.note)}</p></div></div>` : ''}
-      <div class="source-split"><span class="source-pill official">PPP oficial</span><span>${course.officialSyllabusAvailable === false ? 'nome e carga horária da optativa' : 'ementa e bibliografia'}</span><span class="source-pill support">Apoio</span><span>${course.officialSyllabusAvailable === false ? 'roteiro, conteúdo e flashcards sugeridos' : 'roteiro, conteúdo, flashcards e quiz'}</span></div>
-      <div class="course-tabs">${tabButton('guide', 'Guia', initialTab)}${tabButton('content', 'Aulas', initialTab)}${tabButton('flash', 'Flashcards', initialTab)}${tabButton('quiz', 'Quiz', initialTab)}${tabButton('syllabus', 'Ementa oficial', initialTab)}${tabButton('biblio', 'Bibliografia', initialTab)}${tabButton('class', 'Minha turma', initialTab)}${tabButton('notes', 'Caderno', initialTab)}</div>
-
-      <section class="tab-panel ${initialTab === 'guide' ? 'active' : ''}" data-panel="guide">
-        <div class="guide-intro"><span class="eyebrow">Visão geral</span><h3>Para que serve esta matéria?</h3><p>${esc(pack.overview)}</p></div>
-        <div class="two-col"><div><h3>Roteiro sugerido de estudo</h3><p class="muted">Estes tópicos foram organizados como apoio a partir da ementa; não são uma lista oficial de aulas ou de questões de prova.</p><div class="study-list">${course.topics.map((topic, i) => `<label class="study-item ${topicChecked(course, i) ? 'checked' : ''}"><input type="checkbox" data-topic-check="${i}" ${topicChecked(course, i) ? 'checked' : ''}><span>${esc(topic)}</span></label>`).join('')}</div></div>
-        <aside class="study-tips"><h3>Como estudar</h3><ol>${(pack.studyTips || []).map(t => `<li>${esc(t)}</li>`).join('')}</ol><div class="mini-rule"><strong>Teste de domínio</strong><p>Marque um tópico somente quando conseguir explicá-lo sem copiar a definição e dar pelo menos um exemplo ou aplicação.</p></div></aside></div>
-      </section>
-
-      <section class="tab-panel ${initialTab === 'content' ? 'active' : ''}" data-panel="content"><div class="tab-heading"><div><span class="eyebrow">Material didático</span><h3>Aulas da matéria</h3><p>${course.officialSyllabusAvailable === false ? 'Estas aulas são material de apoio sugerido a partir do título da optativa e de referências gerais da área. O PPP consultado lista nome e carga horária, mas não fornece ementa para as optativas; por isso, ajuste o conteúdo ao plano de ensino quando a disciplina for ofertada.' : 'As 397 aulas dos 8 semestres trazem explicação desenvolvida, aprofundamento, conceitos, método de raciocínio, exemplo aplicado, erros comuns, síntese e perguntas com respostas comentadas. O conteúdo é material didático de apoio construído a partir da ementa e dos tópicos auditados do PPP; o plano de ensino do professor continua sendo a referência da turma.'}</p></div></div>
-        <div class="lesson-list">${course.topics.map((topic, i) => `<details class="lesson-card" ${i === 0 ? 'open' : ''}><summary><span class="lesson-number">${String(i + 1).padStart(2, '0')}</span><span>${esc(topic)}</span><span class="lesson-state">${topicChecked(course, i) ? '✓ estudado' : 'abrir'}</span></summary><div class="lesson-body">${lessonText(topic, course)}<div class="recall-box"><strong>Fechamento da aula</strong><p>Se você consegue responder às perguntas de revisão sem olhar e dar um exemplo próprio, já pode marcar esta aula como estudada.</p></div><button type="button" class="btn btn-soft btn-sm" data-mark-topic="${i}">${topicChecked(course, i) ? 'Marcar como não estudado' : 'Marcar tópico como estudado'}</button></div></details>`).join('')}</div>
-      </section>
-
-      <section class="tab-panel ${initialTab === 'flash' ? 'active' : ''}" data-panel="flash"><div class="tab-heading"><div><span class="eyebrow">Recordação ativa</span><h3>Flashcards</h3><p>Clique no cartão para revelar. Depois diga se conseguiu responder antes de olhar.</p></div><div class="score-chip">${masteredCardCount(course)}/${cards.length} dominados</div></div>
-        <div class="flash-grid">${cards.map((card, i) => `<details class="flashcard ${flashState(course, card, i) === true ? 'mastered' : flashState(course, card, i) === false ? 'missed' : ''}" data-flashcard="${i}"><summary><span class="flash-label">Pergunta ${i + 1}</span><strong>${esc(card.q)}</strong><span class="reveal">Ver resposta</span></summary><div class="flash-answer"><p>${esc(card.a)}</p><div class="flash-actions"><button type="button" class="btn btn-outline btn-sm" data-flash-result="0" data-flash-index="${i}">Ainda não sei</button><button type="button" class="btn btn-soft btn-sm" data-flash-result="1" data-flash-index="${i}">Acertei</button></div></div></details>`).join('')}</div>
-      </section>
-
-      <section class="tab-panel ${initialTab === 'quiz' ? 'active' : ''}" data-panel="quiz"><div class="tab-heading"><div><span class="eyebrow">Autoteste</span><h3>Quiz da matéria</h3><p>As questões testam os conceitos do material de apoio. Tente sem consultar as outras abas.</p></div>${score !== undefined ? `<div class="score-chip">Melhor: ${score}%</div>` : ''}</div>
-        ${quiz.length ? `<form class="quiz-form" data-quiz-form>${quiz.map((item, qi) => `<fieldset class="quiz-question" data-quiz-question="${qi}"><legend><span>${qi + 1}</span>${esc(item.q)}</legend>${item.options.map((opt, oi) => `<label class="quiz-option"><input type="radio" name="q${qi}" value="${oi}"><span>${esc(shortText(opt, 210))}</span></label>`).join('')}</fieldset>`).join('')}<button type="submit" class="btn">Corrigir quiz</button></form><div class="quiz-result" data-quiz-result></div>` : `<div class="empty"><p>${course.officialSyllabusAvailable === false ? 'O PPP não traz ementa desta optativa, então o app não gera um quiz como se o conteúdo fosse oficial. Use o roteiro sugerido e, quando a disciplina for ofertada, preencha o plano da sua turma.' : 'Esta matéria não possui conceitos únicos suficientes para gerar um quiz confiável. Use os tópicos, flashcards e anotações para revisão.'}</p></div>`}
-      </section>
-
-      <section class="tab-panel ${initialTab === 'syllabus' ? 'active' : ''}" data-panel="syllabus">
-        ${course.officialSyllabusAvailable === false ? `<div class="notice"><div>i</div><div><strong>Optativa sem ementa neste PPP</strong><p>O documento oficial lista esta optativa e sua carga horária, mas não apresenta uma ementa específica. Por isso o app não chama o roteiro sugerido de “ementa oficial”.</p></div></div>` : `<div class="official-box"><span class="source-pill official">PPP oficial</span><h3>Ementa</h3><p class="syllabus">${esc(course.syllabus)}</p></div>`}
-        <table class="detail-table"><tr><th>Nome como aparece na matriz</th><td>${esc(course.matrixNameOriginal || course.title)}</td></tr><tr><th>Carga horária na matriz</th><td>${course.matrixHours}h</td></tr><tr><th>Carga horária no ementário</th><td>${course.ementaryHours ? `${course.ementaryHours}h` : 'não informada'}</td></tr><tr><th>Créditos no ementário</th><td>${course.credits ? esc(course.credits) : 'não informados'}</td></tr></table>
-      </section>
-
-      <section class="tab-panel ${initialTab === 'biblio' ? 'active' : ''}" data-panel="biblio"><div class="official-box"><span class="source-pill official">PPP oficial</span><h3>Leituras indicadas</h3>${course.bibliographyBasic ? `<div class="biblio"><h4>Bibliografia básica</h4><p>${esc(course.bibliographyBasic)}</p></div>` : `<p class="syllabus">${course.officialSyllabusAvailable === false ? 'O PPP consultado não apresenta bibliografia específica para esta optativa.' : 'O PPP não informa bibliografia específica para este componente.'}</p>`}${course.bibliographyComplementary ? `<div class="biblio"><h4>Bibliografia complementar</h4><p>${esc(course.bibliographyComplementary)}</p></div>` : ''}</div></section>
-
-      <section class="tab-panel ${initialTab === 'class' ? 'active' : ''}" data-panel="class"><div class="tab-heading"><div><span class="eyebrow">Sua turma real</span><h3>Plano da minha turma</h3><p>Preencha quando receber horários, professor, avaliações e o plano de ensino. Essas informações ficam salvas apenas neste navegador.</p></div></div><div class="class-plan-grid">
-        <label><span>Professor(a)</span><input class="plan-input" data-plan-field="professor" value="${esc(plan.professor || '')}" placeholder="Nome do professor"></label>
-        <label><span>Dias e horários</span><input class="plan-input" data-plan-field="schedule" value="${esc(plan.schedule || '')}" placeholder="Ex.: terça e quinta, 8h–10h"></label>
-        <label><span>Sala / local</span><input class="plan-input" data-plan-field="location" value="${esc(plan.location || '')}" placeholder="Sala, laboratório ou campo"></label>
-        <label class="span-2"><span>Avaliações e datas</span><textarea class="notes-area compact" data-plan-field="assessments" placeholder="Provas, seminários, trabalhos, entregas...">${esc(plan.assessments || '')}</textarea></label>
-        <label class="span-2"><span>Plano de ensino / leituras realmente pedidas</span><textarea class="notes-area compact" data-plan-field="teachingPlan" placeholder="Cole aqui os tópicos, leituras e observações do plano da turma...">${esc(plan.teachingPlan || '')}</textarea></label>
-      </div></section>
-
-      <section class="tab-panel ${initialTab === 'notes' ? 'active' : ''}" data-panel="notes">
-        <div class="tab-heading notebook-heading"><div><span class="eyebrow">Caderno digital</span><h3>Meu caderno de ${esc(course.title)}</h3><p>Registre o que realmente foi ensinado em sala. Cada aula vira uma folha independente, fechada quando não estiver em uso.</p></div><button type="button" class="btn" data-add-note>+ Nova folha</button></div>
-        <div class="notebook-tip"><strong>Como usar as folhas</strong><p>Crie uma folha por aula. A folha nova abre automaticamente; as anteriores ficam recolhidas. Clique na capa para abrir ou fechar. Em cada folha, use “Salvar PDF” para gerar uma versão limpa pronta para salvar ou imprimir.</p></div>
-        <div class="notebook-list" data-notebook-list>${notebookListHtml(course)}</div>
-        <details class="legacy-notes"><summary>Anotação geral da matéria</summary><div><p class="muted">Este campo preserva as anotações das versões anteriores e pode ser usado para um resumo geral da disciplina.</p><textarea class="notes-area" data-notes-id="${course.id}" placeholder="Resumo geral da matéria, páginas do livro, conceitos para revisar...">${esc(state.notes[course.id] || '')}</textarea></div></details>
-      </section>
-      </div>`;
-
-    bindDialog(course, quiz);
-    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
-  }
-
-  function shortText(text, max) { const s = String(text); return s.length > max ? `${s.slice(0, max - 1).trim()}…` : s; }
-
-  function refreshDialogProgress(course) {
-    const p = courseProgress(course);
-    const bar = $('[data-dialog-progress-bar]', dialogContent), text = $('[data-dialog-progress-text]', dialogContent);
-    if (bar) bar.style.width = `${p}%`; if (text) text.textContent = `${p}%`;
-  }
-
-  function bindDialog(course, quiz) {
-    $$('.course-tab', dialogContent).forEach(btn => btn.addEventListener('click', () => {
-      $$('.course-tab', dialogContent).forEach(b => b.classList.remove('active')); $$('.tab-panel', dialogContent).forEach(p => p.classList.remove('active'));
-      btn.classList.add('active'); $(`[data-panel="${btn.dataset.tab}"]`, dialogContent)?.classList.add('active');
-    }));
-
-    $$('[data-status]', dialogContent).forEach(btn => btn.addEventListener('click', () => {
-      const requested = btn.dataset.status;
-
-      if (requested === 'todo') {
-        const hasStudyProgress = completedTopicCount(course) > 0 || masteredCardCount(course) > 0 || Number(state.quizAttempts[course.id] || 0) > 0 || Number(state.quizScores[course.id] || 0) > 0;
-        if (hasStudyProgress && !confirm('Marcar esta matéria como “Não iniciada” vai zerar tópicos estudados, domínio dos flashcards e quiz desta matéria. Seu caderno, suas anotações e os dados da turma serão mantidos. Continuar?')) return;
-        state.topicChecks[course.id] = {};
-        state.flashcardMastery[course.id] = {};
-        delete state.quizScores[course.id];
-        delete state.quizAttempts[course.id];
-        state.statuses[course.id] = 'todo';
-        syncStudyUI(course);
-      } else if (requested === 'done') {
-        state.statuses[course.id] = 'done';
-        state.topicChecks[course.id] = Object.fromEntries(course.topics.map(topic => [topic, true]));
-        const cards = flashcardsForCourse(course);
-        state.flashcardMastery[course.id] = Object.fromEntries(cards.map((card, i) => [flashKey(card, i), true]));
-        syncStudyUI(course);
-      } else {
-        state.statuses[course.id] = 'studying';
-      }
-
-      $$('[data-status]', dialogContent).forEach(b => b.classList.toggle('active', b.dataset.status === state.statuses[course.id]));
-      saveState();
-      refreshDialogProgress(course);
-    }));
-
-    $$('[data-topic-check]', dialogContent).forEach(ch => ch.addEventListener('change', () => setTopic(course, Number(ch.dataset.topicCheck), ch.checked, ch)));
-    $$('[data-mark-topic]', dialogContent).forEach(btn => btn.addEventListener('click', () => {
-      const idx = Number(btn.dataset.markTopic), newValue = !topicChecked(course, idx);
-      setTopic(course, idx, newValue, null); btn.textContent = newValue ? 'Marcar como não estudado' : 'Marcar tópico como estudado';
-      const lesson = btn.closest('.lesson-card'); const stateEl = $('.lesson-state', lesson); if (stateEl) stateEl.textContent = newValue ? '✓ estudado' : 'abrir';
-      const check = $(`[data-topic-check="${idx}"]`, dialogContent); if (check) { check.checked = newValue; check.closest('.study-item')?.classList.toggle('checked', newValue); }
-    }));
-
-    $$('[data-flash-result]', dialogContent).forEach(btn => btn.addEventListener('click', e => {
-      e.preventDefault(); const idx = Number(btn.dataset.flashIndex), value = btn.dataset.flashResult === '1';
-      const cardData = flashcardsForCourse(course)[idx];
-      state.flashcardMastery[course.id] ||= {}; state.flashcardMastery[course.id][flashKey(cardData, idx)] = value;
-      recomputeCourseStatus(course); saveState();
-      const card = btn.closest('.flashcard'); card?.classList.toggle('mastered', value); card?.classList.toggle('missed', !value); refreshDialogProgress(course);
-      const chip = $('[data-panel="flash"] .score-chip', dialogContent); if (chip) chip.textContent = `${masteredCardCount(course)}/${flashcardsForCourse(course).length} dominados`;
-    }));
-
-    const form = $('[data-quiz-form]', dialogContent);
-    if (form) form.addEventListener('submit', e => {
-      e.preventDefault(); let correct = 0, answered = 0; const feedback = [];
-      quiz.forEach((item, qi) => {
-        const chosen = form.querySelector(`input[name="q${qi}"]:checked`); const field = form.querySelector(`[data-quiz-question="${qi}"]`);
-        field?.classList.remove('correct', 'wrong'); if (!chosen) { feedback.push(`Questão ${qi + 1}: não respondida.`); return; }
-        answered++; const value = Number(chosen.value), selectedText = item.options[value]; const ok = selectedText === item.correct;
-        if (ok) { correct++; field?.classList.add('correct'); } else { field?.classList.add('wrong'); feedback.push(`Questão ${qi + 1}: revise “${item.correctTerm}”. ${item.correct}`); }
-      });
-      const scoreNow = quiz.length ? Math.round(correct / quiz.length * 100) : 0;
-      state.quizScores[course.id] = Math.max(Number(state.quizScores[course.id] || 0), scoreNow); state.quizAttempts[course.id] = Number(state.quizAttempts[course.id] || 0) + 1;
-      recomputeCourseStatus(course); saveState(); refreshDialogProgress(course);
-      const result = $('[data-quiz-result]', dialogContent);
-      result.innerHTML = `<div class="quiz-score ${scoreNow >= 70 ? 'pass' : 'retry'}"><strong>${scoreNow}%</strong><div><b>${scoreNow >= 70 ? 'Bom resultado' : 'Vale revisar'}</b><p>${correct} de ${quiz.length} corretas${answered < quiz.length ? ` · ${quiz.length - answered} sem resposta` : ''}.</p></div></div>${feedback.length ? `<div class="quiz-feedback"><h4>O que revisar</h4>${feedback.map(f => `<p>${esc(f)}</p>`).join('')}</div>` : `<p class="success-note">Você acertou todas. Tente novamente outro dia sem consultar para confirmar que reteve.</p>`}`;
-    });
-
-    $$('[data-plan-field]', dialogContent).forEach(field => field.addEventListener('input', () => {
-      state.coursePlans[course.id] ||= {};
-      state.coursePlans[course.id][field.dataset.planField] = field.value;
-      saveState();
-    }));
-
-    const addNote = $('[data-add-note]', dialogContent);
-    if (addNote) addNote.addEventListener('click', () => {
-      state.notebookEntries[course.id] ||= [];
-      const newId = `note-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      const nextPageNumber = state.notebookEntries[course.id].reduce((max, entry) => Math.max(max, Number(entry.pageNumber || 0)), 0) + 1;
-      state.notebookEntries[course.id].unshift({
-        id: newId, pageNumber: nextPageNumber,
-        date: localDateISO(), title: '', learned: '', concepts: '', questions: '', tasks: '', free: ''
-      });
-      saveState();
-      renderNotebookList(course, newId);
-      const firstTitle = $(`[data-note-entry="${newId}"] [data-note-field="title"]`, dialogContent);
-      firstTitle?.focus();
-    });
-    bindNotebookFields(course);
-
-    const notes = $('[data-notes-id]', dialogContent); if (notes) notes.addEventListener('input', () => { state.notes[course.id] = notes.value; saveState(); });
-  }
-
-  function syncStudyUI(course) {
-    $$('[data-topic-check]', dialogContent).forEach(ch => {
-      const idx = Number(ch.dataset.topicCheck);
-      const value = topicChecked(course, idx);
-      ch.checked = value;
-      ch.closest('.study-item')?.classList.toggle('checked', value);
-    });
-    $$('[data-mark-topic]', dialogContent).forEach(btn => {
-      const idx = Number(btn.dataset.markTopic);
-      const value = topicChecked(course, idx);
-      btn.textContent = value ? 'Marcar como não estudado' : 'Marcar tópico como estudado';
-      const lesson = btn.closest('.lesson-card');
-      const stateEl = $('.lesson-state', lesson);
-      if (stateEl) stateEl.textContent = value ? '✓ estudado' : 'abrir';
-    });
-    const cards = flashcardsForCourse(course);
-    $$('.flashcard', dialogContent).forEach((card, index) => {
-      const value = flashState(course, cards[index], index);
-      card.classList.toggle('mastered', value === true);
-      card.classList.toggle('missed', value === false);
-    });
-    const flashChip = $('[data-panel="flash"] .score-chip', dialogContent);
-    if (flashChip) flashChip.textContent = `${masteredCardCount(course)}/${cards.length} dominados`;
-    const quizResult = $('[data-quiz-result]', dialogContent);
-    if (quizResult && state.statuses[course.id] === 'todo') quizResult.innerHTML = '';
-  }
-
-  function recomputeCourseStatus(course) {
-    const topics = course.topics || [];
-    const allTopics = topics.length > 0 && topics.every((_, i) => topicChecked(course, i));
-    const anyTopics = topics.some((_, i) => topicChecked(course, i));
-    const cards = flashcardsForCourse(course);
-    const mastered = masteredCardCount(course);
-    const allFlash = cards.length === 0 || mastered === cards.length;
-    const anyFlash = mastered > 0;
-    const quiz = quizForCourse(course);
-    const quizScore = Number(state.quizScores[course.id] || 0);
-    const quizAttempts = Number(state.quizAttempts[course.id] || 0);
-    const quizRequirementMet = quiz.length === 0 || quizScore >= 70;
-    const anyQuiz = quizAttempts > 0 || quizScore > 0;
-
-    if (allTopics && allFlash && quizRequirementMet) state.statuses[course.id] = 'done';
-    else if (anyTopics || anyFlash || anyQuiz) state.statuses[course.id] = 'studying';
-    else state.statuses[course.id] = 'todo';
-  }
-
-  function setTopic(course, idx, value, checkbox) {
-    state.topicChecks[course.id] ||= {};
-    const checks = state.topicChecks[course.id];
-    const key = topicKey(course, idx);
-    checks[key] = value;
-    // Remove a chave numérica usada pelas versões antigas para impedir conflito ao desmarcar.
-    if (String(idx) !== key) delete checks[String(idx)];
-
-    if (checkbox) {
-      checkbox.checked = value;
-      checkbox.closest('.study-item')?.classList.toggle('checked', value);
-    }
-
-    recomputeCourseStatus(course);
-
-    saveState();
-    refreshDialogProgress(course);
-    $$('[data-status]', dialogContent).forEach(b => b.classList.toggle('active', b.dataset.status === (state.statuses[course.id] || 'todo')));
-  }
-
-  function bindDynamic() {
-    $$('[data-course-id]', view).forEach(card => {
-      const open = e => { if (e.target.closest('[data-fav-id]')) return; openCourse(courseById(card.dataset.courseId)); };
-      card.addEventListener('click', open); card.addEventListener('keydown', e => { if (e.target.closest('[data-fav-id]')) return; if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(e); } });
-    });
-    $$('[data-course-open]', view).forEach(btn => btn.addEventListener('click', () => {
-      const course = courseById(btn.dataset.courseOpen);
-      openCourse(course, btn.dataset.openTab || 'guide');
-      if (btn.dataset.newNote === '1' && course && notebookEntriesFor(course).length === 0) {
-        $('[data-add-note]', dialogContent)?.click();
-      }
-    }));
-    $$('[data-fav-id]', view).forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); const id = btn.dataset.favId; state.favorites[id] = !state.favorites[id]; saveState(); render(); }));
-    $$('[data-sem-chip]', view).forEach(btn => btn.addEventListener('click', () => navigate('semester', { semester: btn.dataset.semChip })));
-    $$('[data-go-sem]', view).forEach(btn => btn.addEventListener('click', () => navigate('semester', { semester: btn.dataset.goSem })));
-    $$('[data-go-review]', view).forEach(btn => btn.addEventListener('click', () => navigate('review')));
-    $$('[data-export]', view).forEach(btn => btn.addEventListener('click', exportBackup));
-    $$('[data-import]', view).forEach(btn => btn.addEventListener('click', () => $('#importInput').click()));
-    $$('[data-reset]', view).forEach(btn => btn.addEventListener('click', resetProgress));
-  }
-
-  function exportBackup() {
-    const payload = { app: 'Arqueologia Study Hub UNEB', version: APP_VERSION, exportedAt: new Date().toISOString(), state };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
-    a.href = url; a.download = `arqueologia-study-hub-backup-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-
-  function resetProgress() {
-    if (!confirm('Apagar todo o progresso, quizzes, flashcards, cadernos, anotações e favoritas deste navegador?')) return;
-    state = structuredCloneSafe(defaultState); state.currentSemester = Number($('#currentSemester').value || 1); saveState(); render();
-  }
-
-  $('#importInput').addEventListener('change', async e => {
-    const file = e.target.files?.[0]; if (!file) return;
-    try {
-      const parsed = JSON.parse(await file.text());
-      if (!parsed.state || typeof parsed.state !== 'object') throw new Error();
-      state = mergeState(parsed.state);
-      canonicalizeTopicChecks(state);
-      canonicalizeNotebookEntries(state);
-      saveState();
-      $('#currentSemester').value = state.currentSemester;
-      render();
-      alert('Backup importado com sucesso.');
-    }
-    catch (_) { alert('Não consegui importar esse arquivo de backup.'); } finally { e.target.value = ''; }
-  });
-
-  $$('.nav-item').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.view)));
-  $('#menuBtn').addEventListener('click', toggleSidebar); $('#sidebarToggle')?.addEventListener('click', toggleSidebar); overlay.addEventListener('click', closeSidebar);
-  $('#exportBtn').addEventListener('click', exportBackup); $('#dialogClose').addEventListener('click', () => dialog.close());
-  dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); }); dialog.addEventListener('close', () => render());
-  $('#searchInput').addEventListener('input', e => { searchQuery = e.target.value; render(); });
-
-  const semSelect = $('#currentSemester'); semSelect.innerHTML = Array.from({ length: 8 }, (_, i) => i + 1).map(s => `<option value="${s}">${s}º semestre</option>`).join(''); semSelect.value = state.currentSemester || 1;
-  semSelect.addEventListener('change', e => { state.currentSemester = Number(e.target.value); if (state.view === 'semester') state.semesterFilter = state.currentSemester; saveState(); render(); });
-
-  window.addEventListener('resize', () => { if (!isDrawerMode()) closeSidebar(); applySidebarState(); });
+  syncSemesterSelect();
   applySidebarState();
-  setActiveNav(state.view); render();
+  saveState();
+  renderCurrentView();
 })();

@@ -1,78 +1,88 @@
-# Arqueologia Study Hub · UNEB — v7.5
+# Arqueologia Study Hub · UNEB — v8
 
-Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB — Campus VIII, organizado a partir do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
+Aplicativo independente de organização acadêmica para o Bacharelado em Arqueologia da UNEB — Campus VIII, estruturado a partir da matriz curricular e do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
-## O que esta versão consolida
+## Mudança central da v8
 
-A v7.5 é uma revisão geral do conteúdo e do código. Ela mantém a estrutura curricular auditada, o caderno digital em folhas, exportação de folhas para PDF, progresso, flashcards, quiz, busca, favoritos, glossário e menu responsivo. Também corrige cruzamentos semânticos encontrados durante a auditoria final.
+A v8 deixa de tentar prever o conteúdo que cada professor vai ministrar. O app passa a funcionar como um **caderno acadêmico digital baseado na grade oficial**.
 
-### Cobertura
+Cada disciplina possui:
+
+- Visão geral;
+- Ementa oficial do PPP;
+- Bibliografia oficial do PPP;
+- Minha turma (professor, horário, sala, período, contato e plano de ensino);
+- Caderno digital em folhas;
+- Revisão criada pelo próprio estudante;
+- Quiz criado pelo próprio estudante.
+
+Os conteúdos, aulas, flashcards e quizzes gerados automaticamente nas versões anteriores foram removidos da interface e do pacote.
+
+## Grade curricular
 
 - 8 semestres;
 - 65 componentes obrigatórios;
-- 14 optativas;
-- 397 aulas aprofundadas nas obrigatórias;
-- 70 aulas sugeridas nas optativas;
-- 1.588 perguntas de revisão com respostas comentadas nas obrigatórias;
-- 280 perguntas de revisão nas optativas;
-- 498 conceitos de apoio nas obrigatórias;
-- 4.020 h ao somar os componentes obrigatórios listados na matriz;
-- 560 h ao somar as optativas listadas.
+- distribuição: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
+- 4.020 h somadas a partir dos componentes obrigatórios listados na matriz;
+- 14 optativas listadas no PPP, totalizando 560 h.
 
-A matriz continua preservando as divergências internas do próprio PPP em vez de “corrigi-las” silenciosamente.
-
-## Revisão semântica da v7.5
-
-Foram corrigidos sentidos ambíguos que haviam sido herdados por correspondência de palavras:
-
-- `contexto` em Sociologia passou a ser **contexto histórico-social**;
-- `contexto` em Linguística passou a ser **contexto linguístico e discursivo**;
-- Direito e Estágio receberam definições próprias de contexto, sem reutilizar a definição de contexto estratigráfico;
-- `escrita` nos Seminários I e II passou a ser **escrita acadêmica**;
-- Arqueogenética foi reconstruída conforme a ementa oficial de Genética: Mendel, segregação independente, herança extranuclear, gene molecular, regulação gênica e herança relacionada ao sexo;
-- foram removidos de Arqueogenética trechos herdados de Antropologia Física, como estimativa biológica, população comparativa e diagnóstico osteológico;
-- `assortimento independente` foi substituído pelo termo em português **segregação independente**.
-
-O validador contém testes de regressão para impedir que esses cruzamentos reapareçam.
-
-## Repetição de conteúdo
-
-A v7.5 elimina duplicação literal artificial entre parágrafos longos, exemplos, perguntas de revisão e itens de resposta nas 397 aulas obrigatórias. As 70 aulas sugeridas das optativas também permanecem separadas e individualizadas.
-
-Alguns conceitos aparecem legitimamente em mais de uma disciplina — por exemplo, contexto arqueológico, ética, cronologia, patrimônio, sítio e cultura material. Nesses casos a repetição conceitual é intencional porque o mesmo conceito é transversal ao curso. A estrutura visual das aulas também permanece consistente (explicação, aprofundamento, conceitos, exemplo, erros comuns e revisão), mas o conteúdo específico é separado por tópico.
+As inconsistências internas do próprio PPP permanecem sinalizadas nos dados quando necessário; o aplicativo não inventa componentes para fechar divergências de carga horária do documento.
 
 ## Caderno digital
 
-Cada disciplina possui folhas independentes com:
+Cada matéria funciona como um caderno próprio. É possível criar folhas independentes para aulas, leituras, orientações e atividades.
 
-- número permanente da folha;
-- título e data;
-- conteúdo aprendido em sala;
+Cada folha contém:
+
+- número permanente;
+- data;
+- título;
+- o que foi aprendido;
 - conceitos e palavras-chave;
 - dúvidas;
 - tarefas, leituras e prazos;
 - observações livres.
 
-As folhas funcionam em acordeão: ao abrir uma, as outras são recolhidas. Cada folha pode ser preparada para **Salvar como PDF** pela impressão nativa do navegador.
+As folhas funcionam em acordeão: somente a folha aberta ocupa espaço. Cada folha pode ser preparada para impressão/salvamento em PDF pela caixa nativa do navegador.
 
-## Progresso
+## Revisões personalizadas
 
-Nas matérias com todos os componentes:
+A aba **Revisão** não contém tópicos pré-definidos. O estudante adiciona os pontos que realmente surgiram nas aulas ou leituras e pode marcá-los como concluídos.
 
-- 60% — aulas/tópicos;
-- 20% — flashcards;
-- 20% — quiz.
+A porcentagem exibida representa apenas os itens de revisão criados pelo próprio usuário. Se nenhuma revisão tiver sido cadastrada, o app não inventa uma porcentagem de domínio da disciplina.
 
-O quiz completa sua parcela ao atingir 70%. Matérias sem algum componente têm os pesos disponíveis normalizados. Marcar e desmarcar tópicos ou flashcards recalcula a porcentagem imediatamente.
+## Meu quiz
 
-## Responsividade
+A aba **Meu quiz** também é criada pelo estudante. Cada pergunta pode conter:
 
-A v7.5 foi testada em 1440, 1024, 960, 834, 768, 620, 520, 430, 390, 360 e 320 px. A página e o modal das matérias não apresentaram overflow horizontal nessas larguras.
+- pergunta;
+- resposta usada como gabarito;
+- explicação/complemento opcional;
+- autoavaliação: "Acertei" ou "Preciso revisar".
 
-O menu sanduíche:
+## Calendário acadêmico
 
-- recolhe/abre a sidebar no desktop;
-- funciona como drawer no tablet e no celular.
+A página Calendário permite registrar:
+
+- notas livres;
+- aulas;
+- provas;
+- trabalhos;
+- leituras;
+- prazos;
+- lembretes.
+
+Os compromissos podem ser associados a uma matéria, receber horário e observações e aparecer no Início quando estiverem próximos.
+
+## Outros recursos
+
+- status da disciplina: Não iniciada / Cursando / Concluída;
+- favoritas;
+- busca por matéria, ementa, professor, caderno, revisão e quiz;
+- menu lateral recolhível no desktop e em formato drawer no tablet/celular;
+- backup e importação dos dados locais;
+- migração de dados compatíveis das versões anteriores;
+- calendário e caderno incluídos no backup.
 
 ## Arquivos
 
@@ -81,9 +91,6 @@ O menu sanduíche:
 - `app.js`
 - `data.js`
 - `data.json`
-- `study-content.js`
-- `lesson-content.js`
-- `optative-content.js`
 - `validate-data.js`
 - `README.md`
 - `AUDITORIA.md`
@@ -96,8 +103,12 @@ Execute:
 node validate-data.js
 ```
 
-A validação confere matriz curricular, cargas, tópicos, conceitos, aulas, perguntas/respostas, regressões semânticas e duplicações literais já identificadas em versões anteriores.
+O validador confere a estrutura da matriz usada pela v8 e também verifica que os arquivos de conteúdo gerado removidos não fazem parte do pacote.
+
+## Armazenamento
+
+Os dados pessoais do caderno ficam no `localStorage` do navegador. Por isso, o backup JSON é importante antes de limpar dados do navegador, trocar de dispositivo ou realizar mudanças grandes no site.
 
 ## Limite acadêmico
 
-O app é material independente de apoio. Ele não substitui o plano de ensino, as aulas do professor, as leituras indicadas nem bibliografia acadêmica revisada. A aba do PPP é mantida separada do conteúdo didático justamente para distinguir fonte institucional de material de estudo.
+O aplicativo é um projeto independente de organização e estudo. Ele não é um sistema oficial da UNEB e não substitui o plano de ensino, as aulas, os textos indicados ou a orientação dos professores. A ementa e a bibliografia do PPP são mantidas separadas do conteúdo criado pelo usuário.

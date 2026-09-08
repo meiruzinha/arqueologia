@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#6b4937" />
-  <meta name="description" content="Aplicativo independente de apoio aos estudos do Bacharelado em Arqueologia da UNEB Campus VIII, organizado com base no PPP do curso." />
+  <meta name="description" content="Caderno acadêmico independente para o Bacharelado em Arqueologia da UNEB Campus VIII, organizado a partir da matriz e do PPP do curso." />
   <title>Arqueologia Study Hub · UNEB</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -21,11 +21,11 @@
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> Início</button>
         <button class="nav-item" data-view="semester"><span>Ⅰ</span> Meu semestre</button>
         <button class="nav-item" data-view="notebook"><span>✎</span> Caderno</button>
+        <button class="nav-item" data-view="calendar"><span>▣</span> Calendário</button>
+        <button class="nav-item" data-view="review"><span>↻</span> Revisões</button>
         <button class="nav-item" data-view="all"><span>▦</span> Toda a grade</button>
-        <button class="nav-item" data-view="review"><span>↻</span> Revisão</button>
         <button class="nav-item" data-view="optatives"><span>◇</span> Optativas</button>
         <button class="nav-item" data-view="favorites"><span>☆</span> Favoritas</button>
-        <button class="nav-item" data-view="glossary"><span>A·Z</span> Glossário</button>
         <button class="nav-item" data-view="about"><span>i</span> Sobre o PPP</button>
       </nav>
 
@@ -33,12 +33,12 @@
         <label for="currentSemester">Meu semestre atual</label>
         <select id="currentSemester"></select>
         <div class="mini-progress">
-          <div class="mini-progress-head"><span>Progresso geral</span><strong id="sidebarProgressText">0%</strong></div>
+          <div class="mini-progress-head"><span>Revisões concluídas</span><strong id="sidebarProgressText">0%</strong></div>
           <div class="progress-track"><div id="sidebarProgressBar" class="progress-fill"></div></div>
         </div>
         <div class="project-credit" aria-label="Informações do projeto">
-          <small class="version">v7.5 · conteúdo geral revisado</small>
-          <p class="project-source">Desenvolvido para fins de estudo, com organização baseada no <a href="https://dedc8.uneb.br/wp-content/uploads/2023/05/Projeto-Politico-Pedagogico-Arqueologia-DEDC-VIII.pdf" target="_blank" rel="noopener noreferrer" title="Projeto Político-Pedagógico do Bacharelado em Arqueologia da UNEB — Campus VIII">Projeto Político-Pedagógico (PPP)</a> do Bacharelado em Arqueologia da UNEB — Campus VIII, disponibilizado no <a href="https://dedc8.uneb.br/arqueologia/" target="_blank" rel="noopener noreferrer" title="Site oficial do Bacharelado em Arqueologia da UNEB — Campus VIII">site oficial do curso</a>.</p>
+          <small class="version">v8 · caderno acadêmico</small>
+          <p class="project-source">Desenvolvido para fins de estudo, com organização baseada no <a href="https://dedc8.uneb.br/wp-content/uploads/2023/05/Projeto-Politico-Pedagogico-Arqueologia-DEDC-VIII.pdf" target="_blank" rel="noopener noreferrer">Projeto Político-Pedagógico (PPP)</a> do Bacharelado em Arqueologia da UNEB — Campus VIII, disponibilizado no <a href="https://dedc8.uneb.br/arqueologia/" target="_blank" rel="noopener noreferrer">site oficial do curso</a>.</p>
           <p class="project-note">Projeto independente, sem vínculo institucional com a UNEB. — <a class="author-link" href="https://www.instagram.com/meiarqueo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Mei">Mei</a>.</p>
         </div>
       </div>
@@ -46,12 +46,12 @@
 
     <main class="main">
       <header class="topbar">
-        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="true" title="Abrir ou fechar menu">☰</button>
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Abrir ou fechar menu" aria-expanded="true" title="Abrir ou fechar menu">☰</button>
         <div class="search-wrap">
           <span aria-hidden="true">⌕</span>
-          <input id="searchInput" type="search" placeholder="Buscar matéria, tema, conceito..." autocomplete="off" />
+          <input id="searchInput" type="search" placeholder="Buscar matéria, professor, caderno, revisão..." autocomplete="off" />
         </div>
-        <button class="icon-btn" id="exportBtn" title="Exportar meu progresso" aria-label="Exportar meu progresso">⇩</button>
+        <button class="icon-btn" id="exportBtn" title="Exportar backup" aria-label="Exportar backup">⇩</button>
       </header>
       <section id="view" class="view" aria-live="polite"></section>
     </main>
@@ -69,9 +69,6 @@
   <input type="file" id="importInput" accept="application/json" hidden />
 
   <script src="data.js"></script>
-  <script src="study-content.js"></script>
-  <script src="lesson-content.js"></script>
-  <script src="optative-content.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
