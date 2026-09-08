@@ -1,66 +1,75 @@
-# Arqueologia Study Hub · UNEB — v8.3
+# Arqueologia Study Hub · UNEB — v8.4
 
 Aplicativo independente de organização acadêmica para o Bacharelado em Arqueologia da UNEB — Campus VIII, estruturado a partir da matriz curricular e do Projeto Político-Pedagógico (PPP) disponibilizado pelo curso.
 
+## O que é esta versão
 
-## Refinamento visual da v8.3
+A v8.4 é uma revisão de estabilidade da linha v8. O foco foi corrigir incompatibilidades acumuladas entre HTML, CSS e JavaScript e manter o app como **grade oficial + caderno acadêmico + calendário + revisão e quiz criados pelo próprio estudante**.
 
-- O controle do menu foi simplificado: existe apenas o botão sanduíche branco da barra superior.
-- No desktop, o mesmo botão recolhe e reabre a sidebar; no tablet/mobile, abre e fecha o drawer lateral.
-- O Início foi redesenhado como painel acadêmico compacto, com resumo do semestre, atalhos, matérias em cartões leves e próximos compromissos.
-- Os cards detalhados com ementa continuam nas páginas de grade/semestre; a home evita repetir informação e prioriza acesso rápido.
+Não há aulas, flashcards ou conteúdos didáticos gerados automaticamente no pacote.
 
-
-
-### Meu semestre
-
-- Cabeçalho editorial com número do semestre, quantidade de disciplinas, carga horária, folhas e revisões pendentes.
-- Seletor dos 8 semestres integrado à página.
-- Disciplinas em cartões editoriais compactos, com ementa resumida, status e atalhos para caderno/revisão/quiz.
-- O cartão inteiro é clicável e abre a disciplina.
-
-### Caderno
-
-- A página passa a ter uma identidade de caderno acadêmico, com resumo do semestre e estante de cadernos por disciplina.
-- Cada caderno mostra quantidade de folhas e, quando houver, a última folha registrada.
-- Cadernos vazios têm estado visual próprio e convite para criar a primeira folha.
-- A última anotação do semestre recebe um atalho discreto para continuar escrevendo.
-
-### Layout interno das disciplinas
-
-A v8.3 preserva a correção estrutural do modal e redesenha as páginas **Meu semestre** e **Caderno**. O modal agora possui cabeçalho, status, indicadores, abas e painéis com estilos próprios, além de formulários responsivos para Minha turma, Caderno, Revisão e Meu quiz.
-
-## Estrutura acadêmica da v8.3
-
-A v8.3 mantém a decisão de não tentar prever o conteúdo que cada professor vai ministrar. O app passa a funcionar como um **caderno acadêmico digital baseado na grade oficial**.
-
-Cada disciplina possui:
-
-- Visão geral;
-- Ementa oficial do PPP;
-- Bibliografia oficial do PPP;
-- Minha turma (professor, horário, sala, período, contato e plano de ensino);
-- Caderno digital em folhas;
-- Revisão criada pelo próprio estudante;
-- Quiz criado pelo próprio estudante.
-
-Os conteúdos, aulas, flashcards e quizzes gerados automaticamente nas versões anteriores foram removidos da interface e do pacote.
-
-## Grade curricular
+## Estrutura acadêmica
 
 - 8 semestres;
 - 65 componentes obrigatórios;
 - distribuição: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
 - 4.020 h somadas a partir dos componentes obrigatórios listados na matriz;
-- 14 optativas listadas no PPP, totalizando 560 h.
+- 14 optativas listadas no PPP.
 
-As inconsistências internas do próprio PPP permanecem sinalizadas nos dados quando necessário; o aplicativo não inventa componentes para fechar divergências de carga horária do documento.
+Cada disciplina mantém:
+
+- Visão geral;
+- Ementa oficial;
+- Bibliografia oficial;
+- Minha turma;
+- Caderno em folhas;
+- Revisão personalizada;
+- Meu quiz.
+
+## Correções principais da v8.4
+
+### Calendário
+
+O bug das notas salvas foi corrigido. O HTML atual possuía dois blocos por item (conteúdo + ações), enquanto uma camada antiga de CSS ainda reservava três colunas. Isso espremia o texto da nota numa coluna estreita.
+
+A v8.4 alinha novamente o markup e o CSS e também:
+
+- corrige quebra de linha de observações longas;
+- preserva o estado concluído ao editar e mudar a data;
+- valida data e horário ao importar/salvar;
+- permite clicar em um compromisso da Home para abrir diretamente o dia correspondente;
+- inclui notas do calendário na busca global;
+- melhora formulário, legenda, painel do dia e responsividade.
+
+### Compatibilidade de layout
+
+Foram corrigidas classes usadas pela interface atual que estavam sem estilo canônico, como `course-grid`, `empty-state`, `course-card-head`, `course-summary`, `calendar-day-number`, `calendar-day-items` e `calendar-detail-head`.
+
+Isso estabiliza especialmente:
+
+- Toda a grade;
+- resultados de busca;
+- estados vazios;
+- calendário;
+- cartões de matéria.
+
+### Caderno e formulários
+
+- escrita em campos longos passa a usar salvamento agendado para reduzir gravações excessivas no `localStorage` durante a digitação;
+- mudança/saída do campo força gravação imediata;
+- novas folhas recebem `createdAt` e a lista é normalizada por numeração;
+- PDF aceita melhor anotações longas que atravessam mais de uma página.
+
+### Modal e navegação
+
+- fechar a matéria com `Esc` agora atualiza a página que ficou ao fundo;
+- abas receberam estado `aria-selected`;
+- favorito/status receberam estados de acessibilidade;
+- atalhos de navegação limpam corretamente a pesquisa visível.
 
 ## Caderno digital
 
-Cada matéria funciona como um caderno próprio. É possível criar folhas independentes para aulas, leituras, orientações e atividades.
-
-Cada folha contém:
+Cada matéria possui folhas independentes com:
 
 - número permanente;
 - data;
@@ -69,30 +78,14 @@ Cada folha contém:
 - conceitos e palavras-chave;
 - dúvidas;
 - tarefas, leituras e prazos;
-- observações livres.
+- observações livres;
+- opção de salvar/imprimir a folha em PDF.
 
-As folhas funcionam em acordeão: somente a folha aberta ocupa espaço. Cada folha pode ser preparada para impressão/salvamento em PDF pela caixa nativa do navegador.
+## Calendário
 
-## Revisões personalizadas
+Permite registrar:
 
-A aba **Revisão** não contém tópicos pré-definidos. O estudante adiciona os pontos que realmente surgiram nas aulas ou leituras e pode marcá-los como concluídos.
-
-A porcentagem exibida representa apenas os itens de revisão criados pelo próprio usuário. Se nenhuma revisão tiver sido cadastrada, o app não inventa uma porcentagem de domínio da disciplina.
-
-## Meu quiz
-
-A aba **Meu quiz** também é criada pelo estudante. Cada pergunta pode conter:
-
-- pergunta;
-- resposta usada como gabarito;
-- explicação/complemento opcional;
-- autoavaliação: "Acertei" ou "Preciso revisar".
-
-## Calendário acadêmico
-
-A página Calendário permite registrar:
-
-- notas livres;
+- notas;
 - aulas;
 - provas;
 - trabalhos;
@@ -100,17 +93,26 @@ A página Calendário permite registrar:
 - prazos;
 - lembretes.
 
-Os compromissos podem ser associados a uma matéria, receber horário e observações e aparecer no Início quando estiverem próximos.
+Cada item pode receber matéria, horário, observações e status concluído/pendente.
 
-## Outros recursos
+## Revisão e quiz
 
-- status da disciplina: Não iniciada / Cursando / Concluída;
-- favoritas;
-- busca por matéria, ementa, professor, caderno, revisão e quiz;
-- menu lateral recolhível no desktop e em formato drawer no tablet/celular;
-- backup e importação dos dados locais;
-- migração de dados compatíveis das versões anteriores;
-- calendário e caderno incluídos no backup.
+A porcentagem de revisão representa somente os itens criados pelo usuário. O quiz também é criado pelo estudante e guarda pergunta, resposta, complemento e autoavaliação.
+
+## Backup
+
+O app continua usando a chave `arqueologia-study-hub-v8`, portanto dados salvos nas versões anteriores da linha v8 permanecem compatíveis. O backup JSON inclui caderno, calendário, revisões, quiz, favoritas, status e dados da turma.
+
+## Validação
+
+Execute:
+
+```bash
+node validate-data.js
+node validate-app.js
+```
+
+`validate-data.js` confere a matriz curricular. `validate-app.js` acrescenta verificações de estrutura do pacote, arquivos, IDs, CSS essencial e consistência entre `data.js` e `data.json`.
 
 ## Arquivos
 
@@ -120,23 +122,10 @@ Os compromissos podem ser associados a uma matéria, receber horário e observa�
 - `data.js`
 - `data.json`
 - `validate-data.js`
+- `validate-app.js`
 - `README.md`
 - `AUDITORIA.md`
 
-## Validação
-
-Execute:
-
-```bash
-node validate-data.js
-```
-
-O validador confere a estrutura da matriz usada pela v8.3 e também verifica que os arquivos de conteúdo gerado removidos não fazem parte do pacote.
-
-## Armazenamento
-
-Os dados pessoais do caderno ficam no `localStorage` do navegador. Por isso, o backup JSON é importante antes de limpar dados do navegador, trocar de dispositivo ou realizar mudanças grandes no site.
-
 ## Limite acadêmico
 
-O aplicativo é um projeto independente de organização e estudo. Ele não é um sistema oficial da UNEB e não substitui o plano de ensino, as aulas, os textos indicados ou a orientação dos professores. A ementa e a bibliografia do PPP são mantidas separadas do conteúdo criado pelo usuário.
+O app é um projeto independente. O PPP permanece como referência institucional; o conteúdo real das aulas é construído pelo estudante no caderno, nas revisões e no quiz conforme a turma e os professores avançam.

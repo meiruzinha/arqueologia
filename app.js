@@ -4,7 +4,7 @@
   const DATA = window.ARCHAEOLOGY_DATA;
   if (!DATA) throw new Error('Dados do curso não carregados.');
 
-  const APP_VERSION = '8.3';
+  const APP_VERSION = '8.4';
   const STORAGE_KEY = 'arqueologia-study-hub-v8';
   const LEGACY_KEYS = [
     'arqueologia-study-hub-v7', 'arqueologia-study-hub-v6-2', 'arqueologia-study-hub-v6-1',
@@ -74,6 +74,17 @@
     return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
   }
   function wordCount(text) { return String(text || '').trim() ? String(text).trim().split(/\s+/).length : 0; }
+  function isISODate(value) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+    if (!match) return false;
+    const y = Number(match[1]), m = Number(match[2]), d = Number(match[3]);
+    const date = new Date(y, m - 1, d);
+    return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+  }
+  function isClockTime(value) {
+    const match = /^(\d{2}):(\d{2})$/.exec(String(value || ''));
+    return !!match && Number(match[1]) <= 23 && Number(match[2]) <= 59;
+  }
 
   function migrateLegacy(raw) {
     const incoming = plainObject(raw);
@@ -88,7 +99,7 @@
       notebookEntries: plainObject(incoming.notebookEntries),
       calendarEntries: plainObject(incoming.calendarEntries),
       calendarMonth: /^\d{4}-\d{2}$/.test(String(incoming.calendarMonth || '')) ? incoming.calendarMonth : '',
-      calendarSelectedDate: /^\d{4}-\d{2}-\d{2}$/.test(String(incoming.calendarSelectedDate || '')) ? incoming.calendarSelectedDate : '',
+      calendarSelectedDate: isISODate(incoming.calendarSelectedDate) ? String(incoming.calendarSelectedDate) : '',
       sidebarCollapsed: incoming.sidebarCollapsed === true,
       view: ['dashboard','semester','notebook','calendar','review','all','optatives','favorites','about'].includes(incoming.view) ? incoming.view : 'dashboard',
       reviewItems: plainObject(incoming.reviewItems),
@@ -104,12 +115,14 @@
       const cleaned = entries.filter(Boolean).map((entry, index) => ({
         id: String(entry.id || uid(`legacy-${courseId}-${index}`)),
         pageNumber: Number(entry.pageNumber) > 0 ? Number(entry.pageNumber) : null,
-        date: /^\d{4}-\d{2}-\d{2}$/.test(String(entry.date || '')) ? String(entry.date) : '',
+        date: isISODate(entry.date) ? String(entry.date) : '',
         title: String(entry.title || ''), learned: String(entry.learned || ''), concepts: String(entry.concepts || ''),
-        questions: String(entry.questions || ''), tasks: String(entry.tasks || ''), free: String(entry.free || '')
+        questions: String(entry.questions || ''), tasks: String(entry.tasks || ''), free: String(entry.free || ''),
+        createdAt: String(entry.createdAt || '')
       }));
       let max = Math.max(0, ...cleaned.map(e => e.pageNumber || 0));
       for (let i = cleaned.length - 1; i >= 0; i--) if (!cleaned[i].pageNumber) cleaned[i].pageNumber = ++max;
+      cleaned.sort((a,b) => (Number(b.pageNumber)||0) - (Number(a.pageNumber)||0));
       if (cleaned.length) normalized[courseId] = cleaned;
     });
     target.notebookEntries = normalized;
@@ -154,13 +167,13 @@
     const allowed = new Set(allCourses().map(c => c.id));
     const normalized = {};
     Object.entries(plainObject(target.calendarEntries)).forEach(([date, entries]) => {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Array.isArray(entries)) return;
+      if (!isISODate(date) || !Array.isArray(entries)) return;
       const clean = entries.filter(Boolean).map((entry, i) => ({
         id: String(entry.id || `calendar-${date}-${i}`),
         title: String(entry.title || '').slice(0, 200),
         type: ['note','class','exam','assignment','reading','deadline','reminder'].includes(entry.type) ? entry.type : 'note',
         courseId: allowed.has(String(entry.courseId || '')) ? String(entry.courseId) : '',
-        time: /^\d{2}:\d{2}$/.test(String(entry.time || '')) ? String(entry.time) : '',
+        time: isClockTime(entry.time) ? String(entry.time) : '',
         details: String(entry.details || '').slice(0, 10000),
         done: entry.done === true,
         createdAt: String(entry.createdAt || '')
@@ -210,6 +223,16 @@
     updateSidebarProgress();
   }
 
+  let saveTimer = null;
+  function scheduleSaveState(delay = 280) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { saveTimer = null; saveState(); }, delay);
+  }
+  function flushScheduledSave() {
+    if (!saveTimer) return;
+    clearTimeout(saveTimer); saveTimer = null; saveState();
+  }
+
   function allCourses() { return [...(DATA.courses || []), ...(DATA.optatives || [])]; }
   function requiredCourses() { return DATA.courses || []; }
   function optativeCourses() { return DATA.optatives || []; }
@@ -244,10 +267,11 @@
     const pages = notebookPages(course).map(p => Object.values(p).join(' ')).join(' ');
     const reviews = reviewItems(course).map(r => `${r.title} ${r.details}`).join(' ');
     const quizzes = quizItems(course).map(q => `${q.question} ${q.answer} ${q.explanation}`).join(' ');
+    const calendar = Object.values(state.calendarEntries).flat().filter(e => e.courseId === course.id).map(e => `${e.title} ${e.details}`).join(' ');
     return normalizeText([
       course.title, course.syllabus, course.bibliographyBasic, course.bibliographyComplementary, course.note,
       plan.professor, plan.schedule, plan.room, plan.period, plan.contact, plan.plan,
-      state.notes[course.id], pages, reviews, quizzes
+      state.notes[course.id], pages, reviews, quizzes, calendar
     ].join(' '));
   }
 
@@ -409,7 +433,7 @@
     const courses = semesterCourses();
     const totalPages = courses.reduce((total, course) => total + notebookPages(course).length, 0);
     const started = courses.filter(course => notebookPages(course).length).length;
-    const latest = courses.map(course => ({ course, page: notebookPages(course)[0] })).filter(item => item.page).sort((a,b) => String(b.page.date || '').localeCompare(String(a.page.date || '')))[0];
+    const latest = courses.map(course => ({ course, page: notebookPages(course)[0] })).filter(item => item.page).sort((a,b) => String(b.page.createdAt || b.page.date || '').localeCompare(String(a.page.createdAt || a.page.date || '')))[0];
     view.innerHTML = `<div class="page-enter notebook-library-page">
       <section class="notebook-library-hero">
         <div class="notebook-library-copy"><span class="eyebrow">Caderno acadêmico</span><h1>Suas aulas, do seu jeito.</h1><p>Cada disciplina tem um caderno próprio. Uma folha pode guardar uma aula, uma leitura, uma orientação de trabalho ou qualquer coisa que você queira levar consigo durante a graduação.</p><div class="notebook-library-stats"><span><strong>${totalPages}</strong> ${totalPages === 1 ? 'folha' : 'folhas'}</span><span><strong>${started}/${courses.length}</strong> cadernos iniciados</span></div></div>
@@ -445,7 +469,9 @@
   function renderSearch() {
     const q = normalizeText(searchQuery);
     const results = allCourses().filter(c => courseSearchText(c).includes(q));
-    view.innerHTML = `<div class="page-enter">${sectionHead(`Resultados para “${searchQuery}”`, `${results.length} ${results.length===1?'matéria encontrada':'matérias encontradas'}.`)}${results.length ? `<div class="course-grid">${results.map(courseCard).join('')}</div>` : emptyState('Nada encontrado', 'Tente o nome da matéria, professor, uma frase do caderno, revisão ou pergunta de quiz.')}</div>`;
+    const calendarResults = Object.entries(state.calendarEntries).flatMap(([date,entries]) => entries.map(entry => ({...entry,date}))).filter(entry => normalizeText(`${entry.title} ${entry.details} ${getCourse(entry.courseId)?.title || ''}`).includes(q)).sort((a,b) => `${b.date} ${b.time||''}`.localeCompare(`${a.date} ${a.time||''}`)).slice(0,20);
+    const total = results.length + calendarResults.length;
+    view.innerHTML = `<div class="page-enter">${sectionHead(`Resultados para “${searchQuery}”`, `${total} ${total===1?'resultado encontrado':'resultados encontrados'}.`)}${results.length ? `<section class="search-group"><div class="search-group-head"><span class="eyebrow">Matérias</span><h3>${results.length} encontradas</h3></div><div class="course-grid">${results.map(courseCard).join('')}</div></section>` : ''}${calendarResults.length ? `<section class="search-group"><div class="search-group-head"><span class="eyebrow">Calendário</span><h3>${calendarResults.length} itens</h3></div><div class="search-calendar-list">${calendarResults.map(calendarCompactCard).join('')}</div></section>` : ''}${!total ? emptyState('Nada encontrado', 'Tente o nome da matéria, professor, uma frase do caderno, revisão, quiz ou nota do calendário.') : ''}</div>`;
   }
 
   function renderCurrentView() {
@@ -466,11 +492,12 @@
   }
   function calendarCompactCard(entry) {
     const course = getCourse(entry.courseId), type = CAL_TYPES[entry.type] || CAL_TYPES.note;
-    return `<article class="upcoming-item ${entry.done?'done':''}"><div class="upcoming-date"><strong>${entry.date.slice(8,10)}</strong><span>${new Intl.DateTimeFormat('pt-BR',{month:'short'}).format(new Date(`${entry.date}T12:00:00`)).replace('.','')}</span></div><div><span class="calendar-type type-${esc(entry.type)}">${type[1]} ${type[0]}</span><h4>${esc(entry.title || 'Sem título')}</h4><p>${entry.time ? `${esc(entry.time)} · ` : ''}${course ? esc(course.title) : 'Sem matéria vinculada'}</p></div></article>`;
+    const monthLabel = new Intl.DateTimeFormat('pt-BR',{month:'short'}).format(new Date(`${entry.date}T12:00:00`)).replace('.','');
+    return `<button type="button" class="upcoming-item ${entry.done?'done':''}" data-calendar-jump="${esc(entry.date)}" aria-label="Abrir ${esc(entry.title || 'item')} no calendário"><div class="upcoming-date"><strong>${entry.date.slice(8,10)}</strong><span>${monthLabel}</span></div><div class="upcoming-copy"><span class="calendar-type type-${esc(entry.type)}">${type[1]} ${type[0]}</span><h4>${esc(entry.title || 'Sem título')}</h4><p>${entry.time ? `${esc(entry.time)} · ` : ''}${course ? esc(course.title) : 'Sem matéria vinculada'}</p></div></button>`;
   }
   function calendarCell(date, day, currentMonth) {
     const entries = calendarEntriesFor(date), isToday = date === todayISO(), selected = date === state.calendarSelectedDate;
-    return `<button class="calendar-day ${currentMonth?'':'outside'} ${isToday?'today':''} ${selected?'selected':''}" data-calendar-date="${date}"><span class="day-number">${day}</span><div class="day-events">${entries.slice(0,3).map(e => `<span class="day-event type-${esc(e.type)}" title="${esc(e.title)}">${esc(e.title || 'Nota')}</span>`).join('')}${entries.length>3?`<small>+${entries.length-3}</small>`:''}</div></button>`;
+    return `<button type="button" class="calendar-day ${currentMonth?'':'outside'} ${isToday?'today':''} ${selected?'selected':''}" data-calendar-date="${date}" aria-label="${formatDate(date)}${entries.length ? `, ${entries.length} ${entries.length===1?'item':'itens'}` : ''}"><span class="calendar-day-number">${day}</span><div class="calendar-day-items">${entries.slice(0,3).map(e => `<span class="calendar-mini type-${esc(e.type)} ${e.done?'done':''}" title="${esc(e.title)}">${esc(e.title || 'Nota')}</span>`).join('')}${entries.length>3?`<small class="calendar-more">+${entries.length-3}</small>`:''}</div>${entries.length?`<span class="calendar-dot-count">${entries.length}</span>`:''}</button>`;
   }
   function renderCalendar() {
     const month = state.calendarMonth || monthISO(); state.calendarMonth = month;
@@ -479,30 +506,29 @@
     const cells = [];
     for (let i=0;i<42;i++) { const d=new Date(start); d.setDate(start.getDate()+i); const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; cells.push(calendarCell(iso,d.getDate(),d.getMonth()===mon-1)); }
     const selectedEntries = calendarEntriesFor(state.calendarSelectedDate);
-    view.innerHTML = `<div class="page-enter">${sectionHead('Calendário', 'Provas, trabalhos, leituras, aulas, prazos e notas em uma visão mensal.', '<button class="btn btn-soft" data-calendar-today>Hoje</button>')}
-      <div class="calendar-layout"><section class="calendar-panel panel"><div class="calendar-toolbar"><button class="icon-btn" data-calendar-prev aria-label="Mês anterior">‹</button><h3>${esc(formatMonth(month))}</h3><button class="icon-btn" data-calendar-next aria-label="Próximo mês">›</button></div><div class="calendar-weekdays">${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d=>`<span>${d}</span>`).join('')}</div><div class="calendar-grid">${cells.join('')}</div></section>
-      <aside class="calendar-detail panel"><div class="calendar-detail-head"><div><span class="eyebrow">Dia selecionado</span><h3>${formatDate(state.calendarSelectedDate)}</h3></div><button class="btn btn-soft btn-sm" data-calendar-new>+ Adicionar</button></div>
-      <div class="calendar-entry-list">${selectedEntries.length ? selectedEntries.map(e => calendarEntryCard(state.calendarSelectedDate,e)).join('') : '<p class="muted">Nenhum item neste dia.</p>'}</div><div id="calendarFormSlot"></div></aside></div></div>`;
+    view.innerHTML = `<div class="page-enter calendar-page">${sectionHead('Calendário', 'Provas, trabalhos, leituras, aulas, prazos e notas em uma visão mensal.', '<button class="btn btn-soft" data-calendar-today>Hoje</button>')}
+      <div class="calendar-layout"><section class="calendar-panel panel"><div class="calendar-toolbar"><button class="icon-btn" data-calendar-prev aria-label="Mês anterior">‹</button><h2>${esc(formatMonth(month))}</h2><button class="icon-btn" data-calendar-next aria-label="Próximo mês">›</button></div><div class="calendar-weekdays">${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d=>`<span>${d}</span>`).join('')}</div><div class="calendar-grid">${cells.join('')}</div><div class="calendar-legend">${Object.entries(CAL_TYPES).map(([key,value])=>`<span><i class="legend-dot type-${key}"></i>${value[0]}</span>`).join('')}</div></section>
+      <aside class="calendar-side"><section class="calendar-day-panel panel"><div class="calendar-detail-head"><div><span class="eyebrow">Dia selecionado</span><h2>${formatDate(state.calendarSelectedDate)}</h2><p>${selectedEntries.length ? `${selectedEntries.length} ${selectedEntries.length===1?'item registrado':'itens registrados'}` : 'Nada registrado ainda'}</p></div><button class="btn btn-soft btn-sm" data-calendar-new>+ Adicionar</button></div><div class="calendar-entry-list">${selectedEntries.length ? selectedEntries.map(e => calendarEntryCard(state.calendarSelectedDate,e)).join('') : '<div class="calendar-empty-day">Nenhum item neste dia. Use “Adicionar” para criar uma nota, prova, trabalho, leitura ou lembrete.</div>'}</div></section><section id="calendarFormSlot"></section></aside></div></div>`;
     if (calendarEditingId === 'new') renderCalendarForm(state.calendarSelectedDate, null);
     else if (calendarEditingId) renderCalendarForm(state.calendarSelectedDate, selectedEntries.find(e=>e.id===calendarEditingId));
   }
   function calendarEntryCard(date, entry) {
     const course=getCourse(entry.courseId), type=CAL_TYPES[entry.type]||CAL_TYPES.note;
-    return `<article class="calendar-entry ${entry.done?'done':''}"><div class="calendar-entry-main"><div class="calendar-entry-title"><span class="calendar-type type-${esc(entry.type)}">${type[1]} ${type[0]}</span><strong>${esc(entry.title || 'Sem título')}</strong></div><p>${entry.time?`${esc(entry.time)} · `:''}${course?esc(course.title):'Sem matéria vinculada'}</p>${entry.details?`<small>${esc(entry.details)}</small>`:''}</div><div class="calendar-entry-actions"><button class="icon-btn small" data-calendar-done="${esc(date)}|${esc(entry.id)}" title="${entry.done?'Reabrir':'Concluir'}">${entry.done?'↶':'✓'}</button><button class="icon-btn small" data-calendar-edit="${esc(entry.id)}" title="Editar">✎</button><button class="icon-btn small danger" data-calendar-delete="${esc(date)}|${esc(entry.id)}" title="Excluir">×</button></div></article>`;
+    return `<article class="calendar-entry ${entry.done?'done':''}"><div class="calendar-entry-main"><div class="calendar-entry-title"><span class="calendar-type type-${esc(entry.type)}">${type[1]} ${type[0]}</span><strong>${esc(entry.title || 'Sem título')}</strong></div><div class="calendar-entry-meta">${entry.time?`<span>${esc(entry.time)}</span>`:''}${course?`<span>${esc(course.title)}</span>`:'<span>Sem matéria vinculada</span>'}</div>${entry.details?`<p class="calendar-entry-details">${esc(entry.details)}</p>`:''}</div><div class="calendar-entry-actions"><button class="icon-btn small" data-calendar-done="${esc(date)}|${esc(entry.id)}" title="${entry.done?'Reabrir':'Concluir'}" aria-label="${entry.done?'Reabrir':'Concluir'}">${entry.done?'↶':'✓'}</button><button class="icon-btn small" data-calendar-edit="${esc(entry.id)}" title="Editar" aria-label="Editar">✎</button><button class="icon-btn small danger" data-calendar-delete="${esc(date)}|${esc(entry.id)}" title="Excluir" aria-label="Excluir">×</button></div></article>`;
   }
   function renderCalendarForm(date, entry) {
     const slot=$('#calendarFormSlot'); if(!slot)return;
-    slot.innerHTML=`<form class="calendar-form" data-calendar-form><h4>${entry?'Editar item':'Novo item'}</h4><div class="form-grid two"><label>Título<input name="title" required maxlength="200" value="${esc(entry?.title||'')}"></label><label>Tipo<select name="type">${Object.entries(CAL_TYPES).map(([k,v])=>`<option value="${k}" ${entry?.type===k?'selected':''}>${v[0]}</option>`).join('')}</select></label></div><div class="form-grid two"><label>Data<input type="date" name="date" value="${esc(date)}" required></label><label>Horário<input type="time" name="time" value="${esc(entry?.time||'')}"></label></div><label>Matéria<select name="courseId"><option value="">Sem matéria</option>${allCourses().map(c=>`<option value="${esc(c.id)}" ${entry?.courseId===c.id?'selected':''}>${esc(c.title)}</option>`).join('')}</select></label><label>Observações<textarea name="details" rows="4">${esc(entry?.details||'')}</textarea></label><div class="form-actions"><button class="btn" type="submit">Salvar</button><button class="btn btn-outline" type="button" data-calendar-cancel>Cancelar</button></div></form>`;
+    slot.innerHTML=`<form class="calendar-form panel" data-calendar-form><div class="calendar-form-head"><div><span class="eyebrow">${entry?'Editar':'Novo'}</span><h3>${entry?'Editar item':'Adicionar ao calendário'}</h3></div><button class="icon-btn small" type="button" data-calendar-cancel aria-label="Fechar formulário">×</button></div><div class="calendar-form-grid"><label><span>Título</span><input name="title" required maxlength="200" value="${esc(entry?.title||'')}" placeholder="Ex.: Prova 1, leitura do capítulo 3..."></label><label><span>Tipo</span><select name="type">${Object.entries(CAL_TYPES).map(([k,v])=>`<option value="${k}" ${entry?.type===k?'selected':''}>${v[0]}</option>`).join('')}</select></label><label><span>Data</span><input type="date" name="date" value="${esc(date)}" required></label><label><span>Horário <small>(opcional)</small></span><input type="time" name="time" value="${esc(entry?.time||'')}"></label><label class="span-2"><span>Matéria <small>(opcional)</small></span><select name="courseId"><option value="">Sem matéria vinculada</option>${allCourses().map(c=>`<option value="${esc(c.id)}" ${entry?.courseId===c.id?'selected':''}>${esc(c.title)}</option>`).join('')}</select></label><label class="span-2"><span>Observações <small>(opcional)</small></span><textarea name="details" rows="5" maxlength="10000" placeholder="Escreva a nota, orientação, conteúdo da prova ou o que precisar lembrar...">${esc(entry?.details||'')}</textarea></label></div><div class="form-actions"><button class="btn" type="submit">Salvar item</button><button class="btn btn-outline" type="button" data-calendar-cancel>Cancelar</button></div></form>`;
   }
 
   // ---------- DIÁLOGO DA MATÉRIA ----------
-  function tabButton(id,label,active){return `<button type="button" class="course-tab ${active===id?'active':''}" data-tab="${id}">${label}</button>`;}
+  function tabButton(id,label,active){return `<button type="button" class="course-tab ${active===id?'active':''}" data-tab="${id}" role="tab" aria-selected="${active===id?'true':'false'}">${label}</button>`;}
   function openCourse(courseId, initialTab='overview', openNotebookId=null) {
     const course=getCourse(courseId); if(!course)return;
     const status=courseStatus(course), fav=state.favorites[course.id]===true, pages=notebookPages(course), reviews=reviewItems(course), quizzes=quizItems(course), rp=reviewProgress(course);
     dialogContent.innerHTML=`<article class="course-dialog-page" data-course-dialog="${esc(course.id)}">
-      <header class="course-dialog-header"><div><span class="course-sem">${esc(courseTypeLabel(course))}</span><h2>${esc(course.title)}</h2><div class="course-meta"><span>${course.matrixHours||0}h</span>${course.credits?`<span>${esc(course.credits)}</span>`:''}${course.officialSyllabusAvailable===false?'<span class="source-pill suggested">PPP: sem ementa</span>':'<span class="source-pill official">PPP oficial</span>'}</div></div><button class="favorite-btn large ${fav?'active':''}" data-favorite="${esc(course.id)}">${fav?'★':'☆'}</button></header>
-      <div class="status-row">${[['todo','Não iniciada'],['studying','Cursando'],['done','Concluída']].map(([v,l])=>`<button class="status-btn ${status===v?'active':''}" data-status="${v}">${l}</button>`).join('')}</div>
+      <header class="course-dialog-header"><div><span class="course-sem">${esc(courseTypeLabel(course))}</span><h2>${esc(course.title)}</h2><div class="course-meta"><span>${course.matrixHours||0}h</span>${course.credits?`<span>${esc(course.credits)}</span>`:''}${course.officialSyllabusAvailable===false?'<span class="source-pill suggested">PPP: sem ementa</span>':'<span class="source-pill official">PPP oficial</span>'}</div></div><button class="favorite-btn large ${fav?'active':''}" data-favorite="${esc(course.id)}" aria-label="${fav?'Remover dos favoritos':'Adicionar aos favoritos'}" aria-pressed="${fav?'true':'false'}">${fav?'★':'☆'}</button></header>
+      <div class="status-row">${[['todo','Não iniciada'],['studying','Cursando'],['done','Concluída']].map(([v,l])=>`<button class="status-btn ${status===v?'active':''}" data-status="${v}" aria-pressed="${status===v?'true':'false'}">${l}</button>`).join('')}</div>
       <div class="course-quick-stats"><span>✎ ${pages.length} ${pages.length===1?'folha':'folhas'}</span><span>↻ ${reviews.length} revisões</span><span>? ${quizzes.length} perguntas</span>${rp===null?'<span>Sem progresso de revisão</span>':`<span>${rp}% das revisões concluídas</span>`}</div>
       <div class="course-tabs">${tabButton('overview','Visão geral',initialTab)}${tabButton('syllabus','Ementa oficial',initialTab)}${tabButton('biblio','Bibliografia',initialTab)}${tabButton('class','Minha turma',initialTab)}${tabButton('notes','Caderno',initialTab)}${tabButton('review','Revisão',initialTab)}${tabButton('quiz','Meu quiz',initialTab)}</div>
       <div class="course-panels">
@@ -540,7 +566,7 @@
   // ---------- CADERNO ----------
   function nextPageNumber(course) { return Math.max(0,...notebookPages(course).map(e=>Number(e.pageNumber)||0))+1; }
   function createNotebookPage(course) {
-    const entry={ id:uid('page'), pageNumber:nextPageNumber(course), date:todayISO(), title:'', learned:'', concepts:'', questions:'', tasks:'', free:'' };
+    const entry={ id:uid('page'), pageNumber:nextPageNumber(course), date:todayISO(), title:'', learned:'', concepts:'', questions:'', tasks:'', free:'', createdAt:new Date().toISOString() };
     state.notebookEntries[course.id]=[entry,...notebookPages(course)]; saveState(); openCourse(course.id,'notes',entry.id); return entry;
   }
   function notebookPreview(entry) {
@@ -562,7 +588,7 @@
   function printNotebookPage(courseId,entryId) {
     const course=getCourse(courseId), entry=getNotebookEntry(courseId,entryId); if(!course||!entry)return;
     const sections=[['O que aprendi',entry.learned],['Conceitos e palavras-chave',entry.concepts],['Dúvidas',entry.questions],['Tarefas, leituras e prazos',entry.tasks],['Observações',entry.free]].filter(([,v])=>String(v).trim());
-    const html=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(course.title)} — Folha ${entry.pageNumber}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#28231f;line-height:1.55;font-size:11pt}header{border-bottom:2px solid #765746;padding-bottom:10px;margin-bottom:20px}small{color:#766b63}h1{font-size:20pt;margin:4px 0}h2{font-size:13pt;margin:22px 0 6px;color:#684a3a;page-break-after:avoid}p{white-space:pre-wrap;margin:0}.meta{display:flex;justify-content:space-between;gap:20px}.brand{font-weight:700;color:#684a3a}section{break-inside:avoid;margin-bottom:14px}footer{margin-top:28px;padding-top:8px;border-top:1px solid #ddd;color:#777;font-size:9pt}</style></head><body><header><div class="brand">Arqueologia Study Hub · UNEB</div><small>${esc(course.title)} · Folha ${String(entry.pageNumber).padStart(2,'0')}</small><h1>${esc(entry.title||'Anotação de aula')}</h1><div class="meta"><span>${entry.date?formatDate(entry.date):'Sem data'}</span><span>${wordCount(sections.map(s=>s[1]).join(' '))} palavras</span></div></header>${sections.map(([h,t])=>`<section><h2>${esc(h)}</h2><p>${esc(t)}</p></section>`).join('')}<footer>Caderno acadêmico pessoal · Projeto independente baseado na grade do Bacharelado em Arqueologia da UNEB — Campus VIII.</footer><script>window.onload=()=>window.print()<\/script></body></html>`;
+    const html=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(course.title)} — Folha ${entry.pageNumber}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#28231f;line-height:1.55;font-size:11pt}header{border-bottom:2px solid #765746;padding-bottom:10px;margin-bottom:20px}small{color:#766b63}h1{font-size:20pt;margin:4px 0}h2{font-size:13pt;margin:22px 0 6px;color:#684a3a;page-break-after:avoid}p{white-space:pre-wrap;margin:0}.meta{display:flex;justify-content:space-between;gap:20px}.brand{font-weight:700;color:#684a3a}section{break-inside:auto;margin-bottom:14px} p{overflow-wrap:anywhere;word-break:break-word}footer{margin-top:28px;padding-top:8px;border-top:1px solid #ddd;color:#777;font-size:9pt}</style></head><body><header><div class="brand">Arqueologia Study Hub · UNEB</div><small>${esc(course.title)} · Folha ${String(entry.pageNumber).padStart(2,'0')}</small><h1>${esc(entry.title||'Anotação de aula')}</h1><div class="meta"><span>${entry.date?formatDate(entry.date):'Sem data'}</span><span>${wordCount(sections.map(s=>s[1]).join(' '))} palavras</span></div></header>${sections.map(([h,t])=>`<section><h2>${esc(h)}</h2><p>${esc(t)}</p></section>`).join('')}<footer>Caderno acadêmico pessoal · Projeto independente baseado na grade do Bacharelado em Arqueologia da UNEB — Campus VIII.</footer><script>window.onload=()=>window.print()<\/script></body></html>`;
     const w=window.open('','_blank'); if(!w){showToast('O navegador bloqueou a janela de impressão. Permita pop-ups e tente novamente.','warn');return;} try{w.opener=null;}catch(_){} w.document.open();w.document.write(html);w.document.close();
   }
 
@@ -620,17 +646,17 @@
     else{sidebar.classList.toggle('open');overlay.classList.toggle('show',sidebar.classList.contains('open'));$('#menuBtn')?.setAttribute('aria-expanded',String(sidebar.classList.contains('open')));}
   }
   function closeMobileSidebar(){sidebar.classList.remove('open');overlay.classList.remove('show');}
-  function closeDialog(){if(dialog.open)dialog.close();renderCurrentView();}
+  function closeDialog(){if(dialog.open)dialog.close();}
   function refreshOpenCourse(courseId,tab){openCourse(courseId,tab);}
 
   document.addEventListener('click', event => {
     const t=event.target.closest('button,a'); if(!t)return;
-    if(t.matches('[data-view]')){state.view=t.dataset.view;searchQuery='';$('#searchInput').value='';saveState();renderCurrentView();closeMobileSidebar();return;}
-    if(t.matches('[data-view-go]')){state.view=t.dataset.viewGo;searchQuery='';saveState();renderCurrentView();return;}
+    if(t.matches('[data-view]')){state.view=t.dataset.view;calendarEditingId=null;searchQuery='';$('#searchInput').value='';saveState();renderCurrentView();closeMobileSidebar();return;}
+    if(t.matches('[data-view-go]')){state.view=t.dataset.viewGo;calendarEditingId=null;searchQuery='';if($('#searchInput'))$('#searchInput').value='';saveState();renderCurrentView();return;}
     if(t.matches('[data-semester-filter]')){state.semesterFilter=Number(t.dataset.semesterFilter);saveState();renderSemester();return;}
     if(t.matches('[data-course-open]')){openCourse(t.dataset.courseOpen,t.dataset.openTab||'overview');return;}
     if(t.matches('[data-favorite]')){const id=t.dataset.favorite;state.favorites[id]=!state.favorites[id];saveState(); if(dialog.open&&$('[data-course-dialog]',dialogContent)?.dataset.courseDialog===id)refreshOpenCourse(id,$('.course-tab.active',dialogContent)?.dataset.tab||'overview'); else renderCurrentView();return;}
-    if(t.matches('[data-tab]')){$$('.course-tab',dialogContent).forEach(b=>b.classList.toggle('active',b===t));$$('.tab-panel',dialogContent).forEach(p=>p.classList.toggle('active',p.dataset.panel===t.dataset.tab));return;}
+    if(t.matches('[data-tab]')){$$('.course-tab',dialogContent).forEach(b=>{const active=b===t;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});$$('.tab-panel',dialogContent).forEach(p=>p.classList.toggle('active',p.dataset.panel===t.dataset.tab));return;}
     if(t.matches('[data-status]')){const id=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(!id)return;state.statuses[id]=t.dataset.status;saveState();refreshOpenCourse(id,$('.course-tab.active',dialogContent)?.dataset.tab||'overview');return;}
     if(t.matches('[data-notebook-new]')){createNotebookPage(getCourse(t.dataset.notebookNew));return;}
     if(t.matches('[data-notebook-toggle]')){const [courseId,entryId]=t.dataset.notebookToggle.split('|');const page=t.closest('.notebook-page'),wasOpen=page.classList.contains('open');$$('.notebook-page',dialogContent).forEach(p=>p.classList.remove('open'));if(!wasOpen)page.classList.add('open');return;}
@@ -639,6 +665,7 @@
     if(t.matches('[data-review-delete]')){const [c,i]=t.dataset.reviewDelete.split('|');deleteReview(c,i);openCourse(c,'review');return;}
     if(t.matches('[data-quiz-delete]')){const [c,i]=t.dataset.quizDelete.split('|');deleteQuiz(c,i);openCourse(c,'quiz');return;}
     if(t.matches('[data-quiz-mastery]')){const [c,i,m]=t.dataset.quizMastery.split('|');setQuizMastery(c,i,m);openCourse(c,'quiz');return;}
+    if(t.matches('[data-calendar-jump]')){const date=t.dataset.calendarJump;if(isISODate(date)){state.view='calendar';state.calendarMonth=date.slice(0,7);state.calendarSelectedDate=date;calendarEditingId=null;saveState();renderCurrentView();}return;}
     if(t.matches('[data-calendar-prev],[data-calendar-next]')){const [y,m]=state.calendarMonth.split('-').map(Number),d=new Date(y,m-1+(t.matches('[data-calendar-next]')?1:-1),1);state.calendarMonth=monthISO(d);state.calendarSelectedDate=`${state.calendarMonth}-01`;calendarEditingId=null;saveState();renderCalendar();return;}
     if(t.matches('[data-calendar-today]')){state.calendarMonth=monthISO();state.calendarSelectedDate=todayISO();calendarEditingId=null;saveState();renderCalendar();return;}
     if(t.matches('[data-calendar-date]')){state.calendarSelectedDate=t.dataset.calendarDate;state.calendarMonth=t.dataset.calendarDate.slice(0,7);calendarEditingId=null;saveState();renderCalendar();return;}
@@ -655,19 +682,19 @@
   document.addEventListener('change', event => {
     const el=event.target;
     if(el.id==='currentSemester'){state.currentSemester=safeSemester(el.value);state.semesterFilter=state.currentSemester;saveState();renderCurrentView();return;}
-    if(el.matches('[data-note-field]')){const page=el.closest('[data-notebook-page]'),courseId=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(page&&courseId)saveNotebookField(courseId,page.dataset.notebookPage,el.dataset.noteField,el.value);return;}
+    if(el.matches('[data-note-field]')){const page=el.closest('[data-notebook-page]'),courseId=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(page&&courseId)saveNotebookField(courseId,page.dataset.notebookPage,el.dataset.noteField,el.value);flushScheduledSave();return;}
     if(el.matches('[data-review-toggle]')){const [c,i]=el.dataset.reviewToggle.split('|');toggleReview(c,i);if(dialog.open&&$('[data-course-dialog]',dialogContent)?.dataset.courseDialog===c)openCourse(c,'review');else renderCurrentView();return;}
   });
   document.addEventListener('input', event => {
     const el=event.target;
-    if(el.matches('[data-note-field]')){const page=el.closest('[data-notebook-page]'),courseId=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(page&&courseId)saveNotebookField(courseId,page.dataset.notebookPage,el.dataset.noteField,el.value);return;}
-    if(el.closest('[data-class-form]')){const form=el.closest('[data-class-form]'),id=form.dataset.classForm;state.coursePlans[id]={...coursePlan(getCourse(id)),[el.name]:el.value};saveState();return;}
+    if(el.matches('[data-note-field]')){const page=el.closest('[data-notebook-page]'),courseId=$('[data-course-dialog]',dialogContent)?.dataset.courseDialog;if(page&&courseId){const entry=getNotebookEntry(courseId,page.dataset.notebookPage);if(entry&&['date','title','learned','concepts','questions','tasks','free'].includes(el.dataset.noteField)){entry[el.dataset.noteField]=String(el.value);scheduleSaveState();}}return;}
+    if(el.closest('[data-class-form]')){const form=el.closest('[data-class-form]'),id=form.dataset.classForm;state.coursePlans[id]={...coursePlan(getCourse(id)),[el.name]:el.value};scheduleSaveState();return;}
   });
   document.addEventListener('submit', event => {
     const form=event.target;
     if(form.matches('[data-review-form]')){event.preventDefault();const id=form.dataset.reviewForm,fd=new FormData(form);addReviewItem(id,fd.get('title'),fd.get('details'));openCourse(id,'review');return;}
     if(form.matches('[data-quiz-form]')){event.preventDefault();const id=form.dataset.quizForm,fd=new FormData(form);addQuizItem(id,fd.get('question'),fd.get('answer'),fd.get('explanation'));openCourse(id,'quiz');return;}
-    if(form.matches('[data-calendar-form]')){event.preventDefault();const fd=new FormData(form),date=String(fd.get('date')),entry={id:calendarEditingId&&calendarEditingId!=='new'?calendarEditingId:uid('calendar'),title:String(fd.get('title')).trim(),type:String(fd.get('type')),courseId:String(fd.get('courseId')),time:String(fd.get('time')),details:String(fd.get('details')).trim(),done:false,createdAt:new Date().toISOString()};if(!entry.title){showToast('Dê um título ao item.','warn');return;}if(calendarEditingId&&calendarEditingId!=='new'){for(const [d,entries] of Object.entries(state.calendarEntries)){const old=entries.find(e=>e.id===calendarEditingId);if(old){entry.done=old.done;state.calendarEntries[d]=entries.filter(e=>e.id!==calendarEditingId);if(!state.calendarEntries[d].length)delete state.calendarEntries[d];break;}}}state.calendarEntries[date]=[entry,...calendarEntriesFor(date)];state.calendarMonth=date.slice(0,7);state.calendarSelectedDate=date;calendarEditingId=null;saveState();renderCalendar();return;}
+    if(form.matches('[data-calendar-form]')){event.preventDefault();const fd=new FormData(form),date=String(fd.get('date')||''),time=String(fd.get('time')||'').trim(),title=String(fd.get('title')||'').trim(),type=String(fd.get('type')||'note'),courseId=String(fd.get('courseId')||''),details=String(fd.get('details')||'').trim();if(!title){showToast('Dê um título ao item.','warn');return;}if(!isISODate(date)){showToast('Escolha uma data válida.','warn');return;}if(time&&!isClockTime(time)){showToast('Informe um horário válido.','warn');return;}let previous=null;if(calendarEditingId&&calendarEditingId!=='new'){for(const [d,entries] of Object.entries(state.calendarEntries)){previous=entries.find(e=>e.id===calendarEditingId);if(previous){state.calendarEntries[d]=entries.filter(e=>e.id!==calendarEditingId);if(!state.calendarEntries[d].length)delete state.calendarEntries[d];break;}}}const entry={id:previous?.id||uid('calendar'),title:title.slice(0,200),type:CAL_TYPES[type]?type:'note',courseId:getCourse(courseId)?courseId:'',time,details:details.slice(0,10000),done:previous?.done===true,createdAt:previous?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};state.calendarEntries[date]=[entry,...calendarEntriesFor(date)];state.calendarMonth=date.slice(0,7);state.calendarSelectedDate=date;calendarEditingId=null;saveState();renderCalendar();showToast(previous?'Item atualizado.':'Item adicionado.');return;}
   });
 
   $('#searchInput').addEventListener('input', e => { searchQuery=e.target.value; renderCurrentView(); });
@@ -675,8 +702,10 @@
   overlay.addEventListener('click', closeMobileSidebar);
   $('#dialogClose').addEventListener('click', closeDialog);
   dialog.addEventListener('click', e => { if(e.target===dialog)closeDialog(); });
+  dialog.addEventListener('close', renderCurrentView);
   $('#importInput').addEventListener('change', e => { const file=e.target.files?.[0]; if(file) importBackupFile(file); e.target.value=''; });
   window.addEventListener('resize', applySidebarState);
+  window.addEventListener('beforeunload', flushScheduledSave);
 
   // Pequena API interna para testes automatizados do pacote.
   window.__ARCH_TEST__ = {
@@ -687,7 +716,12 @@
     addReview: (id,title='Teste') => { addReviewItem(id,title,''); return reviewProgress(getCourse(id)); },
     toggleFirstReview: id => { const item=reviewItems(getCourse(id))[0]; if(item)toggleReview(id,item.id); return reviewProgress(getCourse(id)); },
     addQuiz: id => { addQuizItem(id,'Pergunta teste?','Resposta teste',''); return quizItems(getCourse(id)).length; },
-    addPage: id => createNotebookPage(getCourse(id)).pageNumber
+    addPage: id => createNotebookPage(getCourse(id)).pageNumber,
+    calendarAdd: (date,title='Teste',details='') => { if(!isISODate(date)) return false; const entry={id:uid('calendar-test'),title,type:'note',courseId:'',time:'',details,done:false,createdAt:new Date().toISOString()}; state.calendarEntries[date]=[entry,...calendarEntriesFor(date)]; saveState(); return entry.id; },
+    calendarToggle: (date,id) => { const entry=calendarEntriesFor(date).find(e=>e.id===id); if(!entry)return false; entry.done=!entry.done; saveState(); return entry.done; },
+    calendarDelete: (date,id) => { state.calendarEntries[date]=calendarEntriesFor(date).filter(e=>e.id!==id); if(!state.calendarEntries[date].length)delete state.calendarEntries[date]; saveState(); return true; },
+    setView: name => { if(['dashboard','semester','notebook','calendar','review','all','optatives','favorites','about'].includes(name)){state.view=name;renderCurrentView();return true;}return false; },
+    openCourse: (id,tab='overview') => { openCourse(id,tab); return !!dialog.open; }
   };
 
   syncSemesterSelect();

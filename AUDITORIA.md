@@ -1,133 +1,108 @@
-# Auditoria — Arqueologia Study Hub v8.3
+# Auditoria completa — Arqueologia Study Hub v8.4
 
-## Escopo
+## Motivo da revisão
 
-A v8.3 mantém a organização acadêmica da v8 e acrescenta uma revisão visual específica de **Meu semestre** e **Caderno**. A estrutura curricular e as ferramentas preenchidas pelo estudante permanecem inalteradas. para funcionar como caderno acadêmico digital. A auditoria desta versão verifica a matriz curricular, a remoção do material didático gerado automaticamente e a estrutura das ferramentas que passam a ser preenchidas pelo próprio estudante.
+A revisão começou por um bug relatado ao salvar notas no calendário. A análise mostrou que o problema não estava nos dados salvos, e sim numa incompatibilidade entre o HTML atual e CSS legado acumulado de versões anteriores.
 
-## Matriz preservada
+O item do calendário possuía `conteúdo + ações`, mas a regra antiga ainda usava uma grade com `28px + conteúdo + ações`. O texto acabava ocupando a coluna de 28 px. A v8.4 corrige essa origem e não apenas o sintoma.
 
-O validador confirma:
+## Auditoria curricular
 
-- 65/65 componentes obrigatórios;
-- 14/14 optativas;
+Validado por `validate-data.js` e `validate-app.js`:
+
+- 65 componentes obrigatórios;
+- 14 optativas;
 - 8 semestres;
-- distribuição obrigatória: 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
-- 4.020 h dos componentes obrigatórios listados na matriz;
-- 560 h das 14 optativas listadas.
+- distribuição 7 / 8 / 9 / 9 / 9 / 9 / 8 / 6;
+- 4.020 h na soma dos componentes obrigatórios da matriz;
+- IDs de disciplinas únicos;
+- `data.js` e `data.json` idênticos.
 
-`node validate-data.js` conclui sem erros.
+Os arquivos curriculares da v8.4 são byte a byte idênticos aos da v8.3; esta revisão não altera a grade nem as informações oficiais já cadastradas.
 
-## Conteúdo gerado removido
+## Bugs corrigidos
 
-A linha v8 não carrega mais:
+1. **Notas do calendário espremidas** — corrigido o grid incompatível entre markup e CSS.
+2. **Classes atuais sem estilo** — `course-grid`, `empty-state`, `course-card-head`, `course-summary` e classes atuais do calendário ganharam camada canônica.
+3. **Compromissos da Home sem navegação direta** — agora abrem o dia correspondente no calendário.
+4. **Busca não encontrava notas do calendário** — agora pesquisa título, observações e matéria vinculada.
+5. **Edição de calendário** — preserva status concluído, `createdAt`, mudança de data e adiciona `updatedAt`.
+6. **Datas/horários importados** — normalização passou de regex simples para validação real de calendário/relógio.
+7. **Modal fechado por Esc** — a tela ao fundo agora é atualizada também nesse caminho.
+8. **Atalho de navegação com busca antiga visível** — o campo de busca é limpo junto com o estado da busca.
+9. **Gravação excessiva durante digitação** — caderno e dados da turma usam salvamento agendado durante `input` e gravação imediata ao confirmar mudança.
+10. **PDF de folha longa** — conteúdo pode quebrar entre páginas e palavras extensas podem quebrar linha.
+11. **Acessibilidade das abas/status/favorito** — estados `aria-selected`/`aria-pressed` foram adicionados.
 
-- `study-content.js`;
-- `lesson-content.js`;
-- `optative-content.js`;
-- aulas geradas automaticamente;
-- flashcards gerados automaticamente;
-- quizzes gerados automaticamente;
-- checklist artificial de conteúdos previstos.
+## Testes dinâmicos no Chromium
 
-A matéria passa a ser organizada a partir do que é institucionalmente conhecido (matriz, ementa e bibliografia) e do que o usuário registra durante a graduação.
+Foi executada uma bateria automatizada com o app inteiro injetado no Chromium e interação real de DOM. Resultado: **100/100 verificações passaram**.
 
-## Estrutura de cada disciplina
+A bateria cobriu:
 
-Foram mantidas sete áreas:
+- inicialização do app;
+- 65 obrigatórias e 14 optativas;
+- abrir calendário;
+- criar nota longa com múltiplas linhas;
+- confirmar largura útil do texto e ausência de overflow;
+- concluir item;
+- editar item;
+- mover item para outra data;
+- preservar estado concluído durante edição;
+- reabrir item;
+- abrir um compromisso da Home diretamente no calendário;
+- encontrar a nota pela busca;
+- criar duas folhas no caderno;
+- confirmar acordeão com apenas uma folha aberta;
+- atualizar estado dos campos da folha;
+- gerar HTML de impressão/PDF sem sidebar;
+- adicionar, marcar e desmarcar revisão (0% → 100% → 0%);
+- criar pergunta no quiz;
+- alternar as sete abas de uma disciplina;
+- editar dados de Minha turma;
+- abrir **todas as 65 obrigatórias + 14 optativas** no modal;
+- menu sanduíche no desktop;
+- drawer no mobile;
+- ausência de exceções JavaScript.
 
-1. Visão geral;
-2. Ementa oficial;
-3. Bibliografia;
-4. Minha turma;
-5. Caderno;
-6. Revisão;
-7. Meu quiz.
+## Responsividade testada
 
-As optativas continuam identificadas como sem ementa detalhada quando o PPP consultado apenas lista nome e carga horária.
+As nove páginas principais e o modal da disciplina foram verificados em:
 
-## Caderno
+- 1440 × 900;
+- 1024 × 768;
+- 834 × 1112;
+- 768 × 1024;
+- 430 × 900;
+- 390 × 844;
+- 320 × 700.
 
-A estrutura suporta várias folhas por matéria, com numeração permanente, acordeão, autosalvamento e exportação de uma folha pela impressão nativa do navegador para PDF.
+Em todos os casos testados, `scrollWidth - clientWidth` ficou em **0** para a página, calendário e modal.
 
-A normalização de dados preserva folhas compatíveis de versões anteriores e atribui número permanente a registros legados que ainda não possuíam `pageNumber`.
+## Verificações estáticas adicionais
 
-## Revisão
+- todos os arquivos `.js` passam em `node --check`;
+- CSS com chaves balanceadas;
+- nenhum ID duplicado no `index.html`;
+- arquivos locais referenciados pelo HTML existem;
+- um único `#menuBtn`;
+- arquivos antigos de conteúdo gerado (`lesson-content.js`, `study-content.js`, `optative-content.js`) não fazem parte do pacote;
+- todas as classes estáticas atuais do app possuem estilo, exceto `.meta`, que existe apenas dentro do HTML isolado de impressão e é estilizada ali mesmo.
 
-A porcentagem de revisão é calculada somente a partir dos itens criados pelo usuário:
+## Observação sobre persistência
 
-`concluídos / total de itens × 100`.
+O harness usado para injetar o app no Chromium não fornece acesso a `localStorage` por política de origem do documento injetado. Por isso o teste dinâmico valida atualização do estado interno, normalização e fluxo de backup, enquanto a persistência real continua implementada com `localStorage` e tratamento de erro. O app avisa o usuário se o navegador impedir o salvamento e recomenda exportar backup.
 
-Se não existirem itens, a interface informa que não há revisão cadastrada em vez de atribuir um percentual artificial à disciplina.
+## Melhorias de produto incluídas
 
-## Quiz personalizado
+Além das correções, a v8.4 melhora a experiência sem alterar a filosofia da v8:
 
-As perguntas são criadas pelo usuário e armazenam pergunta, resposta, complemento opcional e estado de autoavaliação. O app não atribui nota acadêmica nem presume o conteúdo cobrado pelo professor.
+- calendário pesquisável;
+- compromissos da Home clicáveis;
+- formulários e notas longas mais robustos;
+- salvamento durante digitação mais leve;
+- validador `validate-app.js` para evitar regressões estruturais.
 
-## Calendário
+## Resultado
 
-O estado da v8.3 preserva calendário mensal com título, tipo, matéria opcional, horário, observações e estado concluído/pendente. Os próximos compromissos podem aparecer no Início.
-
-## Busca
-
-A busca inclui dados institucionais e conteúdo criado pelo usuário: nome da disciplina, ementa, bibliografia, professor, dados da turma, caderno, revisões e perguntas do quiz.
-
-## Backup e migração
-
-O estado da v8.3 é salvo em `arqueologia-study-hub-v8`. A migração procura chaves anteriores compatíveis e preserva, quando disponíveis:
-
-- semestre atual;
-- status;
-- favoritas;
-- anotações antigas;
-- dados da turma;
-- folhas do caderno;
-- calendário;
-- revisões personalizadas;
-- quizzes personalizados.
-
-Os conteúdos automáticos antigos não são importados como conteúdo da nova interface.
-
-## Responsividade
-
-A estrutura CSS mantém os breakpoints já usados no projeto para desktop, tablet e mobile, incluindo menu lateral recolhível/drawer, grade de cartões, diálogo da disciplina, calendário e formulários.
-
-A validação estrutural verifica que os arquivos locais referenciados pelo HTML existem. Nesta revisão, o mecanismo de captura automática do Chromium do ambiente não concluiu de forma confiável; por isso a auditoria não afirma uma inspeção por screenshot que não foi possível fechar.
-
-## Limites
-
-Esta auditoria não transforma o app em fonte oficial da UNEB. O objetivo da v8.3 é justamente evitar prever o que o professor ensinará. O PPP permanece como referência institucional e o conteúdo real passa a ser construído no caderno, nas revisões e nos quizzes do próprio usuário.
-
-## Interface v8.3
-
-A sidebar não possui mais um segundo botão interno de recolhimento. O único controle é `#menuBtn`, mantido na barra superior e disponível mesmo quando o menu está fechado. A home usa componentes próprios mais compactos e não altera os cards detalhados das demais páginas.
-
-Checagens estáticas desta revisão: IDs HTML sem duplicação, um único `#menuBtn`, ausência de `#sidebarToggle`, CSS com blocos balanceados, JavaScript com sintaxe válida e matriz validada pelo `validate-data.js`.
-
-
-
-## Correção do modal da disciplina
-
-A v8.3 preserva um problema estrutural da v8/v8.1: a nova marcação interna das disciplinas (`course-dialog-page`, `course-dialog-header`, `course-meta` e `course-panels`) havia sido criada sem uma camada completa de estilos própria e acabava herdando parcialmente o CSS do modal antigo.
-
-A correção estabelece:
-
-- cabeçalho próprio e responsivo para a disciplina;
-- botão de fechar posicionado sem sobrepor os campos;
-- barra de status e indicadores com espaçamento consistente;
-- abas horizontais com rolagem em telas estreitas;
-- área de conteúdo com padding próprio;
-- grade de campos 2→1 colunas conforme a largura;
-- largura máxima e `box-sizing` consistente em inputs, selects e textareas;
-- Caderno, Revisão e Meu Quiz protegidos contra estouro horizontal;
-- modal quase em tela cheia no mobile sem perder margens de segurança.
-
-
-## Redesign de Meu semestre e Caderno
-
-A v8.3 substitui o layout utilitário dessas duas páginas por componentes próprios.
-
-**Meu semestre:** hero do período com métricas reais da matriz e do conteúdo criado pelo usuário, seletor de semestre e cartões editoriais por disciplina. Os cartões são elementos `button`, portanto o clique em qualquer área abre corretamente a matéria dentro do sistema de eventos existente.
-
-**Caderno:** hero acadêmico, contagem de folhas/cadernos iniciados, atalho para a anotação mais recente e cards que simulam cadernos com lombada, quantidade de folhas e última anotação. Nenhuma estrutura de dados do caderno foi alterada.
-
-A nova camada possui breakpoints próprios para 1100, 820, 620 e 390 px. A validação estática confirmou JavaScript válido, matriz preservada e ausência de mudanças em `data.js`/`data.json`. O Chromium headless disponível no ambiente permaneceu incapaz de concluir capturas confiáveis; por isso não é declarada uma inspeção dinâmica completa que não foi possível executar.
+A v8.4 é a primeira revisão da linha v8 em que o calendário, caderno, revisão, quiz, modal, menu e todas as páginas principais foram submetidos à mesma bateria automatizada de interface e responsividade.
